@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Project G</title>
+	<meta name="viewport" content="width=1000, initial-scale=1.0" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<script src="jquery.min.js"></script>
+	<script src="resources/data/global.js"></script>
+	<script src="resources/data/assets.js"></script>
+	<script src="resources/data/ground_tiles.js"></script>
+	<script src="resources/data/game_objects.js"></script>
+	<script src="resources/data/maps.js"></script>
+
+	<script src="libs/assets.js"></script>
+	<script src="libs/game_object.js"></script>
+	<script src="libs/viewport.js"></script>
+
+	<link href="common.css" rel="stylesheet" />
+	<style>
+		body{width:100vw; height:100vh;}
+		#viewport{position:absolute; width:1000px; height:750px; top:50%; left:50%; transform:translate(-50%,-50%);}
+	</style>
+	<script>
+$(document).ready(function() {
+	var viewport = new Viewport({'fps':15, 'width':1000, 'height':750, 'target':$('#viewport')});
+	viewport.setScene(new LoadingScene());
+
+	var assets = new Assets(data_assets, function(msg, progress) {
+		switch(msg) {
+			case 'finished':
+				console.log('image loading finished');
+				setTimeout(function(){
+					viewport.setScene(null);	
+				}, 3000);
+		}
+	});
+	var ground_tiles = new GroundTiles(assets, data_ground_tiles);
+});
+	</script>
+</head>
+<body>
+<div id="viewport"></div>
+</body>
+</html>

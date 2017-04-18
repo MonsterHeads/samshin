@@ -1,2 +1,2 @@
 # samshin
-javascript game engine
+html5 canvas/javascript game engine
