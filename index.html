@@ -16,16 +16,16 @@
 	<script src="libs/viewport.js"></script>
 	<script src="libs/assets.js"></script>
 	<script src="libs/game_object.js"></script>
-	
+	<script src="libs/world.js"></script>
 
 	<link href="common.css" rel="stylesheet" />
 	<style>
 		body{width:100vw; height:100vh;}
-		#viewport{position:absolute; width:1000px; height:750px; top:50%; left:50%; transform:translate(-50%,-50%);}
+		#viewport{position:absolute; width:960px; height:720px; top:50%; left:50%; transform:translate(-50%,-50%);}
 	</style>
 	<script>
 $(document).ready(function() {
-	var viewport = new Viewport({'fps':15, 'width':1000, 'height':750, 'target':$('#viewport')});
+	var viewport = new Viewport({'fps':30, 'width':960, 'height':720, 'target':$('#viewport')});
 	viewport.setScene(new LoadingScene());
 
 	var assets = new Assets(data_assets, function(msg, progress) {
@@ -33,11 +33,14 @@ $(document).ready(function() {
 			case 'finished':
 				console.log('image loading finished');
 				setTimeout(function(){
-					viewport.setScene(null);	
-				}, 3000);
+					viewport.setScene(worldCameraScene);
+				}, 1500);
 		}
 	});
 	var ground_tiles = new GroundTiles(assets, data_ground_tiles);
+	var world = new World(ground_tiles, data_maps.room1);
+	var worldCameraScene = new WorldCameraScene(world);
+
 });
 	</script>
 </head>
