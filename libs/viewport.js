@@ -1,12 +1,12 @@
 var LoadingScene = function() {
-	var begin = -1;
-	var circle = 1500;
+	var _begin = -1;
+	var _circle = 1500;
 	
 	this.render = function(t, ctx, width, height) {
-		if( 0 > begin ) {
-			begin = t;
+		if( 0 > _begin ) {
+			_begin = t;
 		}
-		var dt = (t-begin) / circle;
+		var dt = (t-_begin) / _circle;
 		var rad = Math.PI * dt
 		var opacity = Math.abs(Math.sin(rad));
 
