@@ -7,6 +7,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 	<script src="jquery.min.js"></script>
+	<script src="libs/helper_game_object.js"></script>
+
 	<script src="resources/data/global.js"></script>
 	<script src="resources/data/assets.js"></script>
 	<script src="resources/data/ground_tiles.js"></script>
@@ -38,7 +40,8 @@ $(document).ready(function() {
 		}
 	});
 	var ground_tiles = new GroundTiles(assets, data_ground_tiles);
-	var world = new World(ground_tiles, data_maps.room1, 'default');
+	var game_objects = new GameObjects(assets, data_game_objects);
+	var world = new World(ground_tiles, game_objects, data_maps['room01'], 'default');
 });
 	</script>
 </head>

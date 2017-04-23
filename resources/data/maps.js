@@ -1,8 +1,21 @@
 var data_maps = {
-'room1': {
+'room01': {
 	'width':11, 'height':14,
-	'map_object': [
-	],
+	'objects': {
+		'citywindow1':{'cls':'furnitures/room01', 'status':'citywindow', 'x':35, 'y':20},
+		'citywindow2':{'cls':'furnitures/room01', 'status':'citywindow', 'x':120, 'y':20},
+		'wallshelf':{'cls':'furnitures/room01', 'status':'wallshelf', 'x':70, 'y':18},
+		'tv':{'cls':'furnitures/room01', 'status':'tv', 'x':24, 'y':40},
+		'tableandlamp':{'cls':'furnitures/room01', 'status':'tableandlamp', 'x':90, 'y':40},
+		'teatable':{'cls':'furnitures/room01', 'status':'teatable', 'x':25, 'y':72,
+			'children':{
+				'stackbook':{'cls':'furnitures/room01', 'status':'stackbook', 'x':25, 'y':5},
+			}
+		},
+		'couch':{'cls':'furnitures/room01', 'status':'couch', 'x':25, 'y':100},
+		'diningtable':{'cls':'furnitures/room01', 'status':'diningtable', 'x':110, 'y':120},
+		'chair':{'cls':'furnitures/room01', 'status':'chair', 'x':125, 'y':145},
+	},
 	'ground':[
 	[201,202,202,202,202,202,202,202,202,202,203],
 	[204,215,215,215,215,215,215,215,215,215,205],

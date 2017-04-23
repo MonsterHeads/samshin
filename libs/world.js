@@ -1,4 +1,4 @@
-var World = function(ground_tiles, map_data, scene_name) {
+var World = function(ground_tiles, game_objects, map_data, scene_name) {
 	var _grid_width = map_data.width;
 	var _grid_height = map_data.height;
 	var _width = _grid_width * config.ground_tile.unit;
@@ -6,6 +6,9 @@ var World = function(ground_tiles, map_data, scene_name) {
 	var _ground_data = $.extend({}, map_data.ground);
 	var _center_x = _width/2;
 	var _center_y = _height/2;
+	var object_map = {};
+	var object_list = [];
+	var _this = this;
 
 	this.getWidth = function(){return _width;}
 	this.getHeight = function(){return _height;}
@@ -46,6 +49,26 @@ var World = function(ground_tiles, map_data, scene_name) {
 			}
 			cur_y += config.ground_tile.unit;
 		}
+		$.each(object_list, function(idx, wrap_obj) {
+			wrap_obj.inst.draw(t, ctx, ctx_dst_x+wrap_obj.x-map_src_x, ctx_dst_y+wrap_obj.y-map_src_y);
+		});
 	}
+	this.setGameObject = function(name, wrap_obj) {
+		object_list.push(wrap_obj); // need sorting
+		object_map[name] = {'wrap_obj':wrap_obj, 'idx':object_list.length-1};
+		return true;
+	}
+
 	var scene = new map_data.scenes[scene_name](this);
+	$.each(map_data.objects, function(name, object_data) {
+		var createGameObject = function(object_data) {
+			var inst = game_objects.createGameObject(object_data.cls, object_data.status);
+			$.each(object_data.children, function(child_name, child_data){
+				var child = createGameObject(child_data);
+				inst.setChild(child_name, child);
+			});
+			return {'x':object_data.x, 'y':object_data.y, 'inst':inst};
+		};
+		_this.setGameObject(name, createGameObject(object_data));
+	});
 };
