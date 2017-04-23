@@ -33,14 +33,12 @@ $(document).ready(function() {
 			case 'finished':
 				console.log('image loading finished');
 				setTimeout(function(){
-					viewport.setScene(worldCameraScene);
+					viewport.setScene(world);
 				}, 1500);
 		}
 	});
 	var ground_tiles = new GroundTiles(assets, data_ground_tiles);
-	var world = new World(ground_tiles, data_maps.room1);
-	var worldCameraScene = new WorldCameraScene(world);
-
+	var world = new World(ground_tiles, data_maps.room1, 'default');
 });
 	</script>
 </head>
