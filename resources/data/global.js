@@ -4,7 +4,7 @@ var config = {
 		'background_color':'#000000',
 	},
 	'ground_tile': {
-		'unit': 32,
+		'unit': 16,
 	}
 }
 
