@@ -50,8 +50,17 @@ var World = function(ground_tiles, game_objects, map_data, scene_name) {
 			cur_y += config.ground_tile.unit;
 		}
 		$.each(object_list, function(idx, wrap_obj) {
-			wrap_obj.inst.draw(t, ctx, ctx_dst_x+wrap_obj.x-map_src_x, ctx_dst_y+wrap_obj.y-map_src_y);
+			wrap_obj.beforeRender(t);
 		});
+		ctx.translate(ctx_dst_x-map_src_x, ctx_dst_y-map_src_y);
+		$.each(object_list, function(idx, wrap_obj) {
+			var mx = wrap_obj.getX();
+			var my = wrap_obj.getY();
+			ctx.translate(mx, my);
+			wrap_obj.render(t, ctx);
+			ctx.translate(0-mx, 0-my);
+		});
+		ctx.translate(0-ctx_dst_x+map_src_x, 0-ctx_dst_y+map_src_y);
 	}
 	this.setGameObject = function(name, wrap_obj) {
 		object_list.push(wrap_obj); // need sorting
@@ -61,14 +70,6 @@ var World = function(ground_tiles, game_objects, map_data, scene_name) {
 
 	var scene = new map_data.scenes[scene_name](this);
 	$.each(map_data.objects, function(name, object_data) {
-		var createGameObject = function(object_data) {
-			var inst = game_objects.createGameObject(object_data.cls, object_data.status);
-			$.each(object_data.children, function(child_name, child_data){
-				var child = createGameObject(child_data);
-				inst.setChild(child_name, child);
-			});
-			return {'x':object_data.x, 'y':object_data.y, 'inst':inst};
-		};
-		_this.setGameObject(name, createGameObject(object_data));
+		_this.setGameObject(name, game_objects.createGameObject(object_data.cls, object_data));
 	});
 };

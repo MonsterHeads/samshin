@@ -1,6 +1,5 @@
 var data_maps = {
 'room01': {
-	'width':11, 'height':14,
 	'objects': {
 		'citywindow1':{'cls':'furnitures/room01', 'status':'citywindow', 'x':35, 'y':20},
 		'citywindow2':{'cls':'furnitures/room01', 'status':'citywindow', 'x':120, 'y':20},
@@ -16,6 +15,7 @@ var data_maps = {
 		'diningtable':{'cls':'furnitures/room01', 'status':'diningtable', 'x':110, 'y':120},
 		'chair':{'cls':'furnitures/room01', 'status':'chair', 'x':125, 'y':145},
 	},
+	'width':11, 'height':14,
 	'ground':[
 	[201,202,202,202,202,202,202,202,202,202,203],
 	[204,215,215,215,215,215,215,215,215,215,205],
@@ -32,7 +32,6 @@ var data_maps = {
 	[ -1, -1, -1,204,101,101,101,205, -1, -1, -1],
 	[ -1, -1, -1,211,207,207,207,212, -1, -1, -1],
 	],
-
 
 	'scenes': {
 'default': function(world) {

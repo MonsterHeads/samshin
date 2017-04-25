@@ -1,13 +1,30 @@
 var gameObjectAnimation = {
-	'single': function(asset, hitbox_list) {
+	'single': function(asset_name, hitbox_list) {
+		var _assets;
+		var _asset;
 		return {
-			'asset_list':[asset,],
-			'hitbox_list':hitbox_list,
-			'animate': function(t) {
+			'init': function(assets) {
+				_assets = assets;
+				_asset = _assets.getAsset(asset_name);
 				return {
-					'asset_idx':0,
-					'x':0, 'y':0,
+					'rx':0,
+					'ry':0,
+					'width':_asset.getWidth(),
+					'height':_asset.getHeight(),
+					'hitbox_list':hitbox_list,
 				}
+			},
+			'beforeRender': function(t) {
+				return {
+					'rx':0,
+					'ry':0,
+					'width':_asset.getWidth(),
+					'height':_asset.getHeight(),
+					'hitbox_list':hitbox_list,
+				}
+			},
+			'render': function(t, ctx) {
+				_asset.draw(ctx, 0, 0, _asset.getWidth(), _asset.getHeight());
 			}
 		}
 	},

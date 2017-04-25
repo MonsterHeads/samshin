@@ -22,73 +22,79 @@ var GroundTiles = function(assets, data) {
 	}
 };
 
-var GameObject = function(assets, data, initial_status) {
+var GameObject = function(game_objects, assets, data, initial_data) {
+	var $this = this;
+
 	var _status_map = {};
-	$.each(data, function(status, status_data) {
-		var asset_list = {};
-		var _width = 0;
-		var _height = 0;
-		$.each(status_data.asset_list, function(idx, asset_name) {
-			var asset = assets.getAsset(asset_name);
-			asset_list[idx] = asset;
-			_width = Math.max(_width, asset.getWidth());
-			_height = Math.max(_height, asset.getHeight());
-		});
-		_status_map[status] = {
-			'asset_list': asset_list,
-			'width': _width,
-			'height': _height,
-			'hitbox_list': status_data.hitbox_list,
-			'animate': status_data.animate,
-		};
-	});
-	var _additional_data = {};
+	var _position_data = {'rx':0, 'ry':0, 'width':0, 'height':0, 'hitbox_list':[]};
+	var _x = initial_data.x;
+	var _y = initial_data.y;
+
+	var _data = {};
 	var _status;
 	var _status_start = -1;
 	var _child_map = {};
 	var _child_list = [];
-	this.setChild = function(child_name, wrap_child) {
-		_child_list.push(wrap_child);
-		_child_map[name] = {'wrap_child':wrap_child, 'idx':_child_list.length-1};
+	this.setChild = function(child_name, child) {
+		_child_list.push(child);
+		_child_map[name] = {'child':child, 'idx':_child_list.length-1};
 	}
-	this.setStatus= function(status, validateFunc) {
+	this.setStatus= function(status) {
 		if( !_status_map.hasOwnProperty(status) ) {
-			return false;
-		}
-		if( validateFunc && !validateFunc(_status_map[_status], _status_map[status]) ) {
 			return false;
 		}
 		_status = status;
 		_status_start = -1;
+		var status_position_data = _status_map[_status].init.apply($this,[assets]);
+		$.extend(_position_data, status_position_data);
 	};
-	this.setAdditionalData = function(additional_data) {
-		_additional_data = additional_data;
-	};
-	this.getAdditionalData = function() {
-		return _additional_data;
-	};
-	this.getWidth = function() {
-		return _status_map[_status].width;
-	};
-	this.getHeight = function() {
-		return _status_map[_status].height;
-	};
-	this.getHitboxList = function() {
-		return _status_map[_status].hitbox_list;
-	}
-	this.draw = function(t, ctx, x, y) {
+	this.setData = function(data) { _data = data; };
+	this.getData = function() { return _data; };
+	this.getX = function() { return _x; }
+	this.setX = function(x) { _x = x; }
+	this.getY = function() { return _y; }
+	this.setY = function(y) { _y = y; }
+	this.getWidth = function() { return _position_data.width; };
+	this.getHeight = function() { return _position_data.height; };
+	this.getHitboxList = function() { return _position_data.hitbox_list; }
+
+	this.beforeRender = function(t) {
 		if( 0 > _status_start ) {
 			_status_start = t;
 		}
-		var data = _status_map[_status];
-		var ani_info = data.animate(t-_status_start, _additional_data);
-		data.asset_list[ani_info.asset_idx].draw(ctx, x, y, data.width, data.height);
-		$.each(_child_list, function(idx, wrap_child) {
-			wrap_child.inst.draw(t, ctx, x+wrap_child.x, y+wrap_child.y);
+		var status_data = _status_map[_status];
+		var status_position_data = status_data.beforeRender.apply($this, [t-_status_start]);
+		$.extend(_position_data, status_position_data);
+		$.each(_child_list, function(idx, child) {
+			child.beforeRender(t);
+		});
+	}
+	this.render = function(t, ctx) {
+		if( 0 > _status_start ) {
+			_status_start = t;
+		}
+		var status_data = _status_map[_status];
+		status_data.render.apply($this, [t-_status_start, ctx]);
+		$.each(_child_list, function(idx, child) {
+			var mx = child.getX();
+			var my = child.getY();
+			ctx.translate(mx, my);
+			child.render(t, ctx);
+			ctx.translate(0-mx, 0-my);
 		});
 	};
-
-	this.setStatus(initial_status);
+	$.each(data, function(status, status_data) {
+		_status_map[status] = {
+			'init': status_data.init,
+			'beforeRender': status_data.beforeRender,
+			'render': status_data.render,
+		};
+	});
+	$.each(initial_data.children, function(name, child_data) {
+		var child = game_objects.createGameObject(child_data.cls, child_data);
+		$this.setChild(name, child);
+	});
+	$this.setStatus(initial_data.status);
 };
 
 var GameObjects = function(assets, data) {
@@ -99,7 +105,7 @@ var GameObjects = function(assets, data) {
 			_game_object_data_map[cls] = data;
 		});
 	});
-	this.createGameObject = function(cls, initial_status) {
-		return new GameObject(assets, _game_object_data_map[cls], initial_status);
+	this.createGameObject = function(cls, initial_data) {
+		return new GameObject(this, assets, _game_object_data_map[cls], initial_data);
 	}
 };
