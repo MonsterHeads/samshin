@@ -51,7 +51,7 @@ var data_maps = {
 	[999,999,999,211,207,207,207,212,999,999,999],
 	],
 
-	'scenes': { // this == world
+	'scenes': {
 		'default': function() {
 			var _dx = 0;
 			var _dy = 0;
