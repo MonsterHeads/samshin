@@ -36,6 +36,7 @@ var data_assets = {
 			'floor_01_frame_corner_br': {'url':'resources/images/tiles/floor_01.png', 'x':16, 'y':64, 'width':16, 'height':16},
 			'room01_wall': {'url':'resources/images/tiles/room01_wall.png', 'x':0, 'y':0, 'width':16, 'height':16},
 			'room01_wall_bottom': {'url':'resources/images/tiles/room01_wall.png', 'x':0, 'y':16, 'width':16, 'height':16},
+			'floor_01_blank': {'url':'resources/images/tiles/floor_01.png', 'x':32, 'y':64, 'width':16, 'height':16},
 		},
 	},
 };

@@ -1,32 +1,8 @@
-var GroundTile = function(assets, key, data) {
-	// {'asset':'tiles/floor_01', 'hit_check':false, 'width':1, 'height':1,}
-	var _asset = assets.getAsset(data.asset);
-	var _width = data.width;
-	var _height = data.height;
-	var _hit_check = data.hit_check;
-
-	this.getWidth = function(){return _width;};
-	this.getHeight = function(){return _height;};
-	this.draw = function(ctx, x, y) {
-		_asset.draw(ctx, x, y, _width*config.ground_tile.unit, _height*config.ground_tile.unit);
-	};
-};
-
-var GroundTiles = function(assets, data) {
-	var _tiles_map = {};
-	$.each(data, function(key, data) {
-		_tiles_map[key] = new GroundTile(assets, key, data);
-	});
-	this.getGroundTile = function(key) {
-		return _tiles_map[key];
-	}
-};
-
 var GameObject = function(game_objects, assets, data, initial_data) {
 	var $this = this;
 
 	var _status_map = {};
-	var _position_data = {'rx':0, 'ry':0, 'width':0, 'height':0, 'hitbox_list':[]};
+	var _position_data = {'width':0, 'height':0, 'hitbox_list':[]};
 	var _x = initial_data.x;
 	var _y = initial_data.y;
 
@@ -39,6 +15,7 @@ var GameObject = function(game_objects, assets, data, initial_data) {
 		_child_list.push(child);
 		_child_map[name] = {'child':child, 'idx':_child_list.length-1};
 	}
+	//Object.defineProperty(this, 'child', {});
 	this.setStatus= function(status) {
 		if( !_status_map.hasOwnProperty(status) ) {
 			return false;
