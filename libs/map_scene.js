@@ -1,4 +1,4 @@
-var World = function(assets, game_objects, map_data, scene_name) {
+var MapScene = function(assets, game_objects, map_data, scene_name) {
 	var $this = this;
 	var _center_x, _center_y;
 
