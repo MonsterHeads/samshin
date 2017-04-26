@@ -20,7 +20,7 @@ var GameObjectHelper = {
 				return {}
 			},
 			'render': function(t, ctx) {
-				_asset.draw(ctx, 0, 0, size, size);
+				_asset.draw(ctx, 0, 0, _asset.getWidth(), size);
 			}
 		}
 	},	

@@ -53,11 +53,10 @@ var GameObject = function(game_objects, assets, data, initial_data) {
 		var status_data = _status_map[_status];
 		status_data.render.apply($this, [t-_status_start, ctx]);
 		$.each(_child_list, function(idx, child) {
-			var mx = child.getX();
-			var my = child.getY();
-			ctx.translate(mx, my);
+			ctx.save();
+			ctx.translate(child.getX(), child.getY());
 			child.render(t, ctx);
-			ctx.translate(0-mx, 0-my);
+			ctx.restore();
 		});
 	};
 	$.each(data, function(status, status_data) {
