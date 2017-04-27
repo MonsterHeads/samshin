@@ -19,22 +19,22 @@ var LoadingScene = function() {
 	}
 }
 
-var Viewport = function(init_config) {
+var Viewport = function(initConfig) {
 	var _scene;
 	var _config;
 	var _ctx;
 
 	var init = function() {
-		var default_config = {'fps': 15, 'width': 640, 'height': 480,}
-		_config = $.extend({}, default_config, init_config);
+		var defaultConfig = {'fps': 15, 'width': 640, 'height': 480,}
+		_config = $.extend({}, defaultConfig, initConfig);
 		var canvas = $('<canvas></canvas>');
 		canvas.css('width', '100%');
 		canvas.css('height', '100%');
 		canvas.attr('width', _config.width);
 		canvas.attr('height', _config.height);
 		_config.target.append(canvas);
-		_config.render_width = Math.ceil(_config.width/config.viewport.scale);
-		_config.render_height = Math.ceil(_config.height/config.viewport.scale);
+		_config.renderWidth = Math.ceil(_config.width/config.viewport.scale);
+		_config.renderHeight = Math.ceil(_config.height/config.viewport.scale);
 
 		_ctx = canvas[0].getContext('2d');
 		_ctx.scale(config.viewport.scale, config.viewport.scale);
@@ -58,7 +58,7 @@ var Viewport = function(init_config) {
 	var render = function() {
 		var t = new Date().getTime();
 		if( _scene ) {
-			_scene.render(t, _ctx, _config.render_width, _config.render_height);
+			_scene.render(t, _ctx, _config.renderWidth, _config.renderHeight);
 		} else {
 			_ctx.fillStyle = "#000000";
 			_ctx.fillRect(0, 0, _config.width, _config.height);

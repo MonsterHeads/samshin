@@ -1,19 +1,19 @@
 var GameObjectHelper = {
-	'tile': function(asset_name, size, hitcheck) {
-		var _assets;
+	'tile': function(assetName, size, hitcheck) {
+		var _assetPool;
 		var _asset;
-		var _hitbox_list = [];
+		var _hitboxList = [];
 		return {
-			'init': function(assets) {
-				_assets = assets;
-				_asset = _assets.getAsset(asset_name);
+			'init': function(assetPool) {
+				_assetPool = assetPool;
+				_asset = _assetPool.getAsset(assetName);
 				if( hitcheck ) {
-					_hitbox_list = [{'x':0, 'y':0, 'width':size, 'height':size}];
+					_hitboxList = [{'x':0, 'y':0, 'width':size, 'height':size}];
 				}
 				return {
 					'width':size,
 					'height':size,
-					'hitbox_list':_hitbox_list,
+					'hitboxList':_hitboxList,
 				}
 			},
 			'beforeRender': function(t) {
@@ -24,19 +24,19 @@ var GameObjectHelper = {
 			}
 		}
 	},	
-	'single': function(asset_name, hitbox_list) {
-		var _assets;
+	'single': function(assetName, hitboxList) {
+		var _assetPool;
 		var _asset;
 		return {
-			'init': function(assets) {
-				_assets = assets;
-				_asset = _assets.getAsset(asset_name);
+			'init': function(assetPool) {
+				_assetPool = assetPool;
+				_asset = _assetPool.getAsset(assetName);
 				return {
 					'rx':0,
 					'ry':0,
 					'width':_asset.getWidth(),
 					'height':_asset.getHeight(),
-					'hitbox_list':hitbox_list,
+					'hitboxList':hitboxList,
 				}
 			},
 			'beforeRender': function(t) {

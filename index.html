@@ -29,7 +29,7 @@ $(document).ready(function() {
 	var viewport = new Viewport({'fps':30, 'width':960, 'height':720, 'target':$('#viewport')});
 	viewport.setScene(new LoadingScene());
 
-	var assets = new Assets(data_assets, function(msg, progress) {
+	var assetPool = new AssetPool(data_assets, function(msg, progress) {
 		switch(msg) {
 			case 'finished':
 				console.log('image loading finished');
@@ -38,8 +38,8 @@ $(document).ready(function() {
 				}, 1500);
 		}
 	});
-	var game_objects = new GameObjects(assets, data_game_objects);
-	var map_scene = new MapScene(assets, game_objects, data_maps['room01'], 'default');
+	var gameObjectPool = new GameObjectPool(assetPool, data_game_objects);
+	var map_scene = new MapScene(assetPool, gameObjectPool, data_maps['room01'], 'default');
 });
 	</script>
 </head>

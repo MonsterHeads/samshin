@@ -59,18 +59,18 @@ var ImageAsset = function(key, loader, data, loadingCallback) {
 	}
 };
 
-var Assets = function(assets_data, loadingCallback) {
-	var _asset_map = {};
+var AssetPool = function(assetData, loadingCallback) {
+	var _assetMap = {};
 	var _loaded = 0;
-	var _all_loading = false;
-	var _asset_amount = 0;
-	var _image_loader = new ImageLoader();
-	$.each(assets_data, function(group, group_assets) {
-		if( 'image' == group_assets.type ) {
-			$.each(group_assets.data, function(asset_key, data) {
-				var key = group + '/' + asset_key;
-				_asset_amount += 1;
-				var assetObj = new ImageAsset(key, _image_loader, data, function(key, msg){
+	var _allLoading = false;
+	var _assetAmount = 0;
+	var _imageLoader = new ImageLoader();
+	$.each(assetData, function(group, groupAssets) {
+		if( 'image' == groupAssets.type ) {
+			$.each(groupAssets.data, function(assetKey, data) {
+				var key = group + '/' + assetKey;
+				_assetAmount += 1;
+				var assetObj = new ImageAsset(key, _imageLoader, data, function(key, msg){
 					switch(msg) {
 					case 'loaded':
 						break;
@@ -79,15 +79,15 @@ var Assets = function(assets_data, loadingCallback) {
 						break;
 					}
 					_loaded += 1;
-					if( _all_loading && _loaded == _asset_amount ) loadingCallback('finished');
+					if( _allLoading && _loaded == _assetAmount ) loadingCallback('finished');
 				});
-				_asset_map[key] = assetObj;
+				_assetMap[key] = assetObj;
 			});
 		}
 	});
-	_all_loading = true;
+	_allLoading = true;
 
 	this.getAsset = function(key) {
-		return _asset_map[key];
+		return _assetMap[key];
 	}
 };
