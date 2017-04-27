@@ -18,9 +18,9 @@ var ImageLoader = function() {
 				});
 				_complete[url] = data.image;
 			}
-			data.image.onerror = function() {
+			data.image.onerror = function(evt) {
 				$.each(data.callbacks, function(idx, callback){
-					callback(url, 'error');
+					callback(url, 'error', evt);
 				});
 				console.log('image error', url);
 			}
@@ -45,12 +45,12 @@ var ImageAsset = function(key, loader, data, loadingCallback) {
 		}
 	});
 
-	this.getWidth = function() {
-		return _width;
-	}
-	this.getHeight = function() {
-		return _height;
-	}
+	Object.defineProperty(this, 'width', {
+		'get':function() { return _width; },
+	});
+	Object.defineProperty(this, 'height', {
+		'get':function() { return _height; },
+	});
 
 	this.draw = function(ctx, dx, dy, dw, dh) {
 		var drawW = Math.min(_width, dw);
@@ -70,12 +70,12 @@ var AssetPool = function(assetData, loadingCallback) {
 			$.each(groupAssets.data, function(assetKey, data) {
 				var key = group + '/' + assetKey;
 				_assetAmount += 1;
-				var assetObj = new ImageAsset(key, _imageLoader, data, function(key, msg){
+				var assetObj = new ImageAsset(key, _imageLoader, data, function(key, msg, callbackData){
 					switch(msg) {
 					case 'loaded':
 						break;
 					case 'error':
-						console.error('error while image loading', data, evt);
+						console.error('error while image loading', data, callbackData);
 						break;
 					}
 					_loaded += 1;
