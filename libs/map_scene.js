@@ -1,6 +1,6 @@
 var MapScene = function(assets, game_objects, map_data, scene_name) {
 	var $this = this;
-	var _center_x, _center_y;
+	var _center;
 
 	var _object_map = {};
 	var _object_list = [];
@@ -8,24 +8,24 @@ var MapScene = function(assets, game_objects, map_data, scene_name) {
 	var _root_object;
 	var _scene_descriptor = {};
 
-	this.getWidth = function(){return _root_object.getWidth();};
-	this.getHeight = function(){return _root_object.getHeight();};
-	this.getCenter = function() {
-		return {'x':_center_x, 'y':_center_y};
-	}
-	this.setCenter = function(x, y) {
-		_center_x = x;
-		_center_y = y;
-	};
+	Object.defineProperty(this, 'width', {
+		'get':function() { return _root_object.width; },
+	});
+	Object.defineProperty(this, 'height', {
+		'get':function() { return _root_object.height; },
+	});
+	Object.defineProperty(this, 'center', {
+		'get':function() { return _center; },
+	});
 	this.eventCallback = function(type, evt) {
 		_scene_descriptor.eventCallback.apply($this, [type, evt]);
 	};
 	this.render = function(t, ctx, width, height) {
 		_scene_descriptor.beforeRender.apply($this, [t, width, height]);
-		var map_src_x = Math.max(0, _center_x-width/2);
-		var ctx_dst_x = Math.max(0, width/2-_center_x);
-		var map_src_y = Math.max(0, _center_y-height/2);
-		var ctx_dst_y = Math.max(0, height/2-_center_y);
+		var map_src_x = Math.max(0, this.center.x-width/2);
+		var ctx_dst_x = Math.max(0, width/2-this.center.x);
+		var map_src_y = Math.max(0, this.center.y-height/2);
+		var ctx_dst_y = Math.max(0, height/2-this.center.y);
 
 		_root_object.beforeRender(t);
 		ctx.save();
@@ -35,11 +35,7 @@ var MapScene = function(assets, game_objects, map_data, scene_name) {
 		_root_object.render(t, ctx);
 		ctx.restore();
 	};
-	this.setGameObject = function(name, wrap_obj) {
-		_object_list.push(wrap_obj); // need sorting
-		_object_map[name] = {'wrap_obj':wrap_obj, 'idx':_object_list.length-1};
-		return true;
-	};
+
 	(function() {
 		var object_list = [];
 
@@ -54,16 +50,15 @@ var MapScene = function(assets, game_objects, map_data, scene_name) {
 				var tile_obj_data = $.extend({}, map_data.tiles[tile_idx], {'x':x, 'y':y});
 				var tile_obj = game_objects.createGameObject(map_data.tiles[tile_idx].cls, tile_obj_data);
 				object_list.push({'name':'__tile_'+x_idx+'_'+y_idx, 'inst':tile_obj});
-				x = x + tile_obj.getWidth();
-				max_height = Math.max(max_height, tile_obj.getHeight());
+				x = x + tile_obj.width;
+				max_height = Math.max(max_height, tile_obj.height);
 			});
 			y = y + max_height;
 			max_width = Math.max(max_width, x);
 		});
 		var width = max_width;
 		var height = y;
-		_center_x = width/2;
-		_center_y = height/2;
+		_center = {'x':width/2, 'y':height/2}
 
 		// other game objects
 		$.each(map_data.objects, function(name, object_data) {

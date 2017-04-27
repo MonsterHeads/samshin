@@ -58,7 +58,8 @@ var data_maps = {
 			var init = function() {
 				_dx = 0;
 				_dy = 0;
-				this.setCenter(this.getWidth()/2, this.getHeight()/2);
+				this.center.x = this.width/2;
+				this.center.y = this.height/2;
 			}
 			var eventCallback = function(type, evt) {
 				switch(type) {
@@ -76,12 +77,13 @@ var data_maps = {
 				}
 			}
 			var beforeRender = function(t, view_width, view_height) {
-				var center = this.getCenter();
+				var center = this.center;
 				center.x += _dx*2;
 				center.y += _dy*2;
-				center.x = Math.min(view_width/2, Math.max(center.x, this.getWidth()-view_width/2));
-				center.y = Math.min(view_height/2, Math.max(center.y, this.getHeight()-view_height/2));
-				this.setCenter(center.x, center.y);
+				center.x = Math.min(view_width/2, Math.max(center.x, this.width-view_width/2));
+				center.y = Math.min(view_height/2, Math.max(center.y, this.height-view_height/2));
+				
+
 				_dx = 0;
 				_dy = 0;
 			};

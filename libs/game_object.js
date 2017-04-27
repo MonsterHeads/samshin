@@ -15,25 +15,39 @@ var GameObject = function(game_objects, assets, data, initial_data) {
 		_child_list.push(child);
 		_child_map[name] = {'child':child, 'idx':_child_list.length-1};
 	}
-	//Object.defineProperty(this, 'child', {});
-	this.setStatus= function(status) {
-		if( !_status_map.hasOwnProperty(status) ) {
-			return false;
-		}
-		_status = status;
-		_status_start = -1;
-		var status_position_data = _status_map[_status].init.apply($this,[assets]);
-		$.extend(_position_data, status_position_data);
-	};
-	this.setData = function(data) { _data = data; };
-	this.getData = function() { return _data; };
-	this.getX = function() { return _x; }
-	this.setX = function(x) { _x = x; }
-	this.getY = function() { return _y; }
-	this.setY = function(y) { _y = y; }
-	this.getWidth = function() { return _position_data.width; };
-	this.getHeight = function() { return _position_data.height; };
-	this.getHitboxList = function() { return _position_data.hitbox_list; }
+	Object.defineProperty(this, 'status', {
+		'get': function() { return _status; },
+		'set': function(status) {
+			if( !_status_map.hasOwnProperty(status) ) {
+				return false;
+			}
+			_status = status;
+			_status_start = -1;
+			var status_position_data = _status_map[_status].init.apply($this,[assets]);
+			$.extend(_position_data, status_position_data);			
+		},
+	});
+	Object.defineProperty(this, 'data', {
+		'get':function() { return _data; },
+		'set':function(data) { this._data = data;},
+	});
+	Object.defineProperty(this, 'x', {
+		'get':function() { return _x; },
+		'set':function(x) { this._x = x;},
+	});
+	Object.defineProperty(this, 'y', {
+		'get':function() { return _y; },
+		'set':function(y) { this._y = y;},
+	});
+	Object.defineProperty(this, 'width', {
+		'get':function() { return _position_data.width; },
+	});
+	Object.defineProperty(this, 'height', {
+		'get':function() { return _position_data.height; },
+	});
+	Object.defineProperty(this, 'hitboxList', {
+		'get':function() { return _position_data.hitbox_list; },
+	});
 
 	this.beforeRender = function(t) {
 		if( 0 > _status_start ) {
@@ -54,7 +68,7 @@ var GameObject = function(game_objects, assets, data, initial_data) {
 		status_data.render.apply($this, [t-_status_start, ctx]);
 		$.each(_child_list, function(idx, child) {
 			ctx.save();
-			ctx.translate(child.getX(), child.getY());
+			ctx.translate(child.x, child.y);
 			child.render(t, ctx);
 			ctx.restore();
 		});
@@ -70,7 +84,7 @@ var GameObject = function(game_objects, assets, data, initial_data) {
 		var child = game_objects.createGameObject(child_data.cls, child_data);
 		$this.setChild(name, child);
 	});
-	$this.setStatus(initial_data.status);
+	$this.status = initial_data.status;
 };
 
 var GameObjects = function(assets, data) {
