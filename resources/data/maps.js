@@ -14,6 +14,8 @@ var data_maps = {
 		'couch':{'cls':'furnitures/room01', 'status':'couch', 'x':25, 'y':100},
 		'diningtable':{'cls':'furnitures/room01', 'status':'diningtable', 'x':110, 'y':120},
 		'chair':{'cls':'furnitures/room01', 'status':'chair', 'x':125, 'y':145},
+
+		'doctorW':{'cls':'characters/doctor_w', 'status':'down_walk', 'x':72, 'y':100},
 	},
 	'tiles': {
 		101:{'cls':'tiles/room01', 'status':'101'},

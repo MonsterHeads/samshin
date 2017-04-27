@@ -32,7 +32,41 @@ var data_game_objects = {
 			'wallshelf': GameObjectHelper.single('room01_furnitures/wallshelf', []),
 		}
 	},
-	'characters': { // width:1, height:1
+	'characters': {
+		'doctor_w':{
+			'up_stop': GameObjectHelper.single('characters/doctor_w_up1', []),
+			'down_stop': GameObjectHelper.single('characters/doctor_w_down1', []),
+			'left_stop': GameObjectHelper.single('characters/doctor_w_left1', []),
+			'right_stop': GameObjectHelper.single('characters/doctor_w_right1', []),
+			'up_walk': GameObjectHelper.simpleAnimation({
+				'delay':300,
+				'assetList':[
+					'characters/doctor_w_up1','characters/doctor_w_up2','characters/doctor_w_up1','characters/doctor_w_up3',
+				],
+				'hitboxList':[]
+			}),
+			'down_walk': GameObjectHelper.simpleAnimation({
+				'delay':300,
+				'assetList':[
+					'characters/doctor_w_down1','characters/doctor_w_down2','characters/doctor_w_down1','characters/doctor_w_down3',
+				],
+				'hitboxList':[]
+			}),
+			'left_walk': GameObjectHelper.simpleAnimation({
+				'delay':300,
+				'assetList':[
+					'characters/doctor_w_left1','characters/doctor_w_left2','characters/doctor_w_left1','characters/doctor_w_left3',
+				],
+				'hitboxList':[]
+			}),
+			'right_walk': GameObjectHelper.simpleAnimation({
+				'delay':300,
+				'assetList':[
+					'characters/doctor_w_right1','characters/doctor_w_right2','characters/doctor_w_right1','characters/doctor_w_right3',
+				],
+				'hitboxList':[]
+			}),
+		}
 		// 'agatha':{
 		// 	'down_stop': gameObjectAnimation.single('', [{'x':0,'y':0,'width':32,'height':32}]),
 		// 	'up_stop': gameObjectAnimation.single('', [{'x':0,'y':0,'width':32,'height':32}]),

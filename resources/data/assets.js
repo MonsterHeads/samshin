@@ -2,7 +2,19 @@ var data_assets = {
 	'characters': {
 		'type':'image',
 		'data': {
-		}
+			'doctor_w_up1':{'url':'resources/images/characters/doctor_w/back1.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_up2':{'url':'resources/images/characters/doctor_w/back2.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_up3':{'url':'resources/images/characters/doctor_w/back3.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_down1':{'url':'resources/images/characters/doctor_w/face1.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_down2':{'url':'resources/images/characters/doctor_w/face2.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_down3':{'url':'resources/images/characters/doctor_w/face3.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_left1':{'url':'resources/images/characters/doctor_w/left1.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_left2':{'url':'resources/images/characters/doctor_w/left2.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_left3':{'url':'resources/images/characters/doctor_w/left3.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_right1':{'url':'resources/images/characters/doctor_w/right1.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_right2':{'url':'resources/images/characters/doctor_w/right2.png', 'x':0, 'y':0, 'width':32, 'height':32},
+			'doctor_w_right3':{'url':'resources/images/characters/doctor_w/right3.png', 'x':0, 'y':0, 'width':32, 'height':32},
+		},
 	},
 	'room01_furnitures': {
 		'type':'image',

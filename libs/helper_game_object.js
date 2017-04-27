@@ -20,7 +20,7 @@ var GameObjectHelper = {
 				return {}
 			},
 			'render': function(t, ctx) {
-				_asset.draw(ctx, 0, 0, _asset.getWidth(), size);
+				_asset.draw(ctx, 0, 0, _asset.width, size);
 			}
 		}
 	},	
@@ -32,10 +32,8 @@ var GameObjectHelper = {
 				_assetPool = assetPool;
 				_asset = _assetPool.getAsset(assetName);
 				return {
-					'rx':0,
-					'ry':0,
-					'width':_asset.getWidth(),
-					'height':_asset.getHeight(),
+					'width':_asset.width,
+					'height':_asset.height,
 					'hitboxList':hitboxList,
 				}
 			},
@@ -43,21 +41,40 @@ var GameObjectHelper = {
 				return {}
 			},
 			'render': function(t, ctx) {
-				_asset.draw(ctx, 0, 0, _asset.getWidth(), _asset.getHeight());
+				_asset.draw(ctx, 0, 0, _asset.width, _asset.height);
 			}
 		}
 	},
-	'simpleAnimation': function(delay, asset_list, hitbox_list) {
+	'simpleAnimation': function(animationData) {
+		var delay = animationData.delay;
+		var assetNameList = animationData.assetList;
+		var hitboxList = animationData.hitboxList;
+		var _width = 0;
+		var _height = 0;
+		var _assetList;
 		return {
-			'asset_list':asset_list,
-			'hitbox_list':hitbox_list,
-			'animate': function(t, data) {
-				var asset_idx = Math.floor(t/delay) % asset_list.length;
+			'init': function(assetPool) {
+				_assetList = [];
+				$.each(assetNameList, function(idx, assetName){
+					var asset = assetPool.getAsset(assetName);
+					_width = Math.max(asset.width, _width);
+					_height = Math.max(asset.height, _height)
+					_assetList.push(asset);
+
+				});
 				return {
-					'asset_idx':asset_idx,
-					'x':0, 'y':0,
+					'width':_width,
+					'height':_height,
+					'hitboxList':hitboxList,
 				}
+			},
+			'beforeRender': function(t) {
+				return {}
+			},
+			'render': function(t, ctx) {
+				var asset = _assetList[Math.floor(t/delay) % _assetList.length];
+				asset.draw(ctx, 0, 0, _width, _height);
 			}
-		}	
+		}
 	}
 };
