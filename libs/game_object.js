@@ -13,8 +13,11 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 	var _childList = [];
 	this.setChild = function(child_name, child) {
 		_childList.push(child);
-		_childMap[name] = {'child':child, 'idx':_childList.length-1};
-	}
+		_childMap[child_name] = {'inst':child, 'idx':_childList.length-1};
+	};
+	this.child = function(child_name) {
+		return _childMap[child_name].inst;
+	};
 	Object.defineProperty(this, 'status', {
 		'get': function() { return _status; },
 		'set': function(status) {
@@ -29,15 +32,15 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 	});
 	Object.defineProperty(this, 'data', {
 		'get':function() { return _data; },
-		'set':function(data) { this._data = data;},
+		'set':function(data) { _data = data;},
 	});
 	Object.defineProperty(this, 'x', {
 		'get':function() { return _x; },
-		'set':function(x) { this._x = x;},
+		'set':function(x) { _x = x;},
 	});
 	Object.defineProperty(this, 'y', {
 		'get':function() { return _y; },
-		'set':function(y) { this._y = y;},
+		'set':function(y) { _y = y;},
 	});
 	Object.defineProperty(this, 'width', {
 		'get':function() { return _boxData.width; },

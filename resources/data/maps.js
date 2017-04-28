@@ -15,7 +15,7 @@ var data_maps = {
 		'diningtable':{'cls':'furnitures/room01', 'status':'diningtable', 'x':110, 'y':120},
 		'chair':{'cls':'furnitures/room01', 'status':'chair', 'x':125, 'y':145},
 
-		'doctorW':{'cls':'characters/doctor_w', 'status':'down_walk', 'x':72, 'y':100},
+		'doctorW':{'cls':'characters/doctor_w', 'status':'down_stop', 'x':72, 'y':100},
 	},
 	'tiles': {
 		101:{'cls':'tiles/room01', 'status':'101'},
@@ -55,39 +55,63 @@ var data_maps = {
 
 	'scenes': {
 		'default': function() {
-			var _dx = 0;
-			var _dy = 0;
+			var _character;
+			var _characterStartPosition;
+			var _statusStartTime = -1;
+			var _keyPressed = -1;
+
 			var init = function() {
-				_dx = 0;
-				_dy = 0;
 				this.center.x = this.width/2;
 				this.center.y = this.height/2;
-			}
-			var eventCallback = function(type, evt) {
+				_character = this.gameObject('doctorW');
+				_characterStartPosition = {'x':_character.x, 'y':_character.y};
+			};
+			var eventCallback = function(t, type, evt) {
 				switch(type) {
 				case 'keydown':
 					switch(evt.keyCode) {
-					case 37: _dx -= 1; break;
-					case 38: _dy -= 1; break;
-					case 39: _dx += 1; break;
-					case 40: _dy += 1; break;
-					}
-					switch(evt.keyCode) {
-					case 37: case 38: case 39: case 40: evt.preventDefault();
+					case 37: case 38: case 39: case 40:
+						_keyPressed = evt.keyCode;
 					}
 					break;
+				case 'keyup':
+					switch(evt.keyCode) {
+					case 37: case 38: case 39: case 40:
+						if( evt.keyCode == _keyPressed ) {
+							_keyPressed = -1;
+						}
+					}
 				}
-			}
-			var beforeRender = function(t, view_width, view_height) {
-				var center = this.center;
-				center.x += _dx*2;
-				center.y += _dy*2;
-				center.x = Math.min(view_width/2, Math.max(center.x, this.width-view_width/2));
-				center.y = Math.min(view_height/2, Math.max(center.y, this.height-view_height/2));
-				
+			};
 
-				_dx = 0;
-				_dy = 0;
+			var _checkAndChangeToWalk = function(t, status, axis, plus) {
+				if( status != _character.status ) {
+					_character.status = status;
+					_characterStartPosition = {'x':_character.x, 'y':_character.y};
+					_statusStartTime = t;
+					temp =0;
+				}
+				var delta = (t-_statusStartTime)/35;
+				if( !plus ) delta = 0 - delta;
+				_character[axis] = Math.floor(_characterStartPosition[axis]+delta);
+			};
+
+			var beforeRender = function(t, view_width, view_height) {
+				if( 0 > _keyPressed ) {
+					switch(_character.status) {
+					case 'down_walk': _character.status = 'down_stop'; break;
+					case 'up_walk': _character.status = 'up_stop'; break;
+					case 'left_walk': _character.status = 'left_stop'; break;
+					case 'right_walk': _character.status = 'right_stop'; break;
+					}
+				} else {
+					switch(_keyPressed) {
+					case 37: _checkAndChangeToWalk(t, 'left_walk', 'x', false); break;
+					case 38: _checkAndChangeToWalk(t, 'up_walk', 'y', false); break;
+					case 39: _checkAndChangeToWalk(t, 'right_walk', 'x', true); break;
+					case 40: _checkAndChangeToWalk(t, 'down_walk', 'y', true); break;
+					}
+				}				
 			};
 			return {'init':init, 'eventCallback': eventCallback, 'beforeRender': beforeRender};
 		},

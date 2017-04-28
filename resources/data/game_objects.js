@@ -43,30 +43,30 @@ data_game_objects = {
 			'left_stop': GOH.single('characters/doctor_w_left1', []),
 			'right_stop': GOH.single('characters/doctor_w_right1', []),
 			'up_walk': GOH.simpleAnimation({
-				'delay':300,
+				'delay':150,
 				'assetList':[
-					'characters/doctor_w_up1','characters/doctor_w_up2','characters/doctor_w_up1','characters/doctor_w_up3',
+					'characters/doctor_w_up2','characters/doctor_w_up1','characters/doctor_w_up3','characters/doctor_w_up1',
 				],
 				'hitboxList':[]
 			}),
 			'down_walk': GOH.simpleAnimation({
-				'delay':300,
+				'delay':150,
 				'assetList':[
-					'characters/doctor_w_down1','characters/doctor_w_down2','characters/doctor_w_down1','characters/doctor_w_down3',
+					'characters/doctor_w_down2','characters/doctor_w_down1','characters/doctor_w_down3','characters/doctor_w_down1',
 				],
 				'hitboxList':[]
 			}),
 			'left_walk': GOH.simpleAnimation({
-				'delay':300,
+				'delay':150,
 				'assetList':[
-					'characters/doctor_w_left1','characters/doctor_w_left2','characters/doctor_w_left1','characters/doctor_w_left3',
+					'characters/doctor_w_left2','characters/doctor_w_left1','characters/doctor_w_left3','characters/doctor_w_left1',
 				],
 				'hitboxList':[]
 			}),
 			'right_walk': GOH.simpleAnimation({
-				'delay':300,
+				'delay':150,
 				'assetList':[
-					'characters/doctor_w_right1','characters/doctor_w_right2','characters/doctor_w_right1','characters/doctor_w_right3',
+					'characters/doctor_w_right2','characters/doctor_w_right1','characters/doctor_w_right3','characters/doctor_w_right1',
 				],
 				'hitboxList':[]
 			}),

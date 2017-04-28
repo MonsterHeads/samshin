@@ -45,12 +45,14 @@ var Viewport = function(initConfig) {
 
 		$(window).on('keydown', function(evt) {
 			if( _scene && typeof _scene.eventCallback == 'function' ) {
-				_scene.eventCallback('keydown', evt);
+				var t = new Date().getTime();
+				_scene.eventCallback(t, 'keydown', evt);
 			}
 		});
 		$(window).on('keyup', function(evt) {
 			if( _scene && typeof _scene.eventCallback == 'function' ) {
-				_scene.eventCallback('keyup', evt);	
+				var t = new Date().getTime();
+				_scene.eventCallback(t, 'keyup', evt);	
 			}
 		});
 		render();

@@ -14,8 +14,11 @@ var MapScene = function(assetPool, gameObjectPool, mapData, sceneName) {
 	Object.defineProperty(this, 'center', {
 		'get':function() { return _center; },
 	});
-	this.eventCallback = function(type, evt) {
-		_sceneDescriptor.eventCallback.apply($this, [type, evt]);
+	this.gameObject = function(name) {
+		return _rootGameObject.child(name);
+	}
+	this.eventCallback = function(t, type, evt) {
+		_sceneDescriptor.eventCallback.apply($this, [t, type, evt]);
 	};
 	this.render = function(t, ctx, width, height) {
 		_sceneDescriptor.beforeRender.apply($this, [t, width, height]);
