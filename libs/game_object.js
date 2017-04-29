@@ -202,15 +202,18 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 		}
 		var statusData = _statusMap[_status];
 		statusData.render.apply($this, [t-_statusStartTime, ctx]);
-		$.each(_boxData.hitboxList, function(idx, hitbox) {
-			ctx.beginPath();
-			ctx.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-			ctx.lineWidth = 0.3;
-			ctx.strokeStyle = '#ff0000';
-			ctx.stroke();
-			ctx.closePath();
-		});
-
+		if( config.debug.hitbox ) {
+			$.each(_boxData.hitboxList, function(idx, hitbox) {
+				ctx.fillStyle = 'rgba(50,200,50,0.3)';
+				ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+				ctx.beginPath();
+				ctx.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+				ctx.lineWidth = 0.3;
+				ctx.strokeStyle = 'rgba(255,0,0,1)';
+				ctx.stroke();
+				ctx.closePath();
+			});
+		}
 		$.each(_childList, function(idx, childWrap) {
 			ctx.save();
 			ctx.translate(childWrap.inst.x, childWrap.inst.y);

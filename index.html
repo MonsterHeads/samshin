@@ -22,6 +22,8 @@
 	<link href="common.css" rel="stylesheet" />
 	<style>
 		body{width:100vw; height:100vh;}
+		#debug{position:absolute; top:10px; right:10px; font-size:14px; height:20px; line-height:20px;}
+		#debug label{position:relative; top:-2px;}
 		#viewport{position:absolute; width:960px; height:720px; top:50%; left:50%; transform:translate(-50%,-50%);}
 	</style>
 	<script>
@@ -40,10 +42,23 @@ $(document).ready(function() {
 	});
 	var gameObjectPool = new GameObjectPool(assetPool, data_game_objects);
 	var map_scene = new MapScene(assetPool, gameObjectPool, data_maps['room01'], 'default');
+
+
+	$('#debug_hitbox').on('change', function() {
+		if( $(this).prop('checked') ) {
+			config.debug.hitbox = true;
+		} else {
+			config.debug.hitbox = false;
+		}
+	});
 });
 	</script>
 </head>
 <body>
+<div id="debug">
+	<input id="debug_hitbox" type="checkbox" /> <label for="debug_hitbox">hitbox</label>
+	
+</div>
 <div id="viewport"></div>
 </body>
 </html>
