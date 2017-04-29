@@ -17,6 +17,10 @@ var MapScene = function(assetPool, gameObjectPool, mapData, sceneName) {
 	this.gameObject = function(name) {
 		return _rootGameObject.child(name);
 	}
+
+	this.hitCheckWithChildren = function(gameObject) {
+		return _rootGameObject.hitCheckWithChildren(gameObject);
+	}
 	this.eventCallback = function(t, type, evt) {
 		_sceneDescriptor.eventCallback.apply($this, [t, type, evt]);
 	};

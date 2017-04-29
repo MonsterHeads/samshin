@@ -25,50 +25,50 @@ data_game_objects = {
 	},	
 	'furnitures': {
 		'room01':{
-			'chair': GOH.single('room01_furnitures/chair', []),
+			'chair': GOH.single('room01_furnitures/chair', [{'x':0, 'y':8, 'width':19, 'height':10}]),
 			'citywindow': GOH.single('room01_furnitures/citywindow', []),
-			'couch': GOH.single('room01_furnitures/couch', []),
-			'diningtable': GOH.single('room01_furnitures/diningtable', []),
+			'couch': GOH.single('room01_furnitures/couch', [{'x':2, 'y':14, 'width':44, 'height':16}]),
+			'diningtable': GOH.single('room01_furnitures/diningtable', [{'x':6, 'y':12, 'width':37, 'height':19}]),
 			'stackbook': GOH.single('room01_furnitures/stackbook', []),
-			'tableandlamp': GOH.single('room01_furnitures/tableandlamp', []),
-			'teatable': GOH.single('room01_furnitures/teatable', []),
-			'tv': GOH.single('room01_furnitures/tv', []),
+			'tableandlamp': GOH.single('room01_furnitures/tableandlamp', [{'x':4, 'y':22, 'width':24, 'height':10}]),
+			'teatable': GOH.single('room01_furnitures/teatable', [{'x':4, 'y':16, 'width':41, 'height':12}]),
+			'tv': GOH.single('room01_furnitures/tv', [{'x':6, 'y':20, 'width':38, 'height':12}]),
 			'wallshelf': GOH.single('room01_furnitures/wallshelf', []),
 		}
 	},
 	'characters': {
 		'doctor_w':{
-			'up_stop': GOH.single('characters/doctor_w_up1', []),
-			'down_stop': GOH.single('characters/doctor_w_down1', []),
-			'left_stop': GOH.single('characters/doctor_w_left1', []),
-			'right_stop': GOH.single('characters/doctor_w_right1', []),
+			'up_stop': GOH.single('characters/doctor_w_up1', [{'x':6, 'y':24, 'width':20, 'height':8}]),
+			'down_stop': GOH.single('characters/doctor_w_down1', [{'x':6, 'y':24, 'width':20, 'height':8}]),
+			'left_stop': GOH.single('characters/doctor_w_left1', [{'x':6, 'y':24, 'width':20, 'height':8}]),
+			'right_stop': GOH.single('characters/doctor_w_right1', [{'x':6, 'y':24, 'width':20, 'height':8}]),
 			'up_walk': GOH.simpleAnimation({
 				'delay':150,
 				'assetList':[
 					'characters/doctor_w_up2','characters/doctor_w_up1','characters/doctor_w_up3','characters/doctor_w_up1',
 				],
-				'hitboxList':[]
+				'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}]
 			}),
 			'down_walk': GOH.simpleAnimation({
 				'delay':150,
 				'assetList':[
 					'characters/doctor_w_down2','characters/doctor_w_down1','characters/doctor_w_down3','characters/doctor_w_down1',
 				],
-				'hitboxList':[]
+				'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}]
 			}),
 			'left_walk': GOH.simpleAnimation({
 				'delay':150,
 				'assetList':[
 					'characters/doctor_w_left2','characters/doctor_w_left1','characters/doctor_w_left3','characters/doctor_w_left1',
 				],
-				'hitboxList':[]
+				'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}]
 			}),
 			'right_walk': GOH.simpleAnimation({
 				'delay':150,
 				'assetList':[
 					'characters/doctor_w_right2','characters/doctor_w_right1','characters/doctor_w_right3','characters/doctor_w_right1',
 				],
-				'hitboxList':[]
+				'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}]
 			}),
 		}
 	},

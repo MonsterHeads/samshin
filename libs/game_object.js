@@ -49,9 +49,36 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 		'get':function() { return _boxData.height; },
 	});
 	Object.defineProperty(this, 'hitboxList', {
-		'get':function() { return _boxData.hitbox_list; },
+		'get':function() { return _boxData.hitboxList; },
 	});
 
+	this.hitCheck = function(otherObject) {
+		var o = otherObject;
+		if( $this === o ) return false;
+		var result = false;
+		$.each($this.hitboxList, function(idx, a) {
+			$.each(o.hitboxList, function(idx, b) {
+				var ax1=$this.x+a.x, ax2=$this.x+a.x+a.width-1, ay1=$this.y+a.y, ay2=$this.y+a.y+a.height-1;
+				var bx1=o.x+b.x, bx2=o.x+b.x+b.width-1, by1=o.y+b.y, by2=o.y+b.y+b.height-1;
+				if( ax1<=bx2 && ax2>=bx1 && ay1<=by2 && ay2>=by1 ) {
+					result = true;
+					return false;	
+				} 
+			});
+		});
+		return result;
+	}
+	this.hitCheckWithChildren = function(gameObject) {
+		if( 0 == gameObject.hitboxList.length ) return false;
+		var result = false;
+		$.each(_childList, function(idx, child) {
+			if( child.hitCheck(gameObject) ) {
+				result = child;
+				return false;
+			}
+		});
+		return result;
+	}
 	this.beforeRender = function(t) {
 		if( 0 > _statusStartTime ) {
 			_statusStartTime = t;
@@ -69,6 +96,15 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 		}
 		var statusData = _statusMap[_status];
 		statusData.render.apply($this, [t-_statusStartTime, ctx]);
+		$.each(_boxData.hitboxList, function(idx, hitbox) {
+			ctx.beginPath();
+			ctx.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+			ctx.lineWidth = 0.3;
+			ctx.strokeStyle = '#ff0000';
+			ctx.stroke();
+			ctx.closePath();
+		});
+
 		$.each(_childList, function(idx, child) {
 			ctx.save();
 			ctx.translate(child.x, child.y);
