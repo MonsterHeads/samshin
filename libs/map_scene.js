@@ -25,14 +25,14 @@ var MapScene = function(assetPool, gameObjectPool, mapData, sceneName) {
 		_sceneDescriptor.eventCallback.apply($this, [t, type, evt]);
 	};
 	this.render = function(t, ctx, width, height) {
-		_sceneDescriptor.beforeRender.apply($this, [t, width, height]);
+		_sceneDescriptor.update.apply($this, [t, width, height]);
 		var mapSrcX = Math.max(0, this.center.x-width/2);
 		var mapSrcY = Math.max(0, this.center.y-height/2);
 
 		var ctxDstX = Math.max(0, width/2-this.center.x);
 		var ctxDstY = Math.max(0, height/2-this.center.y);
 
-		_rootGameObject.beforeRender(t);
+		_rootGameObject.update(t);
 		ctx.save();
 		ctx.fillStyle = config.viewport.background_color;
 		ctx.fillRect(0, 0, width, height);
@@ -76,7 +76,7 @@ var MapScene = function(assetPool, gameObjectPool, mapData, sceneName) {
 				'init': function(assetPool) {
 					return { 'width':width, 'height':height, 'hitboxList':[],}
 				},
-				'beforeRender': function(t) {return {}},
+				'update': function(t) {return {}},
 				'render': function(t, ctx) {}
 			}
 		};

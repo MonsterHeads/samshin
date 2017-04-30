@@ -104,7 +104,7 @@ var data_maps = {
 				}
 			};
 
-			var beforeRender = function(t, view_width, view_height) {
+			var update = function(t, view_width, view_height) {
 				if( 0 > _keyPressed ) {
 					switch(_character.status) {
 					case 'down_walk': _character.status = 'down_stop'; break;
@@ -121,7 +121,7 @@ var data_maps = {
 					}
 				}				
 			};
-			return {'init':init, 'eventCallback': eventCallback, 'beforeRender': beforeRender};
+			return {'init':init, 'eventCallback': eventCallback, 'update': update};
 		},
 	}
 

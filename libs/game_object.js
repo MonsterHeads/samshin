@@ -179,12 +179,12 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 		});
 		return result;
 	}
-	this.beforeRender = function(t) {
+	this.update = function(t) {
 		if( 0 > _statusStartTime ) {
 			_statusStartTime = t;
 		}
 		var statusData = _statusMap[_status];
-		var statusBoxData = statusData.beforeRender.apply($this, [t-_statusStartTime]);
+		var statusBoxData = statusData.update.apply($this, [t-_statusStartTime]);
 		if( statusBoxData.hasOwnProperty('width') ) {
 			fireObserveEvent('size', 'width', _boxData.width, statusBoxData.width);
 		}
@@ -193,7 +193,7 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 		}
 		$.extend(_boxData, statusBoxData);
 		$.each(_childList, function(idx, childWrap) {
-			childWrap.inst.beforeRender(t);
+			childWrap.inst.update(t);
 		});
 	}
 	this.render = function(t, ctx) {
@@ -224,7 +224,7 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 	$.each(data, function(status, statusData) {
 		_statusMap[status] = {
 			'init': statusData.init,
-			'beforeRender': statusData.beforeRender,
+			'update': statusData.update,
 			'render': statusData.render,
 		};
 	});

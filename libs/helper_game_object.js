@@ -16,7 +16,7 @@ var GameObjectHelper = {
 					'hitboxList':_hitboxList,
 				}
 			},
-			'beforeRender': function(t) {
+			'update': function(t) {
 				return {}
 			},
 			'render': function(t, ctx) {
@@ -37,7 +37,7 @@ var GameObjectHelper = {
 					'hitboxList':hitboxList,
 				}
 			},
-			'beforeRender': function(t) {
+			'update': function(t) {
 				return {}
 			},
 			'render': function(t, ctx) {
@@ -68,7 +68,7 @@ var GameObjectHelper = {
 					'hitboxList':hitboxList,
 				}
 			},
-			'beforeRender': function(t) {
+			'update': function(t) {
 				return {}
 			},
 			'render': function(t, ctx) {
