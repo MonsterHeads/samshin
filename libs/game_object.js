@@ -3,12 +3,13 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _app = application;
 	var _statusMap = {};
 	var _boxData = {'width':0, 'height':0, 'hitboxList':[]};
-	var _x = instanceData.x;
-	var _y = instanceData.y;
+	var _x = 0;
+	var _y = 0;
 	var _z = 0;
-	if( instanceData.hasOwnProperty('z') ) {
-		_z = instanceData.z;
-	}
+	if( instanceData.hasOwnProperty('x') ) { _x = instanceData.x; }
+	if( instanceData.hasOwnProperty('y') ) { _y = instanceData.y; }
+	if( instanceData.hasOwnProperty('z') ) { _z = instanceData.z; }
+
 
 	var _data = {};
 	var _status;
