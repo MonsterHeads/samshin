@@ -31,7 +31,6 @@ var GameObjectHelper = {
 			'init': function(application) {
 				_app = application;
 				_asset = _app.getAsset(assetName);
-				console.log(_app, assetName, _asset);
 				return {
 					'width':_asset.width,
 					'height':_asset.height,

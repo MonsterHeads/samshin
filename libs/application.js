@@ -1,16 +1,17 @@
 window['SS'] = {
 	'priv':{},
 	'tool':{},
+	'assetClass':{},
 };
 
 
-SS.priv.Viewport = function(globalConfig) {
+SS.priv.Viewport = function(application) {
+	var _app = application;
 	var _scene;
-	var _config;
 	var _ctx;
 
 	var init = function() {
-		_config = globalConfig.viewport;
+		_config = _app.config.viewport;
 		var canvas = $('<canvas></canvas>');
 		canvas.css('width', '100%');
 		canvas.css('height', '100%');
@@ -61,34 +62,13 @@ SS.priv.Viewport = function(globalConfig) {
 	init();
 };
 
-SS.LoadingScene = function() {
-	var _begin = -1;
-	var _circle = 1500;
-	
-	this.render = function(t, ctx, width, height) {
-		if( 0 > _begin ) {
-			_begin = t;
-		}
-		var dt = (t-_begin) / _circle;
-		var rad = Math.PI * dt
-		var opacity = Math.abs(Math.sin(rad));
-
-		ctx.fillStyle = '#bbccdd';
-		ctx.fillRect(0, 0, width, height);
-		ctx.fillStyle = 'rgba(0,0,0,'+opacity+')';
-		ctx.font = 'italic 50px Arial';
-		ctx.textAlign = 'center'
-		ctx.fillText("Loading...", width/2, height/2);
-	}
-}
-
 SS.Application = function(config) {
 	var $this = this;
 	var _config = config;
-	var _viewport = new SS.priv.Viewport(_config);
-	var _assetPool = new SS.priv.AssetPool();
-	var _gameObjectPool = new SS.priv.GameObjectPool($this);
 
+	Object.defineProperty(this, 'config', {
+		'get': function() { return _config; },
+	});
 	Object.defineProperty(this, 'scene', {
 		'get': function() { return _viewport.scene; },
 		'set': function(scene) { _viewport.scene = scene; },
@@ -105,6 +85,10 @@ SS.Application = function(config) {
 	this.createGameObject = function(cls, initial_data) {
 		return _gameObjectPool.createGameObject(cls, initial_data);
 	};
+
+	var _viewport = new SS.priv.Viewport($this);
+	var _assetPool = new SS.priv.AssetPool($this);
+	var _gameObjectPool = new SS.priv.GameObjectPool($this);
 
 };
 

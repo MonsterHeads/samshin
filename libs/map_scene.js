@@ -72,7 +72,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		});
 
 		// root object
-		var rootObjectData = {
+		var rootObjectClassData = {
 			'default': {
 				'init': function(application) {
 					return { 'width':width, 'height':height, 'hitboxList':[],}
@@ -81,7 +81,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 				'render': function(t, ctx) {}
 			}
 		};
-		_rootGameObject = new GameObject($this, rootObjectData, {'status':'default'});
+		_rootGameObject = new GameObject(_app, rootObjectClassData, {'status':'default'});
 
 		// append child to root object
 		$.each(objectList, function(idx, obj) {

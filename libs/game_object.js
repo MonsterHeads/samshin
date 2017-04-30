@@ -202,7 +202,7 @@ var GameObject = function(application, classData, initialData) {
 		}
 		var statusData = _statusMap[_status];
 		statusData.render.apply($this, [t-_statusStartTime, ctx]);
-		if( false ) { // config.debug.hitbox
+		if( _app.config.debug.hitbox ) {
 			$.each(_boxData.hitboxList, function(idx, hitbox) {
 				ctx.fillStyle = 'rgba(50,200,50,0.3)';
 				ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
@@ -229,16 +229,14 @@ var GameObject = function(application, classData, initialData) {
 		};
 	});
 	$.each(initialData.children, function(name, child_data) {
-		console.log(_app);
 		var child = _app.createGameObject(child_data.cls, child_data);
 		$this.setChild(name, child);
 	});
 	$this.status = initialData.status;
 };
 
-SS.priv.GameObjectPool = function(application, config) {
+SS.priv.GameObjectPool = function(application) {
 	var _app = application;
-	var _config = config;
 	var _gameObjectDataMap = {};
 
 	this.loadClasses = function(data) {

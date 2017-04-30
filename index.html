@@ -13,7 +13,7 @@
 	<script src="resources/data/game_objects.js"></script>
 	<script src="resources/data/maps.js"></script>
 
-	<script src="libs/viewport.js"></script>
+	<script src="libs/application.js"></script>
 	<script src="libs/assets.js"></script>
 	<script src="libs/game_object.js"></script>
 	<script src="libs/map_scene.js"></script>
@@ -44,20 +44,39 @@ $(document).ready(function() {
 			'background_color':'#000000',
 		},
 	}
-	var app = new SS.Application(config);
-	app.scene = new SS.LoadingScene();
+	var LoadingScene = function() {
+		var _begin = -1;
+		var _circle = 1500;
+		
+		this.render = function(t, ctx, width, height) {
+			if( 0 > _begin ) {
+				_begin = t;
+			}
+			var dt = (t-_begin) / _circle;
+			var rad = Math.PI * dt
+			var opacity = Math.abs(Math.sin(rad));
 
+			ctx.fillStyle = '#bbccdd';
+			ctx.fillRect(0, 0, width, height);
+			ctx.fillStyle = 'rgba(0,0,0,'+opacity+')';
+			ctx.font = 'italic 50px Arial';
+			ctx.textAlign = 'center'
+			ctx.fillText("Loading...", width/2, height/2);
+		}
+	}
+	var app = new SS.Application(config);
+	app.scene = new LoadingScene();
 	app.loadAssets(data_assets, function(msg, progress) {
 		switch(msg) {
 			case 'finished':
-				console.log('image loading finished');
+				console.log('assets loading finished');
 				setTimeout(function(){
-					app.scene = map_scene;
+					app.scene = mapScene;
 				}, 1500);
 		}
 	});
-	app.loadClasses(data_game_objects);
-	var map_scene = new SS.tool.MapScene(app, data_maps['room01'], 'default');
+	app.loadClasses(data_game_object_classes);
+	var mapScene = new SS.tool.MapScene(app, data_maps['room01'], 'default');
 
 
 	$('#debug_hitbox').on('change', function() {
