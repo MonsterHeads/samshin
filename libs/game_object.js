@@ -1,6 +1,6 @@
-var GameObject = function(gameObjectPool, assets, data, initialData) {
+var GameObject = function(application, classData, initialData) {
 	var $this = this;
-
+	var _app = application;
 	var _statusMap = {};
 	var _boxData = {'width':0, 'height':0, 'hitboxList':[]};
 	var _x = initialData.x;
@@ -33,7 +33,7 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 		child.addObserver('__parent', {
 			'valueChanged': function(object, propertyName, before, after) {
 				switch(propertyName) {
-				case 'y': case 'height': case 'z':
+				case 'y': case 'height': case 'z': // re-sort z-order
 				if( before > after ) {
 					var curIdx = _childMap[childName].idx;
 					for(var idx=curIdx-1; idx>=0; idx--) {
@@ -78,7 +78,7 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 			}
 			_status = status;
 			_statusStartTime = -1;
-			var statusBoxData = _statusMap[_status].init.apply($this,[assets]);
+			var statusBoxData = _statusMap[_status].init.apply($this,[_app]);
 			if( statusBoxData.hasOwnProperty('width') ) {
 				fireObserveEvent('size', 'width', _boxData.width, statusBoxData.width);
 			}
@@ -202,7 +202,7 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 		}
 		var statusData = _statusMap[_status];
 		statusData.render.apply($this, [t-_statusStartTime, ctx]);
-		if( config.debug.hitbox ) {
+		if( false ) { // config.debug.hitbox
 			$.each(_boxData.hitboxList, function(idx, hitbox) {
 				ctx.fillStyle = 'rgba(50,200,50,0.3)';
 				ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
@@ -221,7 +221,7 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 			ctx.restore();
 		});
 	};
-	$.each(data, function(status, statusData) {
+	$.each(classData, function(status, statusData) {
 		_statusMap[status] = {
 			'init': statusData.init,
 			'update': statusData.update,
@@ -229,21 +229,27 @@ var GameObject = function(gameObjectPool, assets, data, initialData) {
 		};
 	});
 	$.each(initialData.children, function(name, child_data) {
-		var child = gameObjectPool.createGameObject(child_data.cls, child_data);
+		console.log(_app);
+		var child = _app.createGameObject(child_data.cls, child_data);
 		$this.setChild(name, child);
 	});
 	$this.status = initialData.status;
 };
 
-var GameObjectPool = function(assetPool, data) {
+SS.priv.GameObjectPool = function(application, config) {
+	var _app = application;
+	var _config = config;
 	var _gameObjectDataMap = {};
-	$.each(data, function(group, groupDataGameObject) {
-		$.each(groupDataGameObject, function(gameObjectKey, data) {
-			var cls = group + '/' + gameObjectKey;
-			_gameObjectDataMap[cls] = data;
+
+	this.loadClasses = function(data) {
+		$.each(data, function(group, groupDataGameObject) {
+			$.each(groupDataGameObject, function(gameObjectKey, data) {
+				var cls = group + '/' + gameObjectKey;
+				_gameObjectDataMap[cls] = data;
+			});
 		});
-	});
+	};
 	this.createGameObject = function(cls, initial_data) {
-		return new GameObject(this, assetPool, _gameObjectDataMap[cls], initial_data);
-	}
+		return new GameObject(_app, _gameObjectDataMap[cls], initial_data);
+	};
 };

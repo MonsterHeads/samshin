@@ -9,7 +9,6 @@
 	<script src="jquery.min.js"></script>
 	<script src="libs/helper_game_object.js"></script>
 
-	<script src="resources/data/global.js"></script>
 	<script src="resources/data/assets.js"></script>
 	<script src="resources/data/game_objects.js"></script>
 	<script src="resources/data/maps.js"></script>
@@ -32,20 +31,33 @@
 	</style>
 	<script>
 $(document).ready(function() {
-	var viewport = new Viewport({'fps':30, 'width':960, 'height':720, 'target':$('#viewport')});
-	viewport.setScene(new LoadingScene());
+	var config = {
+		'debug': {
+			'hitbox':false,
+		},
+		'viewport': {
+			'el':$('#viewport'),
+			'fps':30,
+			'width':960,
+			'height':720,
+			'scale':3,
+			'background_color':'#000000',
+		},
+	}
+	var app = new SS.Application(config);
+	app.scene = new SS.LoadingScene();
 
-	var assetPool = new AssetPool(data_assets, function(msg, progress) {
+	app.loadAssets(data_assets, function(msg, progress) {
 		switch(msg) {
 			case 'finished':
 				console.log('image loading finished');
 				setTimeout(function(){
-					viewport.setScene(map_scene);
+					app.scene = map_scene;
 				}, 1500);
 		}
 	});
-	var gameObjectPool = new GameObjectPool(assetPool, data_game_objects);
-	var map_scene = new MapScene(assetPool, gameObjectPool, data_maps['room01'], 'default');
+	app.loadClasses(data_game_objects);
+	var map_scene = new SS.tool.MapScene(app, data_maps['room01'], 'default');
 
 
 	$('#debug_hitbox').on('change', function() {

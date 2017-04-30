@@ -1,5 +1,6 @@
-var MapScene = function(assetPool, gameObjectPool, mapData, sceneName) {
+SS.tool.MapScene = function(application, mapData, sceneName) {
 	var $this = this;
+	var _app = application;
 	var _center;
 
 	var _rootGameObject;
@@ -34,7 +35,7 @@ var MapScene = function(assetPool, gameObjectPool, mapData, sceneName) {
 
 		_rootGameObject.update(t);
 		ctx.save();
-		ctx.fillStyle = config.viewport.background_color;
+		ctx.fillStyle = "#000000";
 		ctx.fillRect(0, 0, width, height);
 		ctx.translate(ctxDstX-mapSrcX, ctxDstY-mapSrcY);
 		_rootGameObject.render(t, ctx);
@@ -53,7 +54,7 @@ var MapScene = function(assetPool, gameObjectPool, mapData, sceneName) {
 			x = 0;
 			$.each(row, function(xIdx, tileIdx) {
 				var tileObjectData = $.extend({}, mapData.tiles[tileIdx], {'x':x, 'y':y});
-				var tileObject = gameObjectPool.createGameObject(mapData.tiles[tileIdx].cls, tileObjectData);
+				var tileObject = _app.createGameObject(mapData.tiles[tileIdx].cls, tileObjectData);
 				objectList.push({'name':'__tile_'+xIdx+'_'+yIdx, 'inst':tileObject});
 				x = x + tileObject.width;
 				maxHeight = Math.max(maxHeight, tileObject.height);
@@ -67,20 +68,20 @@ var MapScene = function(assetPool, gameObjectPool, mapData, sceneName) {
 
 		// other game objects
 		$.each(mapData.objects, function(name, objectData) {
-			objectList.push({'name':name, 'inst':gameObjectPool.createGameObject(objectData.cls, objectData)});
+			objectList.push({'name':name, 'inst':_app.createGameObject(objectData.cls, objectData)});
 		});
 
 		// root object
 		var rootObjectData = {
 			'default': {
-				'init': function(assetPool) {
+				'init': function(application) {
 					return { 'width':width, 'height':height, 'hitboxList':[],}
 				},
 				'update': function(t) {return {}},
 				'render': function(t, ctx) {}
 			}
 		};
-		_rootGameObject = new GameObject(gameObjectPool, assetPool, rootObjectData, {'status':'default'});
+		_rootGameObject = new GameObject($this, rootObjectData, {'status':'default'});
 
 		// append child to root object
 		$.each(objectList, function(idx, obj) {
