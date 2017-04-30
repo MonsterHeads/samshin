@@ -31,9 +31,13 @@ var GameObject = function(application, classData, initialData) {
 		var reindexChild = function(curIdx, targetIdx) {
 			if( curIdx == targetIdx ) return;
 			var cur = _childList[curIdx];
-			_childMap[childName].idx = targetIdx;
-			_childList.splice(curIdx,1);
-			_childList.splice(targetIdx,0, cur);			
+			_childList.splice(curIdx, 1);
+			_childList.splice(targetIdx, 0, cur);
+			var idx = Math.min(curIdx, targetIdx);
+			var max = Math.max(curIdx, targetIdx);
+			for( ;idx<=max; idx++ ) {
+				_childList[idx].idx = idx;
+			}
 		};
 		(function() {
 			var insertIdx = 0;
@@ -42,8 +46,12 @@ var GameObject = function(application, classData, initialData) {
 				if ( 0 > compare ) break;
 			}
 			insertIdx = idx;
-			_childList.splice(insertIdx, 0, {'inst':child, 'name':childName});
-			_childMap[childName] = {'inst':child, 'idx':insertIdx};
+			var childWrap = {'inst':child, 'name':childName, 'idx':insertIdx};
+			_childList.splice(insertIdx, 0, childWrap);
+			_childMap[childName] = childWrap;
+			for( var idx=insertIdx+1; idx<_childList.length; idx++ ) {
+				_childList[idx].idx = idx;
+			}
 		})();
 		child.removeObserverGroup('__parent');
 		child.addObserver('__parent', {
@@ -82,10 +90,10 @@ var GameObject = function(application, classData, initialData) {
 			_statusStartTime = -1;
 			var statusBoxData = _statusMap[_status].init.apply($this,[_app]);
 			if( statusBoxData.hasOwnProperty('width') ) {
-				fireObserveEvent('size', 'width', _boxData.width, statusBoxData.width);
+				$this.fireValueChangedEvent('size', 'width', _boxData.width, statusBoxData.width);
 			}
 			if( statusBoxData.hasOwnProperty('height') ) {
-				fireObserveEvent('size', 'height', _boxData.height, statusBoxData.height);
+				$this.fireValueChangedEvent('size', 'height', _boxData.height, statusBoxData.height);
 			}
 			$.extend(_boxData, statusBoxData);			
 		},
@@ -96,15 +104,15 @@ var GameObject = function(application, classData, initialData) {
 	});
 	Object.defineProperty(this, 'x', {
 		'get':function() { return _x; },
-		'set':function(x) { fireObserveEvent('position', 'x', _x, x); _x = x;},
+		'set':function(x) { $this.fireValueChangedEvent('position', 'x', _x, x); _x = x;},
 	});
 	Object.defineProperty(this, 'y', {
 		'get':function() { return _y; },
-		'set':function(y) { fireObserveEvent('position', 'y', _y, y); _y = y;},
+		'set':function(y) { $this.fireValueChangedEvent('position', 'y', _y, y); _y = y;},
 	});
 	Object.defineProperty(this, 'z', {
 		'get':function() { return _z; },
-		'set':function(z) { fireObserveEvent('position', 'z', _z, z); _z = z;},
+		'set':function(z) { $this.fireValueChangedEvent('position', 'z', _z, z); _z = z;},
 	});
 	Object.defineProperty(this, 'width', {
 		'get':function() { return _boxData.width; },
@@ -115,27 +123,35 @@ var GameObject = function(application, classData, initialData) {
 	Object.defineProperty(this, 'hitboxList', {
 		'get':function() { return _boxData.hitboxList; },
 	});
-	var fireObserveEvent = function(type, propertyName, before, after) {
+	this.fireValueChangedEvent = function(type, propertyName, before, after) {
 		if( before === after ) return;
+		var observerList = [];
 		$.each(_observeTypes[type], function(group) {
-			$.each(_observerMap[group][type], function(idx, observer) {
-				setTimeout(function(){observer.valueChanged($this, propertyName, before, after);}, 0);
-			});
+			$.each(_observerMap[group][type], function(idx, observer) {observerList.push(observer);});
 		});
+		$.each(_observeTypes['__all'], function(group) {
+			$.each(_observerMap[group]['__all'], function(idx, observer) {observerList.push(observer);});
+		});
+		setTimeout(function(){
+			$.each(observerList, function(idx, observer) {
+				observer.valueChanged($this, propertyName, before, after);
+			});
+		}, 0);
 	};
 	this.addObserver = function(group, observer, types) {
 		var typeToObserve = {};
-		if( !types || types.length == 0 ) types = Object.keys(_observeTypes);
+		if( !types || types.length == 0 ) types = ['__all'];
 		for( var i=0; i<types.length; i++ ) {
-			if( _observeTypes.hasOwnProperty(types[i]) ) {
-				typeToObserve[types[i]] = true;
-			}
+			typeToObserve[types[i]] = true;
 		}
 		if( !_observerMap.hasOwnProperty(group) ) {
 			_observerMap[group] = {};
 		}
 		var typeMap = _observerMap[group];
 		$.each(typeToObserve, function(type) {
+			if( !_observeTypes.hasOwnProperty(type) ) {
+				_observeTypes[type] = {};
+			}
 			_observeTypes[type][group] = true;
 			if( !typeMap.hasOwnProperty(type) ) {
 				typeMap[type] = [];
@@ -188,10 +204,10 @@ var GameObject = function(application, classData, initialData) {
 		var statusData = _statusMap[_status];
 		var statusBoxData = statusData.update.apply($this, [t-_statusStartTime]);
 		if( statusBoxData.hasOwnProperty('width') ) {
-			fireObserveEvent('size', 'width', _boxData.width, statusBoxData.width);
+			$this.fireValueChangedEvent('size', 'width', _boxData.width, statusBoxData.width);
 		}
 		if( statusBoxData.hasOwnProperty('height') ) {
-			fireObserveEvent('size', 'height', _boxData.height, statusBoxData.height);
+			$this.fireValueChangedEvent('size', 'height', _boxData.height, statusBoxData.height);
 		}
 		$.extend(_boxData, statusBoxData);
 		$.each(_childList, function(idx, childWrap) {
