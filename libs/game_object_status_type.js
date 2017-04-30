@@ -1,18 +1,21 @@
-var GameObjectHelper = {
-	'tile': function(assetName, size, hitcheck) {
+SS.gameObjectStatusType = $.extend({}, SS.gameObjectStatusType, {
+	'custom': function(data) {
+		return data;
+	},
+	'tile': function(data) {
 		var _app;
 		var _asset;
 		var _hitboxList = [];
 		return {
 			'init': function(application) {
 				_app = application;
-				_asset = _app.getAsset(assetName);
-				if( hitcheck ) {
-					_hitboxList = [{'x':0, 'y':0, 'width':size, 'height':size}];
+				_asset = _app.getAsset(data.assetName);
+				if( data.hitCheck ) {
+					_hitboxList = [{'x':0, 'y':0, 'width':_asset.width, 'height':_asset.height}];
 				}
 				return {
-					'width':size,
-					'height':size,
+					'width':_asset.width,
+					'height':_asset.height,
 					'hitboxList':_hitboxList,
 				}
 			},
@@ -20,21 +23,21 @@ var GameObjectHelper = {
 				return {}
 			},
 			'render': function(t, ctx) {
-				_asset.draw(ctx, 0, 0, _asset.width, size);
+				_asset.draw(ctx, 0, 0, _asset.width, _asset.height);
 			}
 		}
 	},	
-	'single': function(assetName, hitboxList) {
+	'single': function(data) {
 		var _app;
 		var _asset;
 		return {
 			'init': function(application) {
 				_app = application;
-				_asset = _app.getAsset(assetName);
+				_asset = _app.getAsset(data.assetName);
 				return {
 					'width':_asset.width,
 					'height':_asset.height,
-					'hitboxList':hitboxList,
+					'hitboxList':data.hitboxList,
 				}
 			},
 			'update': function(t) {
@@ -79,4 +82,4 @@ var GameObjectHelper = {
 			}
 		}
 	}
-};
+});

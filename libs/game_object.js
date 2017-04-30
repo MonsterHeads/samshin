@@ -1,13 +1,13 @@
-var GameObject = function(application, classData, initialData) {
+SS.GameObject = function(application, classData, instanceData) {
 	var $this = this;
 	var _app = application;
 	var _statusMap = {};
 	var _boxData = {'width':0, 'height':0, 'hitboxList':[]};
-	var _x = initialData.x;
-	var _y = initialData.y;
+	var _x = instanceData.x;
+	var _y = instanceData.y;
 	var _z = 0;
-	if( initialData.hasOwnProperty('z') ) {
-		_z = initialData.z;
+	if( instanceData.hasOwnProperty('z') ) {
+		_z = instanceData.z;
 	}
 
 	var _data = {};
@@ -239,33 +239,58 @@ var GameObject = function(application, classData, initialData) {
 			ctx.restore();
 		});
 	};
-	$.each(classData, function(status, statusData) {
-		_statusMap[status] = {
-			'init': statusData.init,
-			'update': statusData.update,
-			'render': statusData.render,
-		};
+	
+	$.each(classData.status, function(status, statusData) {
+		var obj = SS.gameObjectStatusType[statusData.type](statusData.data);
+		_statusMap[status] = obj;
 	});
-	$.each(initialData.children, function(name, child_data) {
-		var child = _app.createGameObject(child_data.cls, child_data);
+	$.each(instanceData.children, function(name, childInstanceData) {
+		var child = _app.createGameObject(childInstanceData.cls, childInstanceData);
 		$this.setChild(name, child);
 	});
-	$this.status = initialData.status;
+	$this.status = instanceData.status;
 };
 
 SS.priv.GameObjectPool = function(application) {
 	var _app = application;
 	var _gameObjectDataMap = {};
 
-	this.loadClasses = function(data) {
-		$.each(data, function(group, groupDataGameObject) {
-			$.each(groupDataGameObject, function(gameObjectKey, data) {
-				var cls = group + '/' + gameObjectKey;
-				_gameObjectDataMap[cls] = data;
+	this.loadClasses = function(configList) {
+		var processConfig = function(config, parentKey) {
+			if( 'group' == config.type ) {
+				processGroupConfig(config, parentKey);
+			} else if('class' == config.type ) {
+				processClassConfig(config, parentKey);
+			}
+		};
+		var processGroupConfig = function(groupConfig, parentKey) {
+			var currentKey = parentKey + '/' + groupConfig.name;
+			$.each(groupConfig.children, function(idx, config) {
+				processConfig(config, currentKey);
 			});
+		};
+		var processClassConfig = function(classConfig, parentKey) {
+			var currentKey = parentKey + '/' + classConfig.name;
+			var valid = true;
+			$.each(classConfig.data.status, function(statusName, statusConfig) {
+				if( !SS.gameObjectStatusType.hasOwnProperty(statusConfig.type) || 'function' != typeof SS.gameObjectStatusType[statusConfig.type] ) {
+					valid = false;
+					return false;
+				}
+			});
+			if( valid ) {
+				_gameObjectDataMap[currentKey] = classConfig.data;
+			} else {
+				console.error('unknown game object status type.', currentKey, classConfig);
+			}
+		}
+		$.each(configList, function(idx, config) {
+			processConfig(config, '');
 		});
 	};
-	this.createGameObject = function(cls, initial_data) {
-		return new GameObject(_app, _gameObjectDataMap[cls], initial_data);
+	this.createGameObject = function(cls, instanceData) {
+		if( _gameObjectDataMap.hasOwnProperty(cls) ) {
+			return new SS.GameObject(_app, _gameObjectDataMap[cls], instanceData);
+		}
 	};
 };

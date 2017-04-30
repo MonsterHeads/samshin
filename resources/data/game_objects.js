@@ -1,77 +1,115 @@
-var data_game_objects;
-
-(function() {
-var GOH = GameObjectHelper;
-data_game_object_classes = {
-	'tiles': {
-		'room01':{
-			'101': GOH.tile('/tiles/floor_01', 16, false),
-			'201': GOH.tile('/tiles/floor_01_frame_tl', 16, true),
-			'202': GOH.tile('/tiles/floor_01_frame_tm', 16, true),
-			'203': GOH.tile('/tiles/floor_01_frame_tr', 16, true),
-			'204': GOH.tile('/tiles/floor_01_frame_ml', 16, true),
-			'205': GOH.tile('/tiles/floor_01_frame_mr', 16, true),
-			'206': GOH.tile('/tiles/floor_01_frame_bl', 16, true),
-			'207': GOH.tile('/tiles/floor_01_frame_bm', 16, true),
-			'208': GOH.tile('/tiles/floor_01_frame_br', 16, true),
-			'209': GOH.tile('/tiles/floor_01_frame_corner_tl', 16, true),
-			'210': GOH.tile('/tiles/floor_01_frame_corner_tr', 16, true),
-			'211': GOH.tile('/tiles/floor_01_frame_corner_bl', 16, true),
-			'212': GOH.tile('/tiles/floor_01_frame_corner_br', 16, true),
-			'215': GOH.tile('/tiles/room01_wall', 16, true),
-			'216': GOH.tile('/tiles/room01_wall_bottom', 16, true),
-			'999': GOH.tile('/tiles/floor_01_blank', 16, true),
+var data_game_object_classes = 
+[
+{
+	'type':'group',
+	'name':'tiles',
+	'children':[
+		{
+			'type':'class',
+			'name':'room01',
+			'data': {
+				'status': {
+					'101': {'type':'tile', 'data':{'assetName':'/tiles/floor_01', 'hitCheck': false},},
+					'201': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_tl', 'hitCheck': true},},
+					'202': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_tm', 'hitCheck': true},},
+					'203': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_tr', 'hitCheck': true},},
+					'204': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_ml', 'hitCheck': true},},
+					'205': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_mr', 'hitCheck': true},},
+					'206': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_bl', 'hitCheck': true},},
+					'207': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_bm', 'hitCheck': true},},
+					'208': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_br', 'hitCheck': true},},
+					'209': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_corner_tl', 'hitCheck': true},},
+					'210': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_corner_tr', 'hitCheck': true},},
+					'211': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_corner_bl', 'hitCheck': true},},
+					'212': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_frame_corner_br', 'hitCheck': true},},
+					'215': {'type':'tile', 'data':{'assetName':'/tiles/room01_wall', 'hitCheck': true},},
+					'216': {'type':'tile', 'data':{'assetName':'/tiles/room01_wall_bottom', 'hitCheck': true},},
+					'999': {'type':'tile', 'data':{'assetName':'/tiles/floor_01_blank', 'hitCheck': true},},
+				},
+			}
 		},
-	},	
-	'furnitures': {
-		'room01':{
-			'chair': GOH.single('/room01_furnitures/chair', [{'x':0, 'y':8, 'width':19, 'height':10}]),
-			'citywindow': GOH.single('/room01_furnitures/citywindow', []),
-			'couch': GOH.single('/room01_furnitures/couch', [{'x':2, 'y':14, 'width':44, 'height':16}]),
-			'diningtable': GOH.single('/room01_furnitures/diningtable', [{'x':6, 'y':12, 'width':37, 'height':19}]),
-			'stackbook': GOH.single('/room01_furnitures/stackbook', []),
-			'tableandlamp': GOH.single('/room01_furnitures/tableandlamp', [{'x':4, 'y':22, 'width':24, 'height':10}]),
-			'teatable': GOH.single('/room01_furnitures/teatable', [{'x':4, 'y':16, 'width':41, 'height':12}]),
-			'tv': GOH.single('/room01_furnitures/tv', [{'x':6, 'y':20, 'width':38, 'height':12}]),
-			'wallshelf': GOH.single('/room01_furnitures/wallshelf', []),
-		}
-	},
-	'characters': {
-		'doctor_w':{
-			'up_stop': GOH.single('/characters/doctor_w/up1', [{'x':6, 'y':24, 'width':20, 'height':8}]),
-			'down_stop': GOH.single('/characters/doctor_w/down1', [{'x':6, 'y':24, 'width':20, 'height':8}]),
-			'left_stop': GOH.single('/characters/doctor_w/left1', [{'x':6, 'y':24, 'width':20, 'height':8}]),
-			'right_stop': GOH.single('/characters/doctor_w/right1', [{'x':6, 'y':24, 'width':20, 'height':8}]),
-			'up_walk': GOH.simpleAnimation({
-				'delay':140,
-				'assetList':[
-					'/characters/doctor_w/up2','/characters/doctor_w/up1','/characters/doctor_w/up3','/characters/doctor_w/up1',
-				],
-				'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}]
-			}),
-			'down_walk': GOH.simpleAnimation({
-				'delay':140,
-				'assetList':[
-					'/characters/doctor_w/down2','/characters/doctor_w/down1','/characters/doctor_w/down3','/characters/doctor_w/down1',
-				],
-				'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}]
-			}),
-			'left_walk': GOH.simpleAnimation({
-				'delay':140,
-				'assetList':[
-					'/characters/doctor_w/left2','/characters/doctor_w/left1','/characters/doctor_w/left3','/characters/doctor_w/left1',
-				],
-				'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}]
-			}),
-			'right_walk': GOH.simpleAnimation({
-				'delay':140,
-				'assetList':[
-					'/characters/doctor_w/right2','/characters/doctor_w/right1','/characters/doctor_w/right3','/characters/doctor_w/right1',
-				],
-				'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}]
-			}),
-		}
-	},
-}
-})();
+	],
+},
+{
+	'type':'group',
+	'name':'furnitures',
+	'children':[
+		{
+			'type':'class',
+			'name':'room01',
+			'data': {
+				'status': {
+					'chair':        {'type':'single', 'data':{'assetName':'/room01_furnitures/chair', 'hitboxList':[{'x':0, 'y':8, 'width':19, 'height':10},]}},
+					'citywindow':   {'type':'single', 'data':{'assetName':'/room01_furnitures/citywindow', 'hitboxList':[]}},
+					'couch':        {'type':'single', 'data':{'assetName':'/room01_furnitures/couch', 'hitboxList':[{'x':2, 'y':14, 'width':44, 'height':16}]}},
+					'diningtable':  {'type':'single', 'data':{'assetName':'/room01_furnitures/diningtable', 'hitboxList':[{'x':6, 'y':12, 'width':37, 'height':19}]}},
+					'stackbook':    {'type':'single', 'data':{'assetName':'/room01_furnitures/stackbook', 'hitboxList':[]}},
+					'tableandlamp': {'type':'single', 'data':{'assetName':'/room01_furnitures/tableandlamp', 'hitboxList':[{'x':4, 'y':22, 'width':24, 'height':10}]}},
+					'teatable':     {'type':'single', 'data':{'assetName':'/room01_furnitures/teatable', 'hitboxList':[{'x':4, 'y':16, 'width':41, 'height':12}]}},
+					'tv':           {'type':'single', 'data':{'assetName':'/room01_furnitures/tv', 'hitboxList':[{'x':6, 'y':20, 'width':38, 'height':12}]}},
+					'wallshelf':    {'type':'single', 'data':{'assetName':'/room01_furnitures/wallshelf', 'hitboxList':[]}},
+				},
+			},
+		},
+	],
+},
+{
+	'type':'group',
+	'name':'characters',
+	'children':[
+		{
+			'type':'class',
+			'name':'doctor_w',
+			'data': {
+				'status': {
+					'up_stop':     {'type':'single', 'data':{'assetName':'/characters/doctor_w/up1', 'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8},]}},
+					'down_stop':   {'type':'single', 'data':{'assetName':'/characters/doctor_w/down1', 'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8},]}},
+					'left_stop':   {'type':'single', 'data':{'assetName':'/characters/doctor_w/left1', 'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8},]}},
+					'right_stop':  {'type':'single', 'data':{'assetName':'/characters/doctor_w/right1', 'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8},]}},
+					'up_walk': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/characters/doctor_w/up2','/characters/doctor_w/up1','/characters/doctor_w/up3','/characters/doctor_w/up1',
+							],
+							'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}],
+						},
+					},
+					'down_walk': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/characters/doctor_w/down2','/characters/doctor_w/down1','/characters/doctor_w/down3','/characters/doctor_w/down1',
+							],
+							'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}],
+						},
+					},
+					'left_walk': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/characters/doctor_w/left2','/characters/doctor_w/left1','/characters/doctor_w/left3','/characters/doctor_w/left1',
+							],
+							'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}],
+						},
+					},
+					'right_walk': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/characters/doctor_w/right2','/characters/doctor_w/right1','/characters/doctor_w/right3','/characters/doctor_w/right1',
+							],
+							'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}],
+						},
+					},
+				},
+			},
+		},
+	],
+},
+];
 
