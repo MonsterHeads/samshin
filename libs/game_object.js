@@ -19,50 +19,52 @@ var GameObject = function(application, classData, initialData) {
 	var _observerMap = {}; // GroupMap > TypeMap > InstanceList
 
 	this.setChild = function(childName, child) {
-		var insertIdx = 0;
-		for(var idx=0; idx<_childList.length; idx++) {
-			var childWrap = _childList[idx];
-			if( child.z > childWrap.inst.z  ) continue;
-			if( child.z < childWrap.inst.z  ) break;
-			if( child.y + child.height < childWrap.inst.y + childWrap.inst.height ) break;
-		}
-		insertIdx = idx;
-		_childList.splice(insertIdx, 0, {'inst':child, 'name':childName});
-		_childMap[childName] = {'inst':child, 'idx':insertIdx};
+		var compareZOrder = function(childA, childB) {
+			if( childA.z < childB.z  ) return -1;
+			else if( childA.z > childB.z ) return 1;
+			var aBottom = childA.y + childA.height;
+			var bBottom = childB.y + childB.height;
+			if( aBottom < bBottom ) return -1;
+			else if( aBottom > bBottom ) return 1;
+			return 0;
+		};
+		var reindexChild = function(curIdx, targetIdx) {
+			if( curIdx == targetIdx ) return;
+			var cur = _childList[curIdx];
+			_childMap[childName].idx = targetIdx;
+			_childList.splice(curIdx,1);
+			_childList.splice(targetIdx,0, cur);			
+		};
+		(function() {
+			var insertIdx = 0;
+			for(var idx=0; idx<_childList.length; idx++) {
+				var compare = compareZOrder(child, _childList[idx].inst);
+				if ( 0 > compare ) break;
+			}
+			insertIdx = idx;
+			_childList.splice(insertIdx, 0, {'inst':child, 'name':childName});
+			_childMap[childName] = {'inst':child, 'idx':insertIdx};
+		})();
 		child.removeObserverGroup('__parent');
 		child.addObserver('__parent', {
 			'valueChanged': function(object, propertyName, before, after) {
 				switch(propertyName) {
 				case 'y': case 'height': case 'z': // re-sort z-order
-				if( before > after ) {
-					var curIdx = _childMap[childName].idx;
-					for(var idx=curIdx-1; idx>=0; idx--) {
-						var childWrap = _childList[idx];
-						if( child.z < childWrap.inst.z  ) continue;
-						if( child.z > childWrap.inst.z  ) break;
-						if( child.y + child.height >= childWrap.inst.y + childWrap.inst.height ) break;
+					if( before > after ) {
+						var curIdx = _childMap[childName].idx;
+						for(var idx=curIdx-1; idx>=0; idx--) {
+							var compare = compareZOrder(child, _childList[idx].inst);
+							if( 0 <= compare ) break;
+						}
+						reindexChild(curIdx, idx+1);
+					} else {
+						var curIdx = _childMap[childName].idx;
+						for(var idx=curIdx+1; idx<_childList.length; idx++) {
+							var compare = compareZOrder(child, _childList[idx].inst);
+							if( 0 > compare ) break;
+						}
+						reindexChild(curIdx, idx-1);
 					}
-					if( idx+1 != curIdx ) {
-						var cur = _childList[curIdx];
-						_childMap[childName].idx = idx+1;
-						_childList.splice(curIdx,1);
-						_childList.splice(idx+1,0, cur);
-					}
-				} else {
-					var curIdx = _childMap[childName].idx;
-					for(var idx=curIdx+1; idx<_childList.length; idx++) {
-						var childWrap = _childList[idx];
-						if( child.z > childWrap.inst.z  ) continue;
-						if( child.z < childWrap.inst.z  ) break;
-						if( child.y + child.height < childWrap.inst.y + childWrap.inst.height ) break;
-					}
-					if( idx-1 != curIdx ) {
-						var cur = _childList[curIdx];
-						_childMap[childName].idx = idx-1;
-						_childList.splice(curIdx,1);
-						_childList.splice(idx-1,0, cur);
-					}
-				}
 				}
 			}
 		});
