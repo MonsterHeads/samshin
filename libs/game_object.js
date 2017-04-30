@@ -202,14 +202,18 @@ SS.GameObject = function(application, classData, instanceData) {
 			_statusStartTime = t;
 		}
 		var statusData = _statusMap[_status];
-		var statusBoxData = statusData.update.apply($this, [t-_statusStartTime]);
-		if( statusBoxData.hasOwnProperty('width') ) {
-			$this.fireValueChangedEvent('size', 'width', _boxData.width, statusBoxData.width);
+		if( statusData.hasOwnProperty('update') && 'function' == typeof statusData.update ) {
+			var statusBoxData = statusData.update.apply($this, [t-_statusStartTime]);
+			if( statusBoxData ) {
+				if( statusBoxData.hasOwnProperty('width') ) {
+					$this.fireValueChangedEvent('size', 'width', _boxData.width, statusBoxData.width);
+				}
+				if( statusBoxData.hasOwnProperty('height') ) {
+					$this.fireValueChangedEvent('size', 'height', _boxData.height, statusBoxData.height);
+				}
+				$.extend(_boxData, statusBoxData);
+			}
 		}
-		if( statusBoxData.hasOwnProperty('height') ) {
-			$this.fireValueChangedEvent('size', 'height', _boxData.height, statusBoxData.height);
-		}
-		$.extend(_boxData, statusBoxData);
 		$.each(_childList, function(idx, childWrap) {
 			childWrap.inst.update(t);
 		});

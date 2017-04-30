@@ -19,9 +19,6 @@ SS.gameObjectStatusType = $.extend({}, SS.gameObjectStatusType, {
 					'hitboxList':_hitboxList,
 				}
 			},
-			'update': function(t) {
-				return {}
-			},
 			'render': function(t, ctx) {
 				_asset.draw(ctx, 0, 0, _asset.width, _asset.height);
 			}
@@ -39,9 +36,6 @@ SS.gameObjectStatusType = $.extend({}, SS.gameObjectStatusType, {
 					'height':_asset.height,
 					'hitboxList':data.hitboxList,
 				}
-			},
-			'update': function(t) {
-				return {}
 			},
 			'render': function(t, ctx) {
 				_asset.draw(ctx, 0, 0, _asset.width, _asset.height);
@@ -72,9 +66,6 @@ SS.gameObjectStatusType = $.extend({}, SS.gameObjectStatusType, {
 					'height':_height,
 					'hitboxList':_hitboxList,
 				}
-			},
-			'update': function(t) {
-				return {}
 			},
 			'render': function(t, ctx) {
 				var asset = _assetList[Math.floor(t/_delay) % _assetList.length];
