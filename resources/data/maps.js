@@ -1,20 +1,74 @@
 var data_maps = {
 'room01': {
 	'objects': {
-		'citywindow1':{'cls':'/furnitures/room01', 'status':'citywindow', 'x':35, 'y':20, 'z':1},
-		'citywindow2':{'cls':'/furnitures/room01', 'status':'citywindow', 'x':120, 'y':20, 'z':1},
-		'wallshelf':{'cls':'/furnitures/room01', 'status':'wallshelf', 'x':70, 'y':18, 'z':1},
-		'tv':{'cls':'/furnitures/room01', 'status':'tv', 'x':24, 'y':40, 'z':1},
-		'tableandlamp':{'cls':'/furnitures/room01', 'status':'tableandlamp', 'x':90, 'y':40, 'z':1},
-		'teatable':{'cls':'/furnitures/room01', 'status':'teatable', 'x':25, 'y':72, 'z':1,
-			'children':{
-				'stackbook':{'cls':'/furnitures/room01', 'status':'stackbook', 'x':25, 'y':5, 'z':1},
-			}
+		'citywindow1':{
+			'cls':'/furnitures/room01',
+			'data':{
+				'status':'citywindow', 'x':35, 'y':20, 'z':1
+			},
 		},
-		'couch':{'cls':'/furnitures/room01', 'status':'couch', 'x':25, 'y':100, 'z':1},
-		'diningtable':{'cls':'/furnitures/room01', 'status':'diningtable', 'x':110, 'y':120, 'z':1},
-		'chair':{'cls':'/furnitures/room01', 'status':'chair', 'x':125, 'y':145, 'z':1},
-		'doctorW':{'cls':'/characters/doctor_w', 'status':'down_stop', 'x':72, 'y':100, 'z':1},
+		'citywindow2':{
+			'cls':'/furnitures/room01',
+			'data':{
+				'status':'citywindow', 'x':120, 'y':20, 'z':1
+			},
+		},
+		'wallshelf':{
+			'cls':'/furnitures/room01',
+			'data':{
+				'status':'wallshelf', 'x':70, 'y':18, 'z':1
+			},
+		},
+		'tv':{
+			'cls':'/furnitures/room01',
+			'data':{
+				'status':'tv', 'x':24, 'y':40, 'z':1
+			},
+		},
+		'tableandlamp':{
+			'cls':'/furnitures/room01',
+			'data':{
+				'status':'tableandlamp', 'x':90, 'y':40, 'z':1
+			},
+		},
+		'teatable':{
+			'cls':'/furnitures/room01',
+			'data':{
+				'status':'teatable', 'x':25, 'y':72, 'z':1,
+				'children':{
+					'stackbook':{
+						'cls':'/furnitures/room01',
+						'data':{
+							'status':'stackbook', 'x':25, 'y':5, 'z':1
+						},
+					},
+				},
+			},
+		},
+		'couch':{
+			'cls':'/furnitures/room01',
+			'data':{
+				'status':'couch', 'x':25, 'y':100, 'z':1
+			},
+		},
+		'diningtable':{
+			'cls':'/furnitures/room01',
+			'data':{
+				'status':'diningtable', 'x':110, 'y':120, 'z':1
+			},
+		},
+		'chair':{
+			'cls':'/furnitures/room01',
+			'data':{
+				'status':'chair', 'x':125, 'y':145, 'z':1
+			},
+		},
+		'doctorW':{
+			'cls':'/characters/doctor_w',
+			'data':{
+				'status':'down_stop', 'x':72, 'y':100, 'z':1
+			},
+		},
 	},
 	'tiles': {
 		101:{'cls':'/tiles/room01', 'status':'101'},
@@ -34,7 +88,6 @@ var data_maps = {
 		216:{'cls':'/tiles/room01', 'status':'216'},
 		999:{'cls':'/tiles/room01', 'status':'999'},
 	},
-	'width':11, 'height':14,
 	'ground':[
 	[201,202,202,202,202,202,202,202,202,202,203],
 	[204,215,215,215,215,215,215,215,215,215,205],
