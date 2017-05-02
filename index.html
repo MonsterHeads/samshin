@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<title>Project G</title>
-	<meta name="viewport" content="width=1000, initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
@@ -17,7 +17,7 @@
 	<script src="libs/game_object_status_type.js"></script>
 	<script src="libs/map_scene.js"></script>
 	<style>
-		body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,textarea,p,blockquote,th,td,input,select,textarea,button,a,img{margin:0; padding:0; box-sizing:border-box; position:relative;}
+		*{margin:0; padding:0; box-sizing:border-box; position:relative;}
 		body{-moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; user-select: none;}
 		a, a:hover, a:focus{text-decoration:none; color:inherit; cursor:pointer;}
 		ul{list-style-type: none;}
@@ -36,7 +36,7 @@ $(document).ready(function() {
 		},
 		'viewport': {
 			'el':$('#viewport'),
-			'fps':30,
+			'fps':60,
 			'width':960,
 			'height':720,
 			'scale':3,

@@ -106,7 +106,7 @@ var data_maps = {
 	],
 
 	'scenes': {
-		'default': function() {
+		'default': (function() {
 			var $this;
 			var _character;
 			var _characterStartPosition;
@@ -175,7 +175,7 @@ var data_maps = {
 				}				
 			};
 			return {'init':init, 'eventCallback': eventCallback, 'update': update};
-		},
+		})(),
 	}
 
 

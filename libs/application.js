@@ -50,14 +50,18 @@ SS.priv.Viewport = function(application) {
 			_ctx.fillStyle = "#000000";
 			_ctx.fillRect(0, 0, _config.width, _config.height);
 		}
-		setTimeout(function(){render();}, 1000/_config.fps);
+		var endT = new Date().getTime();
+		var delta = 1000/_config.fps - (endT - t);
+		if( delta < 0 ) {
+			delta = 0;
+		}
+		setTimeout(function(){render();}, delta);
 	}
 
 	Object.defineProperty(this, 'scene', {
 		'get': function() { return _scene; },
 		'set': function(scene) { _scene = scene; },
 	});
-
 
 	init();
 };
@@ -89,7 +93,6 @@ SS.Application = function(config) {
 	var _viewport = new SS.priv.Viewport($this);
 	var _assetPool = new SS.priv.AssetPool($this);
 	var _gameObjectPool = new SS.priv.GameObjectPool($this);
-
 };
 
 

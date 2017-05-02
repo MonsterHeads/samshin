@@ -43,7 +43,6 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	};
 
 	(function() {
-
 		var tileObject;
 		(function() { // tiles && size of root object
 			var tileObjectList = [];
@@ -98,12 +97,12 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		_rootGameObject.setChild('__tile__', tileObject);
 
 		// other game objects
-		$.each(mapData.objects, function(name, objectData) {
-			_rootGameObject.setChild(name, _app.createGameObject(objectData.cls, objectData));
+		$.each(mapData.objects, function(name, objectConfig) {
+			_rootGameObject.setChild(name, _app.createGameObject(objectConfig.cls, objectConfig.data));
 		});
 
 		// scene_descriptor   #should be last
-		_sceneDescriptor = mapData.scenes[sceneName].apply($this,[]);
+		_sceneDescriptor = mapData.scenes[sceneName];
 		_sceneDescriptor.init.apply($this,[]);
 	})();
 };

@@ -249,8 +249,8 @@ SS.GameObject = function(application, classData, instanceData) {
 		var obj = SS.gameObjectStatusType[statusData.type](statusData.data);
 		_statusMap[status] = obj;
 	});
-	$.each(instanceData.children, function(name, childInstanceData) {
-		var child = _app.createGameObject(childInstanceData.cls, childInstanceData);
+	$.each(instanceData.children, function(name, childInstanceConfig) {
+		var child = _app.createGameObject(childInstanceConfig.cls, childInstanceConfig.data);
 		$this.setChild(name, child);
 	});
 	$this.status = instanceData.status;
