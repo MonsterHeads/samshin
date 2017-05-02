@@ -1,6 +1,18 @@
 var data_game_object_classes = 
 [
 {
+	'type':'class',
+	'name':'cursors',
+	'data': {
+		'status': {
+			'action': {'type':'single', 'data':{'assetName':'/cursors/action', 'hitboxList':[]}},
+			'normal': {'type':'single', 'data':{'assetName':'/cursors/normal', 'hitboxList':[]}},
+			'search': {'type':'single', 'data':{'assetName':'/cursors/search', 'hitboxList':[]}},
+			'talk':   {'type':'single', 'data':{'assetName':'/cursors/talk', 'hitboxList':[]}},
+		},
+	}
+},
+{
 	'type':'group',
 	'name':'tiles',
 	'children':[

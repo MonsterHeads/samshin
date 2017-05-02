@@ -8,20 +8,21 @@ window['SS'] = {
 SS.priv.Viewport = function(application) {
 	var _app = application;
 	var _scene;
+	var _canvas;
 	var _ctx;
 
 	var init = function() {
 		_config = _app.config.viewport;
-		var canvas = $('<canvas></canvas>');
-		canvas.css('width', '100%');
-		canvas.css('height', '100%');
-		canvas.attr('width', _config.width);
-		canvas.attr('height', _config.height);
-		_config.el.append(canvas);
+		_canvas = $('<canvas></canvas>');
+		_canvas.css('width', '100%');
+		_canvas.css('height', '100%');
+		_canvas.attr('width', _config.width);
+		_canvas.attr('height', _config.height);
+		_config.el.append(_canvas);
 		_config.renderWidth = Math.ceil(_config.width/_config.scale);
 		_config.renderHeight = Math.ceil(_config.height/_config.scale);
 
-		_ctx = canvas[0].getContext('2d');
+		_ctx = _canvas[0].getContext('2d');
 		_ctx.scale(_config.scale, _config.scale);
 		_ctx.mozImageSmoothingEnabled = false;
 		_ctx.webkitImageSmoothingEnabled = false;
@@ -40,6 +41,12 @@ SS.priv.Viewport = function(application) {
 				_scene.eventCallback(t, 'keyup', evt);	
 			}
 		});
+		$(_canvas).on('mousemove', function(evt) {
+			if( _app.cursor ) {
+				_app.cursor.x = evt.offsetX / _config.scale;
+				_app.cursor.y = evt.offsetY / _config.scale;
+			}
+		});
 		render();
 	}
 	var render = function() {
@@ -49,6 +56,16 @@ SS.priv.Viewport = function(application) {
 		} else {
 			_ctx.fillStyle = "#000000";
 			_ctx.fillRect(0, 0, _config.width, _config.height);
+		}
+		var cursor = _app.cursor;
+		if( cursor ) {
+			_canvas.css('cursor','none');
+			_ctx.save();
+			_ctx.translate(cursor.x, cursor.y);
+			cursor.render(t, _ctx);
+			_ctx.restore();
+		} else {
+			_canvas.css('cursor','');
 		}
 		var endT = new Date().getTime();
 		var delta = 1000/_config.fps - (endT - t);
@@ -62,13 +79,13 @@ SS.priv.Viewport = function(application) {
 		'get': function() { return _scene; },
 		'set': function(scene) { _scene = scene; },
 	});
-
 	init();
 };
 
 SS.Application = function(config) {
 	var $this = this;
 	var _config = config;
+	var _cursorGameObject;
 
 	Object.defineProperty(this, 'config', {
 		'get': function() { return _config; },
@@ -76,6 +93,10 @@ SS.Application = function(config) {
 	Object.defineProperty(this, 'scene', {
 		'get': function() { return _viewport.scene; },
 		'set': function(scene) { _viewport.scene = scene; },
+	});
+	Object.defineProperty(this, 'cursor', {
+		'get': function() { return _cursorGameObject; },
+		'set': function(cursor) { console.log(cursor, cursor instanceof SS.GameObject, typeof cursor); if( cursor instanceof SS.GameObject ) _cursorGameObject = cursor; },
 	});
 	this.loadAssets = function(assetData, loadingCallback) {
 		_assetPool.loadAssets(assetData, loadingCallback);

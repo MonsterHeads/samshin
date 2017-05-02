@@ -60,4 +60,14 @@ var data_assets = [
 		{'type':'asset', 'cls':'image', 'name':'room01_wall_bottom', 'data':{'url':'resources/images/tiles/room01_wall.png', 'x':0, 'y':16, 'width':16, 'height':16},},
 	],
 },
+{
+	'type':'group',
+	'name':'cursors',
+	'children':[
+		{'type':'asset', 'cls':'image', 'name':'action', 'data':{'url':'resources/images/cursors/action.png', 'x':0, 'y':0, 'width':14, 'height':14},},
+		{'type':'asset', 'cls':'image', 'name':'normal', 'data':{'url':'resources/images/cursors/normal.png', 'x':0, 'y':0, 'width':13, 'height':13},},
+		{'type':'asset', 'cls':'image', 'name':'search', 'data':{'url':'resources/images/cursors/search.png', 'x':0, 'y':0, 'width':14, 'height':14},},
+		{'type':'asset', 'cls':'image', 'name':'talk', 'data':{'url':'resources/images/cursors/talk.png', 'x':0, 'y':0, 'width':14, 'height':14},},
+	],
+},
 ];
