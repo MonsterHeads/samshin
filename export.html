@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
 	<title>Project G</title>
-	<meta name="viewport" content="width=1000, initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 	<script src="g.js"></script>
 	<style>
-		body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,textarea,p,blockquote,th,td,input,select,textarea,button,a,img{margin:0; padding:0; box-sizing:border-box; position:relative;}
+		*{margin:0; padding:0; box-sizing:border-box; position:relative;}
 		body{-moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; user-select: none;}
 		a, a:hover, a:focus{text-decoration:none; color:inherit; cursor:pointer;}
 		ul{list-style-type: none;}
@@ -21,20 +21,52 @@
 	</style>
 	<script>
 $(document).ready(function() {
-	var viewport = new Viewport({'fps':30, 'width':960, 'height':720, 'target':$('#viewport')});
-	viewport.setScene(new LoadingScene());
+	var config = {
+		'debug': {
+			'hitbox':false,
+		},
+		'viewport': {
+			'el':$('#viewport'),
+			'fps':60,
+			'width':960,
+			'height':720,
+			'scale':3,
+			'background_color':'#000000',
+		},
+	}
+	var LoadingScene = function() {
+		var _begin = -1;
+		var _circle = 1500;
+		
+		this.render = function(t, ctx, width, height) {
+			if( 0 > _begin ) {
+				_begin = t;
+			}
+			var dt = (t-_begin) / _circle;
+			var rad = Math.PI * dt
+			var opacity = Math.abs(Math.sin(rad));
 
-	var assetPool = new AssetPool(data_assets, function(msg, progress) {
+			ctx.fillStyle = '#bbccdd';
+			ctx.fillRect(0, 0, width, height);
+			ctx.fillStyle = 'rgba(0,0,0,'+opacity+')';
+			ctx.font = 'italic 50px Arial';
+			ctx.textAlign = 'center'
+			ctx.fillText("Loading...", width/2, height/2);
+		}
+	}
+	var app = new SS.Application(config);
+	app.scene = new LoadingScene();
+	app.loadAssets(data_assets, function(msg, progress) {
 		switch(msg) {
 			case 'finished':
-				console.log('image loading finished');
+				console.log('assets loading finished');
 				setTimeout(function(){
-					viewport.setScene(map_scene);
+					app.scene = mapScene;
 				}, 1500);
 		}
 	});
-	var gameObjectPool = new GameObjectPool(assetPool, data_game_objects);
-	var map_scene = new MapScene(assetPool, gameObjectPool, data_maps['room01'], 'default');
+	app.loadClasses(data_game_object_classes);
+	var mapScene = new SS.tool.MapScene(app, data_maps['room01'], 'default');
 
 
 	$('#debug_hitbox').on('change', function() {
