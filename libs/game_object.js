@@ -46,8 +46,8 @@ SS.GameObject = function(application, classData, instanceData) {
 		});
 		if( widthUpdated || heightUpdated ) {
 			_hitboxMap['ui'] = {'x':0, 'y':0, 'width':_width, 'height':_height};
-			if( widthUpdated ) $this.fireObservationEvent('size', 'valueChanged', {'propertyName':'width', 'before':beforeWidth, 'after':_width});
-			if( heightUpdated ) $this.fireObservationEvent('size', 'valueChanged', {'propertyName':'height', 'before':beforeHeight, 'after':_height});
+			if( widthUpdated ) $this.fireEvent('size', 'valueChanged', {'propertyName':'width', 'before':beforeWidth, 'after':_width});
+			if( heightUpdated ) $this.fireEvent('size', 'valueChanged', {'propertyName':'height', 'before':beforeHeight, 'after':_height});
 		}
 	};
 	this.setChild = function(childName, child) {
@@ -128,15 +128,15 @@ SS.GameObject = function(application, classData, instanceData) {
 	});
 	Object.defineProperty(this, 'x', {
 		'get':function() { return _x; },
-		'set':function(x) { $this.fireObservationEvent('position', 'valueChanged', {'propertyName':'x', 'before':_x, 'after':x}); _x = x;},
+		'set':function(x) { $this.fireEvent('position', 'valueChanged', {'propertyName':'x', 'before':_x, 'after':x}); _x = x;},
 	});
 	Object.defineProperty(this, 'y', {
 		'get':function() { return _y; },
-		'set':function(y) { $this.fireObservationEvent('position', 'valueChanged', {'propertyName':'y', 'before':_y, 'after':y}); _y = y;},
+		'set':function(y) { $this.fireEvent('position', 'valueChanged', {'propertyName':'y', 'before':_y, 'after':y}); _y = y;},
 	});
 	Object.defineProperty(this, 'z', {
 		'get':function() { return _z; },
-		'set':function(z) { $this.fireObservationEvent('position', 'valueChanged', {'propertyName':'z', 'before':_z, 'after':z}); _z = z;},
+		'set':function(z) { $this.fireEvent('position', 'valueChanged', {'propertyName':'z', 'before':_z, 'after':z}); _z = z;},
 	});
 	Object.defineProperty(this, 'width', {
 		'get':function() { return _width; },
@@ -147,7 +147,7 @@ SS.GameObject = function(application, classData, instanceData) {
 	this.hitboxList = function(type) {
 		return _hitboxMap[type];
 	}
-	this.fireObservationEvent = function(category, type, data) {
+	this.fireEvent = function(category, type, data) {
 		if( type == 'valueChanged' && data.before == data.after ) {
 			return false;
 		}
