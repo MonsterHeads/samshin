@@ -195,6 +195,22 @@ SS.GameObject = function(application, classData, instanceData) {
 			}
 		});
 	}
+	this.on = function(category, observer) {
+		$this.addObserver('__on_method', observer, [category]);
+	}
+	this.off = function(category) {
+		var group = '__on_method';
+		if( _observerMap.hasOwnProperty(group) ) {
+			if( _observerMap[group].hasOwnProperty(category) ) {
+				delete  _observerMap[group][category];
+			}
+		}
+		if( _observeCategoryMap.hasOwnProperty(category) ) {
+			if( _observeCategoryMap[category].hasOwnProperty(group) ) {
+				delete  _observeCategoryMap[category][group];	
+			}
+		}
+	}
 
 	this.hitCheck = function(otherObject, type) {
 		var o = otherObject;
