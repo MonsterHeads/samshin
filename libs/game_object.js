@@ -1,24 +1,55 @@
 SS.GameObject = function(application, classData, instanceData) {
 	var $this = this;
 	var _app = application;
-	var _statusMap = {};
-	var _boxData = {'width':0, 'height':0, 'hitboxList':[]};
+	
 	var _x = 0;
 	var _y = 0;
 	var _z = 0;
 	if( instanceData.hasOwnProperty('x') ) { _x = instanceData.x; }
 	if( instanceData.hasOwnProperty('y') ) { _y = instanceData.y; }
 	if( instanceData.hasOwnProperty('z') ) { _z = instanceData.z; }
+	var _width = 0;
+	var _height = 0;
+	var _hitboxMap = {};
 
-
+	var _statusMap = {};
 	var _data = {};
-	var _status;
+	var _status = '';
 	var _statusStartTime = -1;
 	var _childMap = {};
 	var _childList = [];
 	var _observeCategoryMap = {'position':{}, 'size':{}, 'status':{},};
 	var _observerMap = {}; // GroupMap > TypeMap > InstanceList
 
+	var _updateBoxData = function(data) {
+		if( !data ) return;
+		var beforeWidth, beforeHeight;
+		var widthUpdated = false;
+		var heightUpdated = false;
+		if( data.hasOwnProperty('width') ) {
+			beforeWidth = _width;
+			_width = data.width;
+			widthUpdated = true;
+		}
+		if( data.hasOwnProperty('height') ) {
+			beforeHeight = _height;
+			_height = data.height;
+			heightUpdated = true;
+		}
+
+		$.each(data.hitboxMap, function(type, hitboxList) {
+			if( hitboxList && hitboxList instanceof Array && 0 < hitboxList.length ) {
+				_hitboxMap[type] = hitboxList;
+			} else {
+				delete _hitboxMap[type];
+			}
+		});
+		if( widthUpdated || heightUpdated ) {
+			_hitboxMap['ui'] = {'x':0, 'y':0, 'width':_width, 'height':_height};
+			if( widthUpdated ) $this.fireObservationEvent('size', 'valueChanged', {'propertyName':'width', 'before':beforeWidth, 'after':_width});
+			if( heightUpdated ) $this.fireObservationEvent('size', 'valueChanged', {'propertyName':'height', 'before':beforeHeight, 'after':_height});
+		}
+	};
 	this.setChild = function(childName, child) {
 		var compareZOrder = function(childA, childB) {
 			if( childA.z < childB.z  ) return -1;
@@ -88,14 +119,7 @@ SS.GameObject = function(application, classData, instanceData) {
 			}
 			_status = status;
 			_statusStartTime = -1;
-			var statusBoxData = _statusMap[_status].init.apply($this,[_app]);
-			if( statusBoxData.hasOwnProperty('width') ) {
-				$this.fireObservationEvent('size', 'valueChanged', {'propertyName':'width', 'before':_boxData.width, 'after':statusBoxData.width});
-			}
-			if( statusBoxData.hasOwnProperty('height') ) {
-				$this.fireObservationEvent('size', 'valueChanged', {'propertyName':'height', 'before':_boxData.height, 'after':statusBoxData.height});
-			}
-			$.extend(_boxData, statusBoxData);			
+			_updateBoxData(_statusMap[_status].init.apply($this,[_app]))
 		},
 	});
 	Object.defineProperty(this, 'data', {
@@ -115,14 +139,14 @@ SS.GameObject = function(application, classData, instanceData) {
 		'set':function(z) { $this.fireObservationEvent('position', 'valueChanged', {'propertyName':'z', 'before':_z, 'after':z}); _z = z;},
 	});
 	Object.defineProperty(this, 'width', {
-		'get':function() { return _boxData.width; },
+		'get':function() { return _width; },
 	});
 	Object.defineProperty(this, 'height', {
-		'get':function() { return _boxData.height; },
+		'get':function() { return _height; },
 	});
-	Object.defineProperty(this, 'hitboxList', {
-		'get':function() { return _boxData.hitboxList; },
-	});
+	this.hitboxList = function(type) {
+		return _hitboxMap[type];
+	}
 	this.fireObservationEvent = function(category, type, data) {
 		if( type == 'valueChanged' && data.before == data.after ) {
 			return false;
@@ -172,12 +196,12 @@ SS.GameObject = function(application, classData, instanceData) {
 		});
 	}
 
-	this.hitCheck = function(otherObject) {
+	this.hitCheck = function(otherObject, type) {
 		var o = otherObject;
 		if( $this === o ) return false;
 		var result = false;
-		$.each($this.hitboxList, function(idx, a) {
-			$.each(o.hitboxList, function(idx, b) {
+		$.each($this.hitboxList(type), function(idx, a) {
+			$.each(o.hitboxList(type), function(idx, b) {
 				var ax1=$this.x+a.x, ax2=$this.x+a.x+a.width-1, ay1=$this.y+a.y, ay2=$this.y+a.y+a.height-1;
 				var bx1=o.x+b.x, bx2=o.x+b.x+b.width-1, by1=o.y+b.y, by2=o.y+b.y+b.height-1;
 				if( ax1<=bx2 && ax2>=bx1 && ay1<=by2 && ay2>=by1 ) {
@@ -188,11 +212,11 @@ SS.GameObject = function(application, classData, instanceData) {
 		});
 		return result;
 	}
-	this.hitCheckWithChildren = function(gameObject) {
+	this.hitCheckWithChildren = function(gameObject, type) {
 		if( 0 == gameObject.hitboxList.length ) return false;
 		var result = false;
 		$.each(_childList, function(idx, childWrap) {
-			if( childWrap.inst.hitCheck(gameObject) ) {
+			if( childWrap.inst.hitCheck(gameObject, type) ) {
 				result = childWrap.inst;
 				return false;
 			}
@@ -206,15 +230,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		var statusData = _statusMap[_status];
 		if( statusData.hasOwnProperty('update') && 'function' == typeof statusData.update ) {
 			var statusBoxData = statusData.update.apply($this, [t-_statusStartTime]);
-			if( statusBoxData ) {
-				if( statusBoxData.hasOwnProperty('width') ) {
-					$this.fireObservationEvent('size', 'valueChanged', {'propertyName':'width', 'before':_boxData.width, 'after':statusBoxData.width});
-				}
-				if( statusBoxData.hasOwnProperty('height') ) {
-					$this.fireObservationEvent('size', 'valueChanged', {'propertyName':'height', 'before':_boxData.height, 'after':statusBoxData.height});
-				}
-				$.extend(_boxData, statusBoxData);
-			}
+			_updateBoxData(statusBoxData);
 		}
 		$.each(_childList, function(idx, childWrap) {
 			childWrap.inst.update(t);

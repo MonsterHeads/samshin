@@ -149,7 +149,7 @@ var data_maps = {
 				if( !plus ) delta = 0 - delta;
 				var org = _character[axis];
 				_character[axis] = Math.floor(_characterStartPosition[axis]+delta);
-				var result = $this.hitCheckWithChildren(_character);
+				var result = $this.hitCheckWithChildren(_character, 'move');
 				if( result ) {
 					_character[axis] = org;
 					_statusStartTime = t;

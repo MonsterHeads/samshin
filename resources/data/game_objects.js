@@ -5,10 +5,10 @@ var data_game_object_classes =
 	'name':'cursors',
 	'data': {
 		'status': {
-			'action': {'type':'single', 'data':{'assetName':'/cursors/action', 'hitboxList':[]}},
-			'normal': {'type':'single', 'data':{'assetName':'/cursors/normal', 'hitboxList':[]}},
-			'search': {'type':'single', 'data':{'assetName':'/cursors/search', 'hitboxList':[]}},
-			'talk':   {'type':'single', 'data':{'assetName':'/cursors/talk', 'hitboxList':[]}},
+			'action': {'type':'single', 'data':{'assetName':'/cursors/action',}},
+			'normal': {'type':'single', 'data':{'assetName':'/cursors/normal',}},
+			'search': {'type':'single', 'data':{'assetName':'/cursors/search',}},
+			'talk':   {'type':'single', 'data':{'assetName':'/cursors/talk',}},
 		},
 	}
 },
@@ -51,15 +51,15 @@ var data_game_object_classes =
 			'name':'room01',
 			'data': {
 				'status': {
-					'chair':        {'type':'single', 'data':{'assetName':'/room01_furnitures/chair', 'hitboxList':[{'x':0, 'y':8, 'width':19, 'height':10},]}},
-					'citywindow':   {'type':'single', 'data':{'assetName':'/room01_furnitures/citywindow', 'hitboxList':[]}},
-					'couch':        {'type':'single', 'data':{'assetName':'/room01_furnitures/couch', 'hitboxList':[{'x':2, 'y':14, 'width':44, 'height':16}]}},
-					'diningtable':  {'type':'single', 'data':{'assetName':'/room01_furnitures/diningtable', 'hitboxList':[{'x':6, 'y':12, 'width':37, 'height':19}]}},
-					'stackbook':    {'type':'single', 'data':{'assetName':'/room01_furnitures/stackbook', 'hitboxList':[]}},
-					'tableandlamp': {'type':'single', 'data':{'assetName':'/room01_furnitures/tableandlamp', 'hitboxList':[{'x':4, 'y':22, 'width':24, 'height':10}]}},
-					'teatable':     {'type':'single', 'data':{'assetName':'/room01_furnitures/teatable', 'hitboxList':[{'x':4, 'y':16, 'width':41, 'height':12}]}},
-					'tv':           {'type':'single', 'data':{'assetName':'/room01_furnitures/tv', 'hitboxList':[{'x':6, 'y':20, 'width':38, 'height':12}]}},
-					'wallshelf':    {'type':'single', 'data':{'assetName':'/room01_furnitures/wallshelf', 'hitboxList':[]}},
+					'chair':        {'type':'single', 'data':{'assetName':'/room01_furnitures/chair', 'hitboxMap':{'move':[{'x':0, 'y':8, 'width':19, 'height':10},]}}},
+					'citywindow':   {'type':'single', 'data':{'assetName':'/room01_furnitures/citywindow'},},
+					'couch':        {'type':'single', 'data':{'assetName':'/room01_furnitures/couch', 'hitboxMap':{'move':[{'x':2, 'y':14, 'width':44, 'height':16}]}}},
+					'diningtable':  {'type':'single', 'data':{'assetName':'/room01_furnitures/diningtable', 'hitboxMap':{'move':[{'x':6, 'y':12, 'width':37, 'height':19}]}}},
+					'stackbook':    {'type':'single', 'data':{'assetName':'/room01_furnitures/stackbook',}},
+					'tableandlamp': {'type':'single', 'data':{'assetName':'/room01_furnitures/tableandlamp', 'hitboxMap':{'move':[{'x':4, 'y':22, 'width':24, 'height':10}]}}},
+					'teatable':     {'type':'single', 'data':{'assetName':'/room01_furnitures/teatable', 'hitboxMap':{'move':[{'x':4, 'y':16, 'width':41, 'height':12}]}}},
+					'tv':           {'type':'single', 'data':{'assetName':'/room01_furnitures/tv', 'hitboxMap':{'move':[{'x':6, 'y':20, 'width':38, 'height':12}]}}},
+					'wallshelf':    {'type':'single', 'data':{'assetName':'/room01_furnitures/wallshelf',}},
 				},
 			},
 		},
@@ -74,10 +74,10 @@ var data_game_object_classes =
 			'name':'doctor_w',
 			'data': {
 				'status': {
-					'up_stop':     {'type':'single', 'data':{'assetName':'/characters/doctor_w/up1', 'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8},]}},
-					'down_stop':   {'type':'single', 'data':{'assetName':'/characters/doctor_w/down1', 'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8},]}},
-					'left_stop':   {'type':'single', 'data':{'assetName':'/characters/doctor_w/left1', 'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8},]}},
-					'right_stop':  {'type':'single', 'data':{'assetName':'/characters/doctor_w/right1', 'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8},]}},
+					'up_stop':     {'type':'single', 'data':{'assetName':'/characters/doctor_w/up1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+					'down_stop':   {'type':'single', 'data':{'assetName':'/characters/doctor_w/down1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+					'left_stop':   {'type':'single', 'data':{'assetName':'/characters/doctor_w/left1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+					'right_stop':  {'type':'single', 'data':{'assetName':'/characters/doctor_w/right1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
 					'up_walk': {
 						'type':'simpleAnimation',
 						'data': {
@@ -85,7 +85,7 @@ var data_game_object_classes =
 							'assetList':[
 								'/characters/doctor_w/up2','/characters/doctor_w/up1','/characters/doctor_w/up3','/characters/doctor_w/up1',
 							],
-							'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}],
+							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
 						},
 					},
 					'down_walk': {
@@ -95,7 +95,7 @@ var data_game_object_classes =
 							'assetList':[
 								'/characters/doctor_w/down2','/characters/doctor_w/down1','/characters/doctor_w/down3','/characters/doctor_w/down1',
 							],
-							'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}],
+							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
 						},
 					},
 					'left_walk': {
@@ -105,7 +105,7 @@ var data_game_object_classes =
 							'assetList':[
 								'/characters/doctor_w/left2','/characters/doctor_w/left1','/characters/doctor_w/left3','/characters/doctor_w/left1',
 							],
-							'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}],
+							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
 						},
 					},
 					'right_walk': {
@@ -115,7 +115,7 @@ var data_game_object_classes =
 							'assetList':[
 								'/characters/doctor_w/right2','/characters/doctor_w/right1','/characters/doctor_w/right3','/characters/doctor_w/right1',
 							],
-							'hitboxList':[{'x':6, 'y':24, 'width':20, 'height':8}],
+							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
 						},
 					},
 				},

@@ -5,18 +5,18 @@ SS.gameObjectStatusType = $.extend({}, SS.gameObjectStatusType, {
 	'tile': function(data) {
 		var _app;
 		var _asset;
-		var _hitboxList = [];
+		var _hitboxMap = {};
 		return {
 			'init': function(application) {
 				_app = application;
 				_asset = _app.getAsset(data.assetName);
 				if( data.hitCheck ) {
-					_hitboxList = [{'x':0, 'y':0, 'width':_asset.width, 'height':_asset.height}];
+					_hitboxMap = {'move':[{'x':0, 'y':0, 'width':_asset.width, 'height':_asset.height}]};
 				}
 				return {
 					'width':_asset.width,
 					'height':_asset.height,
-					'hitboxList':_hitboxList,
+					'hitboxMap':_hitboxMap,
 				}
 			},
 			'render': function(t, ctx) {
@@ -34,7 +34,7 @@ SS.gameObjectStatusType = $.extend({}, SS.gameObjectStatusType, {
 				return {
 					'width':_asset.width,
 					'height':_asset.height,
-					'hitboxList':data.hitboxList,
+					'hitboxMap':data.hitboxMap,
 				}
 			},
 			'render': function(t, ctx) {
@@ -46,7 +46,7 @@ SS.gameObjectStatusType = $.extend({}, SS.gameObjectStatusType, {
 		var _app;
 		var _delay = animationData.delay;
 		var _assetNameList = animationData.assetList;
-		var _hitboxList = animationData.hitboxList;
+		var _hitboxMap = animationData.hitboxMap;
 		var _width = 0;
 		var _height = 0;
 		var _assetList;
@@ -64,7 +64,7 @@ SS.gameObjectStatusType = $.extend({}, SS.gameObjectStatusType, {
 				return {
 					'width':_width,
 					'height':_height,
-					'hitboxList':_hitboxList,
+					'hitboxMap':_hitboxMap,
 				}
 			},
 			'render': function(t, ctx) {

@@ -19,8 +19,8 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		return _rootGameObject.child(name);
 	}
 
-	this.hitCheckWithChildren = function(gameObject) {
-		return _rootGameObject.hitCheckWithChildren(gameObject);
+	this.hitCheckWithChildren = function(gameObject, type) {
+		return _rootGameObject.hitCheckWithChildren(gameObject, type);
 	}
 	this.eventCallback = function(t, type, evt) {
 		_sceneDescriptor.eventCallback.apply($this, [t, type, evt]);
@@ -56,7 +56,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 				$.each(row, function(xIdx, tileIdx) {
 					var tileObjectData = $.extend({}, mapData.tiles[tileIdx], {'x':x, 'y':y});
 					var tileObject = _app.createGameObject(mapData.tiles[tileIdx].cls, tileObjectData);
-					$.each(tileObject.hitboxList, function(idx, hitbox) {
+					$.each(tileObject.hitboxList('move'), function(idx, hitbox) {
 						hitboxList.push({'x':hitbox.x+x, 'y':hitbox.y+y, 'width':hitbox.width, 'height':hitbox.height});
 					});
 
@@ -70,7 +70,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 			var width = maxWidth;
 			var height = y;
 			var tileObjectClassData = {'status':{'default': {'type':'custom','data':{
-				'init': function(application) {return {'width':width,'height':height,'hitboxList':hitboxList,}},
+				'init': function(application) {return {'width':width,'height':height,'hitboxMap':{'move':hitboxList,},}},
 				'render': function(t, ctx) {}
 			},},},};
 			tileObject = new SS.GameObject(_app, tileObjectClassData, {'x':0, 'y':0, 'status':'default'});
