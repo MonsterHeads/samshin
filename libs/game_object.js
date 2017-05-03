@@ -16,7 +16,7 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _statusStartTime = -1;
 	var _childMap = {};
 	var _childList = [];
-	var _observeTypes = {'position':{}, 'size':{}, 'status':{},};
+	var _observeCategoryMap = {'position':{}, 'size':{}, 'status':{},};
 	var _observerMap = {}; // GroupMap > TypeMap > InstanceList
 
 	this.setChild = function(childName, child) {
@@ -55,11 +55,10 @@ SS.GameObject = function(application, classData, instanceData) {
 			}
 		})();
 		child.removeObserverGroup('__parent');
-		child.addObserver('__parent', {
-			'valueChanged': function(object, propertyName, before, after) {
-				switch(propertyName) {
+		child.addObserver('__parent', function(evt) {
+				switch(evt.data.propertyName) {
 				case 'y': case 'height': case 'z': // re-sort z-order
-					if( before > after ) {
+					if( evt.data.before > evt.data.after ) {
 						var curIdx = _childMap[childName].idx;
 						for(var idx=curIdx-1; idx>=0; idx--) {
 							var compare = compareZOrder(child, _childList[idx].inst);
@@ -76,7 +75,7 @@ SS.GameObject = function(application, classData, instanceData) {
 					}
 				}
 			}
-		});
+		);
 	};
 	this.child = function(childName) {
 		return _childMap[childName].inst;
@@ -91,10 +90,10 @@ SS.GameObject = function(application, classData, instanceData) {
 			_statusStartTime = -1;
 			var statusBoxData = _statusMap[_status].init.apply($this,[_app]);
 			if( statusBoxData.hasOwnProperty('width') ) {
-				$this.fireValueChangedEvent('size', 'width', _boxData.width, statusBoxData.width);
+				$this.fireObservationEvent('size', 'valueChanged', {'propertyName':'width', 'before':_boxData.width, 'after':statusBoxData.width});
 			}
 			if( statusBoxData.hasOwnProperty('height') ) {
-				$this.fireValueChangedEvent('size', 'height', _boxData.height, statusBoxData.height);
+				$this.fireObservationEvent('size', 'valueChanged', {'propertyName':'height', 'before':_boxData.height, 'after':statusBoxData.height});
 			}
 			$.extend(_boxData, statusBoxData);			
 		},
@@ -105,15 +104,15 @@ SS.GameObject = function(application, classData, instanceData) {
 	});
 	Object.defineProperty(this, 'x', {
 		'get':function() { return _x; },
-		'set':function(x) { $this.fireValueChangedEvent('position', 'x', _x, x); _x = x;},
+		'set':function(x) { $this.fireObservationEvent('position', 'valueChanged', {'propertyName':'x', 'before':_x, 'after':x}); _x = x;},
 	});
 	Object.defineProperty(this, 'y', {
 		'get':function() { return _y; },
-		'set':function(y) { $this.fireValueChangedEvent('position', 'y', _y, y); _y = y;},
+		'set':function(y) { $this.fireObservationEvent('position', 'valueChanged', {'propertyName':'y', 'before':_y, 'after':y}); _y = y;},
 	});
 	Object.defineProperty(this, 'z', {
 		'get':function() { return _z; },
-		'set':function(z) { $this.fireValueChangedEvent('position', 'z', _z, z); _z = z;},
+		'set':function(z) { $this.fireObservationEvent('position', 'valueChanged', {'propertyName':'z', 'before':_z, 'after':z}); _z = z;},
 	});
 	Object.defineProperty(this, 'width', {
 		'get':function() { return _boxData.width; },
@@ -124,47 +123,49 @@ SS.GameObject = function(application, classData, instanceData) {
 	Object.defineProperty(this, 'hitboxList', {
 		'get':function() { return _boxData.hitboxList; },
 	});
-	this.fireValueChangedEvent = function(type, propertyName, before, after) {
-		if( before === after ) return;
+	this.fireObservationEvent = function(category, type, data) {
+		if( type == 'valueChanged' && data.before == data.after ) {
+			return false;
+		}
 		var observerList = [];
-		$.each(_observeTypes[type], function(group) {
+		$.each(_observeCategoryMap[category], function(group) {
 			$.each(_observerMap[group][type], function(idx, observer) {observerList.push(observer);});
 		});
-		$.each(_observeTypes['__all'], function(group) {
+		$.each(_observeCategoryMap['__all'], function(group) {
 			$.each(_observerMap[group]['__all'], function(idx, observer) {observerList.push(observer);});
 		});
 		setTimeout(function(){
 			$.each(observerList, function(idx, observer) {
-				observer.valueChanged($this, propertyName, before, after);
+				observer.apply($this, [{'category':category, 'type':type, 'data':data}]);
 			});
 		}, 0);
 	};
-	this.addObserver = function(group, observer, types) {
-		var typeToObserve = {};
-		if( !types || types.length == 0 ) types = ['__all'];
-		for( var i=0; i<types.length; i++ ) {
-			typeToObserve[types[i]] = true;
+	this.addObserver = function(group, observer, categories) {
+		var categoryToObserve = {};
+		if( !categories || categories.length == 0 ) categories = ['__all'];
+		for( var i=0; i<categories.length; i++ ) {
+			categoryToObserve[categories[i]] = true;
 		}
 		if( !_observerMap.hasOwnProperty(group) ) {
 			_observerMap[group] = {};
 		}
-		var typeMap = _observerMap[group];
-		$.each(typeToObserve, function(type) {
-			if( !_observeTypes.hasOwnProperty(type) ) {
-				_observeTypes[type] = {};
+		var categoryMap = _observerMap[group];
+		$.each(categoryToObserve, function(category) {
+			if( !_observeCategoryMap.hasOwnProperty(category) ) {
+				_observeCategoryMap[category] = {};
 			}
-			_observeTypes[type][group] = true;
-			if( !typeMap.hasOwnProperty(type) ) {
-				typeMap[type] = [];
+			_observeCategoryMap[category][group] = true;
+			if( !categoryMap.hasOwnProperty(category) ) {
+				categoryMap[category] = [];
 			}
-			typeMap[type].push(observer);
+			categoryMap[category].push(observer);
 		});
 	};
 	this.removeObserverGroup = function(group) {
 		if( _observerMap.hasOwnProperty(group) ) {
 			delete _observerMap[group];
 		}
-		$.each(_observeTypes, function(type, groupMap) {
+		$.each(_observeCategoryMap, function(category, groupMap) {
 			if( groupMap.hasOwnProperty(group) ) {
 				delete groupMap[group];
 			}
@@ -207,10 +208,10 @@ SS.GameObject = function(application, classData, instanceData) {
 			var statusBoxData = statusData.update.apply($this, [t-_statusStartTime]);
 			if( statusBoxData ) {
 				if( statusBoxData.hasOwnProperty('width') ) {
-					$this.fireValueChangedEvent('size', 'width', _boxData.width, statusBoxData.width);
+					$this.fireObservationEvent('size', 'valueChanged', {'propertyName':'width', 'before':_boxData.width, 'after':statusBoxData.width});
 				}
 				if( statusBoxData.hasOwnProperty('height') ) {
-					$this.fireValueChangedEvent('size', 'height', _boxData.height, statusBoxData.height);
+					$this.fireObservationEvent('size', 'valueChanged', {'propertyName':'height', 'before':_boxData.height, 'after':statusBoxData.height});
 				}
 				$.extend(_boxData, statusBoxData);
 			}

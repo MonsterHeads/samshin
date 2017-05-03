@@ -96,7 +96,7 @@ SS.Application = function(config) {
 	});
 	Object.defineProperty(this, 'cursor', {
 		'get': function() { return _cursorGameObject; },
-		'set': function(cursor) { console.log(cursor, cursor instanceof SS.GameObject, typeof cursor); if( cursor instanceof SS.GameObject ) _cursorGameObject = cursor; },
+		'set': function(cursor) { if( cursor instanceof SS.GameObject ) _cursorGameObject = cursor; },
 	});
 	this.loadAssets = function(assetData, loadingCallback) {
 		_assetPool.loadAssets(assetData, loadingCallback);
