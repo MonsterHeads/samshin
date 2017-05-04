@@ -259,15 +259,17 @@ SS.GameObject = function(application, classData, instanceData) {
 		var statusData = _statusMap[_status];
 		statusData.render.apply($this, [t-_statusStartTime, ctx]);
 		if( _app.config.debug.hitbox ) {
-			$.each(_boxData.hitboxList, function(idx, hitbox) {
-				ctx.fillStyle = 'rgba(50,200,50,0.3)';
-				ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-				ctx.beginPath();
-				ctx.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-				ctx.lineWidth = 0.3;
-				ctx.strokeStyle = 'rgba(255,0,0,1)';
-				ctx.stroke();
-				ctx.closePath();
+			$.each(_hitboxMap, function(type, hitboxList) {
+				$.each(hitboxList, function(idx, hitbox) {
+					ctx.fillStyle = 'rgba(50,200,50,0.3)';
+					ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+					ctx.beginPath();
+					ctx.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+					ctx.lineWidth = 0.3;
+					ctx.strokeStyle = 'rgba(255,0,0,1)';
+					ctx.stroke();
+					ctx.closePath();
+				})
 			});
 		}
 		$.each(_childList, function(idx, childWrap) {
