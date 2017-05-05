@@ -91,7 +91,7 @@ SS.tool.HitChecker = (function() {
 			return ( a.x<=b.x+b.width-1 && a.x+a.width-1>=b.x && a.y<=b.y+b.height-1 && a.y+a.height-1>=b.y );
 		},
 		'point2box' : function(p, a) {
-			return ( p.x>=a.x && p.y>=b.y && p.x<=a.x+a.width-1 p.y<=a.y+a.height-1 );
+			return ( p.x>=a.x && p.y>=b.y && p.x<=a.x+a.width-1 && p.y<=a.y+a.height-1 );
 		},
 	}
 })();
