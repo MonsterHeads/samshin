@@ -7,9 +7,11 @@ window['SS'] = {
 
 SS.priv.Viewport = function(application) {
 	var _app = application;
+	var _config;
 	var _scene;
 	var _canvas;
 	var _ctx;
+	var _lastRenderCalled;
 
 	var init = function() {
 		_config = _app.config.viewport;
@@ -30,15 +32,15 @@ SS.priv.Viewport = function(application) {
 		_ctx.imageSmoothingEnabled = false;
 
 		$(window).on('keydown', function(evt) {
-			if( _scene && typeof _scene.eventCallback == 'function' ) {
+			if( _scene && typeof _scene.keyboardEventListener == 'function' ) {
 				var t = new Date().getTime();
-				_scene.eventCallback(t, 'keydown', evt);
+				_scene.keyboardEventListener(t, 'keydown', evt);
 			}
 		});
 		$(window).on('keyup', function(evt) {
-			if( _scene && typeof _scene.eventCallback == 'function' ) {
+			if( _scene && typeof _scene.keyboardEventListener == 'function' ) {
 				var t = new Date().getTime();
-				_scene.eventCallback(t, 'keyup', evt);	
+				_scene.keyboardEventListener(t, 'keyup', evt);	
 			}
 		});
 		$(_canvas).on('mousemove', function(evt) {
@@ -55,7 +57,7 @@ SS.priv.Viewport = function(application) {
 			_scene.render(t, _ctx, _config.renderWidth, _config.renderHeight);
 		} else {
 			_ctx.fillStyle = "#000000";
-			_ctx.fillRect(0, 0, _config.width, _config.height);
+			_ctx.fillRect(0, 0, _config.renderWidth, _config.renderHeight);
 		}
 		var cursor = _app.cursor;
 		if( cursor ) {
@@ -72,6 +74,14 @@ SS.priv.Viewport = function(application) {
 		if( delta < 0 ) {
 			delta = 0;
 		}
+		
+		if( _app.config.debug.fps ) {
+			_ctx.fillStyle = '#00ff00';
+			_ctx.font = '8px Arial';
+			_ctx.textAlign = 'right';
+			_ctx.fillText(""+Math.round(1000/(t-_lastRenderCalled)), _config.renderWidth, 8);
+		}
+		_lastRenderCalled = t;
 		setTimeout(function(){render();}, delta);
 	}
 

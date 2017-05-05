@@ -32,6 +32,7 @@
 $(document).ready(function() {
 	var config = {
 		'debug': {
+			'fps':false,
 			'hitbox':false,
 		},
 		'viewport': {
@@ -78,7 +79,13 @@ $(document).ready(function() {
 	app.cursor = app.createGameObject('/cursors', {'status':'normal'})
 	var mapScene = new SS.tool.MapScene(app, data_maps['room01'], 'default');
 
-
+	$('#debug_fps').on('change', function() {
+		if( $(this).prop('checked') ) {
+			config.debug.fps = true;
+		} else {
+			config.debug.fps = false;
+		}
+	});
 	$('#debug_hitbox').on('change', function() {
 		if( $(this).prop('checked') ) {
 			config.debug.hitbox = true;
@@ -91,6 +98,7 @@ $(document).ready(function() {
 </head>
 <body>
 <div id="debug">
+	<input id="debug_fps" type="checkbox" /> <label for="debug_fps">fps</label>
 	<input id="debug_hitbox" type="checkbox" /> <label for="debug_hitbox">hitbox</label>
 	
 </div>

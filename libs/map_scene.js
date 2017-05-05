@@ -3,27 +3,29 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	var _app = application;
 	var _center = {'x':0, 'y':0};
 
-	var _rootGameObject;
+	var _root;
 	var _sceneDescriptor = {};
 
 	Object.defineProperty(this, 'width', {
-		'get':function() { return _rootGameObject.width; },
+		'get':function() { return _root.child('objects').width; },
 	});
 	Object.defineProperty(this, 'height', {
-		'get':function() { return _rootGameObject.height; },
+		'get':function() { return _root.child('objects').height; },
 	});
 	Object.defineProperty(this, 'center', {
 		'get':function() { return _center; },
 	});
+	Object.defineProperty(this, 'tileObject', {
+		'get':function() { return _root.child('tile'); },
+	});
 	this.gameObject = function(name) {
-		return _rootGameObject.child(name);
+		return _root.child('objects').child(name);
 	}
-
 	this.eachGameObject = function() {
-		_rootGameObject.eachChild.apply(_rootGameObject, Array.prototype.slice.call(arguments));
+		_root.child('objects').eachChild.apply(_root.child('objects'), Array.prototype.slice.call(arguments));
 	}
-	this.eventCallback = function(t, type, evt) {
-		_sceneDescriptor.eventCallback.apply($this, [t, type, evt]);
+	this.keyboardEventListener = function(t, type, evt) {
+		_sceneDescriptor.keyboardEventListener.apply($this, [t, type, evt]);
 	};
 	this.render = function(t, ctx, width, height) {
 		_sceneDescriptor.update.apply($this, [t, width, height]);
@@ -33,12 +35,12 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		var ctxDstX = Math.max(0, width/2-this.center.x);
 		var ctxDstY = Math.max(0, height/2-this.center.y);
 
-		_rootGameObject.update(t);
+		_root.update(t);
 		ctx.save();
 		ctx.fillStyle = "#000000";
 		ctx.fillRect(0, 0, width, height);
 		ctx.translate(ctxDstX-mapSrcX, ctxDstY-mapSrcY);
-		_rootGameObject.render(t, ctx);
+		_root.render(t, ctx);
 		ctx.restore();
 	};
 
@@ -77,10 +79,11 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 			$.each(tileObjectList, function(idx, obj) {
 				tileObject.setChild(obj.name, obj.inst);
 			});
+			tileObject.z = 0;
 		})();
 
 		// root object
-		var rootObjectClassData = {
+		var objectsClassData = {
 			'status': {
 				'default': {
 					'type':'custom',
@@ -93,13 +96,16 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 				},
 			},
 		};
-		_rootGameObject = new SS.GameObject(_app, rootObjectClassData, {'status':'default'});
-		_rootGameObject.setChild('__tile__', tileObject);
-
+		objects = new SS.GameObject(_app, objectsClassData, {'status':'default'});
+		objects.z = 1;
 		// other game objects
 		$.each(mapData.objects, function(name, objectConfig) {
-			_rootGameObject.setChild(name, _app.createGameObject(objectConfig.cls, objectConfig.data));
+			objects.setChild(name, _app.createGameObject(objectConfig.cls, objectConfig.data));
 		});
+
+		_root = new SS.GameObject(_app, objectsClassData, {'status':'default'});
+		_root.setChild('tile', tileObject);
+		_root.setChild('objects', objects);
 
 		// scene_descriptor   #should be last
 		_sceneDescriptor = mapData.scenes[sceneName];

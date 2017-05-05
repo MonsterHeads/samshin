@@ -120,7 +120,7 @@ var data_maps = {
 				_character = $this.gameObject('doctorW');
 				_characterStartPosition = {'x':_character.x, 'y':_character.y};
 			};
-			var eventCallback = function(t, type, evt) {
+			var keyboardEventListener = function(t, type, evt) {
 				switch(type) {
 				case 'keydown':
 					switch(evt.keyCode) {
@@ -154,13 +154,18 @@ var data_maps = {
 				} else {
 					_character[axis] = newValue;
 					var result = false;
-					$this.eachGameObject(true, function(idx, gameObject) {
-						if( _character == gameObject ) return true;
-						if( gameObject.hitCheckForBoxList('move', _character.hitboxList('move')) ) {
-							result = true;
-							return false;
-						}
-					});
+					if( !result ) {
+						result = $this.tileObject.hitCheckForBoxList('move', _character.hitboxList('move'));
+					}
+					if( !result ) {
+						$this.eachGameObject(true, function(idx, gameObject) {
+							if( _character == gameObject ) return true;
+							if( gameObject.hitCheckForBoxList('move', _character.hitboxList('move')) ) {
+								result = true;
+								return false;
+							}
+						});
+					}
 					if( result ) {
 						_character[axis] = org;
 						_statusStartTime = t;
@@ -186,7 +191,7 @@ var data_maps = {
 					}
 				}				
 			};
-			return {'init':init, 'eventCallback': eventCallback, 'update': update};
+			return {'init':init, 'keyboardEventListener': keyboardEventListener, 'update': update};
 		})(),
 	}
 
