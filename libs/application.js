@@ -82,6 +82,20 @@ SS.priv.Viewport = function(application) {
 	init();
 };
 
+SS.tool.HitChecker = (function() {
+	return {
+		'shiftBox' : function(box, x, y) {
+			return {'x':box.x+x, 'y':box.y+y, 'width':box.width, 'height':box.height};
+		},
+		'box2box' : function(a, b) {
+			return ( a.x<=b.x+b.width-1 && a.x+a.width-1>=b.x && a.y<=b.y+b.height-1 && a.y+a.height-1>=b.y );
+		},
+		'point2box' : function(p, a) {
+			return ( p.x>=a.x && p.y>=b.y && p.x<=a.x+a.width-1 p.y<=a.y+a.height-1 );
+		},
+	}
+})();
+
 SS.Application = function(config) {
 	var $this = this;
 	var _config = config;

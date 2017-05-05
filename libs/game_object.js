@@ -11,6 +11,7 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _width = 0;
 	var _height = 0;
 	var _hitboxMap = {};
+	var _shiftedHitboxMap = {};
 
 	var _statusMap = {};
 	var _data = {};
@@ -38,6 +39,9 @@ SS.GameObject = function(application, classData, instanceData) {
 		}
 
 		$.each(data.hitboxMap, function(type, hitboxList) {
+			if( _shiftedHitboxMap.hasOwnProperty(type) ) {
+				delete _shiftedHitboxMap[type];
+			}
 			if( hitboxList && hitboxList instanceof Array && 0 < hitboxList.length ) {
 				_hitboxMap[type] = hitboxList;
 			} else {
@@ -111,6 +115,31 @@ SS.GameObject = function(application, classData, instanceData) {
 	this.child = function(childName) {
 		return _childMap[childName].inst;
 	};
+	this.eachChild = function() {
+		var reverse = false;
+		var eachFunction = function(idx, child){};
+		switch(arguments.length) {
+		case 0:
+			return;
+		case 1:
+			eachFunction = arguments[0];
+			break;
+		case 2:
+		default:
+			reverse = arguments[0];
+			eachFunction = arguments[1];
+		}
+		var i;
+		if( reverse ) {
+			for( i=_childList.length-1; i>=0; i-- ) {
+				eachFunction(i, _childList[i].inst);
+			}
+		} else {
+			for( i=0; i<_childList.length; i++ ) {
+				eachFunction(i, _childList[i].inst);
+			}
+		}
+	}
 	Object.defineProperty(this, 'status', {
 		'get': function() { return _status; },
 		'set': function(status) {
@@ -128,15 +157,29 @@ SS.GameObject = function(application, classData, instanceData) {
 	});
 	Object.defineProperty(this, 'x', {
 		'get':function() { return _x; },
-		'set':function(x) { $this.fireEvent('position', 'valueChanged', {'propertyName':'x', 'before':_x, 'after':x}); _x = x;},
+		'set':function(x) {
+			var before = _x;
+			_x = x;
+			_shiftedHitboxMap = {};
+			$this.fireEvent('position', 'valueChanged', {'propertyName':'x', 'before':before, 'after':_x});
+		},
 	});
 	Object.defineProperty(this, 'y', {
 		'get':function() { return _y; },
-		'set':function(y) { $this.fireEvent('position', 'valueChanged', {'propertyName':'y', 'before':_y, 'after':y}); _y = y;},
+		'set':function(y) {
+			var before = _y;
+			_y = y;
+			_shiftedHitboxMap = {};
+			$this.fireEvent('position', 'valueChanged', {'propertyName':'y', 'before':before, 'after':_y});
+		},
 	});
 	Object.defineProperty(this, 'z', {
 		'get':function() { return _z; },
-		'set':function(z) { $this.fireEvent('position', 'valueChanged', {'propertyName':'z', 'before':_z, 'after':z}); _z = z;},
+		'set':function(z) {
+			var before = _z;
+			_z = z;
+			$this.fireEvent('position', 'valueChanged', {'propertyName':'z', 'before':before, 'after':_z});
+		},
 	});
 	Object.defineProperty(this, 'width', {
 		'get':function() { return _width; },
@@ -145,7 +188,14 @@ SS.GameObject = function(application, classData, instanceData) {
 		'get':function() { return _height; },
 	});
 	this.hitboxList = function(type) {
-		return _hitboxMap[type];
+		if( !_hitboxMap.hasOwnProperty(type) ) return undefined;
+		if( !_shiftedHitboxMap.hasOwnProperty(type) ) {
+			_shiftedHitboxMap[type] = [];
+			$.each(_hitboxMap[type], function(idx, box) {
+				_shiftedHitboxMap[type].push(SS.tool.HitChecker.shiftBox(box, $this.x, $this.y));
+			})
+		}
+		return _shiftedHitboxMap[type];
 	}
 	this.fireEvent = function(category, type, data) {
 		if( type == 'valueChanged' && data.before == data.after ) {
@@ -158,11 +208,9 @@ SS.GameObject = function(application, classData, instanceData) {
 		$.each(_observeCategoryMap['__all'], function(group) {
 			$.each(_observerMap[group]['__all'], function(idx, observer) {observerList.push(observer);});
 		});
-		setTimeout(function(){
-			$.each(observerList, function(idx, observer) {
-				observer.apply($this, [{'category':category, 'type':type, 'data':data}]);
-			});
-		}, 0);
+		$.each(observerList, function(idx, observer) {
+			observer.apply($this, [{'category':category, 'type':type, 'data':data}]);
+		});
 	};
 	this.addObserver = function(group, observer, categories) {
 		var categoryToObserve = {};
@@ -211,33 +259,26 @@ SS.GameObject = function(application, classData, instanceData) {
 			}
 		}
 	}
-
-	this.hitCheck = function(otherObject, type) {
-		var o = otherObject;
-		if( $this === o ) return false;
+	this.hitCheckForBoxList = function(type, boxList) {
 		var result = false;
 		$.each($this.hitboxList(type), function(idx, a) {
-			$.each(o.hitboxList(type), function(idx, b) {
-				var ax1=$this.x+a.x, ax2=$this.x+a.x+a.width-1, ay1=$this.y+a.y, ay2=$this.y+a.y+a.height-1;
-				var bx1=o.x+b.x, bx2=o.x+b.x+b.width-1, by1=o.y+b.y, by2=o.y+b.y+b.height-1;
-				if( ax1<=bx2 && ax2>=bx1 && ay1<=by2 && ay2>=by1 ) {
+			$.each(boxList, function(idx, b) {
+				if( SS.tool.HitChecker.box2box(a, b) ) {
 					result = true;
-					return false;	
-				} 
+					return false;
+				}
 			});
 		});
 		return result;
 	}
-	this.hitCheckWithChildren = function(gameObject, type) {
-		if( 0 == gameObject.hitboxList.length ) return false;
+	this.hitCheckForPoint = function(type, point) {
 		var result = false;
-		$.each(_childList, function(idx, childWrap) {
-			if( childWrap.inst.hitCheck(gameObject, type) ) {
-				result = childWrap.inst;
+		$.each($this.hitboxList(type), function(idx, a) {
+			if( SS.tool.HitChecker.point2box(point, a) ) {
+				result = true;
 				return false;
 			}
 		});
-		return result;
 	}
 	this.update = function(t) {
 		if( 0 > _statusStartTime ) {

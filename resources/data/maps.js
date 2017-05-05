@@ -148,12 +148,24 @@ var data_maps = {
 				var delta = (t-_statusStartTime)/35;
 				if( !plus ) delta = 0 - delta;
 				var org = _character[axis];
-				_character[axis] = Math.floor(_characterStartPosition[axis]+delta);
-				var result = $this.hitCheckWithChildren(_character, 'move');
-				if( result ) {
-					_character[axis] = org;
-					_statusStartTime = t;
-					_characterStartPosition = {'x':_character.x, 'y':_character.y};
+				var newValue = Math.floor(_characterStartPosition[axis]+delta);
+				if( newValue == _character[axis] ) {
+					return;
+				} else {
+					_character[axis] = newValue;
+					var result = false;
+					$this.eachGameObject(true, function(idx, gameObject) {
+						if( _character == gameObject ) return true;
+						if( gameObject.hitCheckForBoxList('move', _character.hitboxList('move')) ) {
+							result = true;
+							return false;
+						}
+					});
+					if( result ) {
+						_character[axis] = org;
+						_statusStartTime = t;
+						_characterStartPosition = {'x':_character.x, 'y':_character.y};
+					}
 				}
 			};
 
