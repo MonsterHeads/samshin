@@ -7,6 +7,8 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	var _root;
 	var _sceneDescriptor = {};
 
+	var _mouseEventHelper;
+
 	Object.defineProperty(this, 'app', {
 		'get':function() { return _app; },
 	});
@@ -33,7 +35,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		case 'keypress': case 'keydown': case 'keyup':
 			_sceneDescriptor.keyboardEventListener.apply($this, [t, type, evt]);
 			break;
-		case 'mousemove':
+		case 'mousemove': case 'mouseleave':
 			_handleMouseEvent(t, type, evt);
 		}
 	};
@@ -61,21 +63,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		var ctxDstX = Math.max(0, _view.width/2-$this.center.x);
 		var ctxDstY = Math.max(0, _view.height/2-$this.center.y);
 
-		var sceneEvent = new SS.MouseEvent(type, {'x':ctxDstX-mapSrcX, 'y':ctxDstY-mapSrcY, 'parentEvent':viewportEvent});
-		var targets = SS.helper.MouseEventHelper.getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root.child('objects'));
-		var eventList = [];
-		var curEvent = sceneEvent;
-		for( var i=0; i<targets.length; i++ ) {
-			curEvent = new SS.MouseEvent(type, {'x':targets[i].x, 'y':targets[i].y, 'parentEvent':curEvent});
-			eventList.push(curEvent);
-		}
-		for( var i=targets.length-1; i>=0; i-- ) {
-			curEvent = eventList[i];
-			targets[i].fireEvent(type, type, curEvent);
-			if( curEvent.propagationStopped ) {
-				break;
-			}
-		}
+		_mouseEventHelper.handleEvent(t, type, viewportEvent, {'x':ctxDstX-mapSrcX, 'y':ctxDstY-mapSrcY});
 	};
 
 	(function() {
@@ -140,6 +128,8 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		_root = new SS.GameObject(_app, objectsClassData, {'status':'default'});
 		_root.setChild('tile', tileObject);
 		_root.setChild('objects', objects);
+
+		_mouseEventHelper = new SS.helper.MouseEventHelper(_root)
 
 		// scene_descriptor   #should be last
 		_sceneDescriptor = mapData.scenes[sceneName];

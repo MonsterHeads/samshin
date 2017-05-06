@@ -30,6 +30,73 @@ SS.MouseEvent = function(_type, data, scale) {
 	};
 };
 
+SS.helper.MouseEventHelper = function(root) {
+	var _root = root;
+	var _lastMouseMoveTargets = [];
+	var _checkTarget = function(targets, x, y, gameObject) {
+		if( gameObject.hitCheckForPoint('ui', {'x':x, 'y':y}) ){
+			targets.push(gameObject);
+			var newX = x + gameObject.x;
+			var newY = y + gameObject.y;
+			gameObject.eachChild(true, function(idx, child) {
+				if( _checkTarget(targets, newX, newY, child) ) {
+					return false;
+				}
+			});
+			return true;
+		}
+		return false;
+	};
+	var _getHitObjectList = function(x, y, gameObject) {
+		var targets = [];
+		_checkTarget(targets, x, y, gameObject);
+		return targets;
+	}
+	return {
+		'handleEvent': function(t, type, viewportEvent, originPosition) {
+			var idx;
+			if( 'mouseleave' == type ) {
+				for( idx=_lastMouseMoveTargets.length-1; idx>=0; idx-- ) {
+					_lastMouseMoveTargets[idx].fireEvent('mouseleave', {});
+				}
+				_lastMouseMoveTargets = [];
+			} else {
+				var sceneEvent = new SS.MouseEvent(type, {'x':originPosition.x, 'y':originPosition.y, 'parentEvent':viewportEvent});
+				var targets = _getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root.child('objects'));
+				var eventList = [];
+				var curEvent = sceneEvent;
+				for( idx=0; idx<targets.length; idx++ ) {
+					curEvent = new SS.MouseEvent(type, {'x':targets[idx].x, 'y':targets[idx].y, 'parentEvent':curEvent});
+					eventList.push(curEvent);
+				}
+				var leaveStartIdx = -1;
+				for( idx=0; idx<targets.length; idx++ ) {
+					if( _lastMouseMoveTargets.length-1 < idx || _lastMouseMoveTargets[idx] !== targets[idx] ) {
+						if( 0 > leaveStartIdx ) {
+							leaveStartIdx = idx;
+						}
+						targets[idx].fireEvent('mouseenter', {});
+					}
+				}
+				for( idx=targets.length-1; idx>=0; idx-- ) {
+					curEvent = eventList[idx];
+					targets[idx].fireEvent(type, curEvent);
+					if( curEvent.propagationStopped ) {
+						break;
+					}
+				}
+				if( 0 > leaveStartIdx ) {
+					leaveStartIdx = targets.length;
+				}
+				for( idx=_lastMouseMoveTargets.length-1; idx>=leaveStartIdx; idx-- ) {
+					_lastMouseMoveTargets[idx].fireEvent('mouseleave', {});
+				}
+				_lastMouseMoveTargets = targets;
+			}
+		}
+	};
+};
+
 SS.priv.Viewport = function(application) {
 	var _app = application;
 	var _config;
@@ -81,7 +148,17 @@ SS.priv.Viewport = function(application) {
 			}
 			if( _scene && typeof _scene.eventListener == 'function' ) {
 				var t = new Date().getTime();
-				_scene.eventListener(t, 'mousemove', new SS.MouseEvent('mousemove', evt, _config.scale));	
+				_scene.eventListener(t, 'mousemove', new SS.MouseEvent('mousemove', evt, _config.scale));
+			}
+		});
+		$(_canvas).on('mouseleave', function(evt) {
+			if( _app.cursor ) {
+				_app.cursor.x = 0 - _app.cursor.width - 10;
+				_app.cursor.y = 0 - _app.cursor.height - 10;
+			}
+			if( _scene && typeof _scene.eventListener == 'function' ) {
+				var t = new Date().getTime();
+				_scene.eventListener(t, 'mouseleave', {});
 			}
 		});
 		render();
@@ -141,29 +218,6 @@ SS.helper.HitChecker = (function() {
 	};
 })();
 
-SS.helper.MouseEventHelper = (function() {
-	var _checkTarget = function(targets, x, y, gameObject) {
-		if( gameObject.hitCheckForPoint('ui', {'x':x, 'y':y}) ){
-			targets.push(gameObject);
-			var newX = x + gameObject.x;
-			var newY = y + gameObject.y;
-			gameObject.eachChild(true, function(idx, child) {
-				if( _checkTarget(targets, newX, newY, child) ) {
-					return false;
-				}
-			});
-			return true;
-		}
-		return false;
-	}
-	return {
-		'getHitObjectList': function(x, y, gameObject) {
-			var targets = [];
-			_checkTarget(targets, x, y, gameObject);
-			return targets;
-		}
-	};
-})();
 SS.Application = function(config) {
 	var $this = this;
 	var _config = config;

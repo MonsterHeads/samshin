@@ -19,7 +19,7 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _statusStartTime = -1;
 	var _childMap = {};
 	var _childList = [];
-	var _observeCategoryMap = {'position':{}, 'size':{}, 'status':{},};
+	var _observeTypeMap = {};
 	var _observerMap = {}; // GroupMap > TypeMap > InstanceList
 
 	var _updateBoxData = function(data) {
@@ -50,8 +50,8 @@ SS.GameObject = function(application, classData, instanceData) {
 		});
 		if( widthUpdated || heightUpdated ) {
 			_hitboxMap['ui'] = [{'x':0, 'y':0, 'width':_width, 'height':_height}];
-			if( widthUpdated ) $this.fireEvent('size', 'valueChanged', {'propertyName':'width', 'before':beforeWidth, 'after':_width});
-			if( heightUpdated ) $this.fireEvent('size', 'valueChanged', {'propertyName':'height', 'before':beforeHeight, 'after':_height});
+			if( widthUpdated ) $this.fireEvent('sizeChanged', {'propertyName':'width', 'before':beforeWidth, 'after':_width});
+			if( heightUpdated ) $this.fireEvent('sizeChanged', {'propertyName':'height', 'before':beforeHeight, 'after':_height});
 		}
 	};
 	this.setChild = function(childName, child) {
@@ -91,27 +91,25 @@ SS.GameObject = function(application, classData, instanceData) {
 		})();
 		child.removeObserverGroup('__parent');
 		child.addObserver('__parent', function(evt) {
-			if( 'valueChanged' == evt.type ) {
-				switch(evt.data.propertyName) {
-				case 'y': case 'height': case 'z': // re-sort z-order
-					if( evt.data.before > evt.data.after ) {
-						var curIdx = _childMap[childName].idx;
-						for(var idx=curIdx-1; idx>=0; idx--) {
-							var compare = compareZOrder(child, _childList[idx].inst);
-							if( 0 <= compare ) break;
-						}
-						reindexChild(curIdx, idx+1);
-					} else {
-						var curIdx = _childMap[childName].idx;
-						for(var idx=curIdx+1; idx<_childList.length; idx++) {
-							var compare = compareZOrder(child, _childList[idx].inst);
-							if( 0 > compare ) break;
-						}
-						reindexChild(curIdx, idx-1);
+			switch(evt.data.propertyName) {
+			case 'y': case 'height': case 'z': // re-sort z-order
+				if( evt.data.before > evt.data.after ) {
+					var curIdx = _childMap[childName].idx;
+					for(var idx=curIdx-1; idx>=0; idx--) {
+						var compare = compareZOrder(child, _childList[idx].inst);
+						if( 0 <= compare ) break;
 					}
+					reindexChild(curIdx, idx+1);
+				} else {
+					var curIdx = _childMap[childName].idx;
+					for(var idx=curIdx+1; idx<_childList.length; idx++) {
+						var compare = compareZOrder(child, _childList[idx].inst);
+						if( 0 > compare ) break;
+					}
+					reindexChild(curIdx, idx-1);
 				}
 			}
-		});
+		}, ['positionChanged', 'sizeChanged']);
 	};
 	this.child = function(childName) {
 		return _childMap[childName].inst;
@@ -166,7 +164,7 @@ SS.GameObject = function(application, classData, instanceData) {
 			var before = _x;
 			_x = x;
 			_shiftedHitboxMap = {};
-			$this.fireEvent('position', 'valueChanged', {'propertyName':'x', 'before':before, 'after':_x});
+			$this.fireEvent('positionChanged', {'propertyName':'x', 'before':before, 'after':_x});
 		},
 	});
 	Object.defineProperty(this, 'y', {
@@ -175,7 +173,7 @@ SS.GameObject = function(application, classData, instanceData) {
 			var before = _y;
 			_y = y;
 			_shiftedHitboxMap = {};
-			$this.fireEvent('position', 'valueChanged', {'propertyName':'y', 'before':before, 'after':_y});
+			$this.fireEvent('positionChanged', {'propertyName':'y', 'before':before, 'after':_y});
 		},
 	});
 	Object.defineProperty(this, 'z', {
@@ -183,7 +181,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		'set':function(z) {
 			var before = _z;
 			_z = z;
-			$this.fireEvent('position', 'valueChanged', {'propertyName':'z', 'before':before, 'after':_z});
+			$this.fireEvent('positionChanged', {'propertyName':'z', 'before':before, 'after':_z});
 		},
 	});
 	Object.defineProperty(this, 'width', {
@@ -202,65 +200,67 @@ SS.GameObject = function(application, classData, instanceData) {
 		}
 		return _shiftedHitboxMap[type];
 	}
-	this.fireEvent = function(category, type, data) {
-		if( type == 'valueChanged' && data.before == data.after ) {
-			return false;
+	this.fireEvent = function(type, data) {
+		switch(type) {
+			case 'positionChanged':
+			case 'sizeChanged':
+				if( data.before == data.after ) return false;
 		}
 		var observerList = [];
-		$.each(_observeCategoryMap[category], function(group) {
+		$.each(_observeTypeMap[type], function(group) {
 			$.each(_observerMap[group][type], function(idx, observer) {observerList.push(observer);});
 		});
-		$.each(_observeCategoryMap['__all'], function(group) {
+		$.each(_observeTypeMap['__all'], function(group) {
 			$.each(_observerMap[group]['__all'], function(idx, observer) {observerList.push(observer);});
 		});
 		$.each(observerList, function(idx, observer) {
-			observer.apply($this, [{'category':category, 'type':type, 'data':data}]);
+			observer.apply($this, [{'type':type, 'data':data}]);
 		});
 	};
-	this.addObserver = function(group, observer, categories) {
-		var categoryToObserve = {};
-		if( !categories || categories.length == 0 ) categories = ['__all'];
-		for( var i=0; i<categories.length; i++ ) {
-			categoryToObserve[categories[i]] = true;
+	this.addObserver = function(group, observer, types) {
+		var typesToObserve = {};
+		if( !types || types.length == 0 ) types = ['__all'];
+		for( var i=0; i<types.length; i++ ) {
+			typesToObserve[types[i]] = true; // remove duplicated
 		}
 		if( !_observerMap.hasOwnProperty(group) ) {
 			_observerMap[group] = {};
 		}
-		var categoryMap = _observerMap[group];
-		$.each(categoryToObserve, function(category) {
-			if( !_observeCategoryMap.hasOwnProperty(category) ) {
-				_observeCategoryMap[category] = {};
+		var typeMap = _observerMap[group];
+		$.each(typesToObserve, function(type) {
+			if( !_observeTypeMap.hasOwnProperty(type) ) {
+				_observeTypeMap[type] = {};
 			}
-			_observeCategoryMap[category][group] = true;
-			if( !categoryMap.hasOwnProperty(category) ) {
-				categoryMap[category] = [];
+			_observeTypeMap[type][group] = true;
+			if( !typeMap.hasOwnProperty(type) ) {
+				typeMap[type] = [];
 			}
-			categoryMap[category].push(observer);
+			typeMap[type].push(observer);
 		});
 	};
 	this.removeObserverGroup = function(group) {
 		if( _observerMap.hasOwnProperty(group) ) {
 			delete _observerMap[group];
 		}
-		$.each(_observeCategoryMap, function(category, groupMap) {
+		$.each(_observeTypeMap, function(type, groupMap) {
 			if( groupMap.hasOwnProperty(group) ) {
 				delete groupMap[group];
 			}
 		});
 	}
-	this.on = function(category, observer) {
-		$this.addObserver('__on_method', observer, [category]);
+	this.on = function(type, observer) {
+		$this.addObserver('__on_method', observer, [type]);
 	}
-	this.off = function(category) {
+	this.off = function(type) {
 		var group = '__on_method';
 		if( _observerMap.hasOwnProperty(group) ) {
-			if( _observerMap[group].hasOwnProperty(category) ) {
-				delete  _observerMap[group][category];
+			if( _observerMap[group].hasOwnProperty(type) ) {
+				delete  _observerMap[group][type];
 			}
 		}
-		if( _observeCategoryMap.hasOwnProperty(category) ) {
-			if( _observeCategoryMap[category].hasOwnProperty(group) ) {
-				delete  _observeCategoryMap[category][group];	
+		if( _observeTypeMap.hasOwnProperty(type) ) {
+			if( _observeTypeMap[type].hasOwnProperty(group) ) {
+				delete  _observeTypeMap[type][group];	
 			}
 		}
 	}
