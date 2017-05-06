@@ -2,10 +2,14 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	var $this = this;
 	var _app = application;
 	var _center = {'x':0, 'y':0};
+	var _view = {'width':0, 'height':0};
 
 	var _root;
 	var _sceneDescriptor = {};
 
+	Object.defineProperty(this, 'app', {
+		'get':function() { return _app; },
+	});
 	Object.defineProperty(this, 'width', {
 		'get':function() { return _root.child('objects').width; },
 	});
@@ -24,16 +28,23 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	this.eachGameObject = function() {
 		_root.child('objects').eachChild.apply(_root.child('objects'), Array.prototype.slice.call(arguments));
 	}
-	this.keyboardEventListener = function(t, type, evt) {
-		_sceneDescriptor.keyboardEventListener.apply($this, [t, type, evt]);
+	this.eventListener = function(t, type, evt) {
+		switch(type) {
+		case 'keypress': case 'keydown': case 'keyup':
+			_sceneDescriptor.keyboardEventListener.apply($this, [t, type, evt]);
+			break;
+		case 'mousemove':
+			_handleMouseEvent(t, type, evt);
+		}
 	};
 	this.render = function(t, ctx, width, height) {
+		_view.width = width;
+		_view.height = height;
 		_sceneDescriptor.update.apply($this, [t, width, height]);
-		var mapSrcX = Math.max(0, this.center.x-width/2);
-		var mapSrcY = Math.max(0, this.center.y-height/2);
-
-		var ctxDstX = Math.max(0, width/2-this.center.x);
-		var ctxDstY = Math.max(0, height/2-this.center.y);
+		var mapSrcX = Math.max(0, $this.center.x-width/2);
+		var mapSrcY = Math.max(0, $this.center.y-height/2);
+		var ctxDstX = Math.max(0, width/2-$this.center.x);
+		var ctxDstY = Math.max(0, height/2-$this.center.y);
 
 		_root.update(t);
 		ctx.save();
@@ -42,6 +53,29 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		ctx.translate(ctxDstX-mapSrcX, ctxDstY-mapSrcY);
 		_root.render(t, ctx);
 		ctx.restore();
+	};
+
+	var _handleMouseEvent = function(t, type, viewportEvent) {
+		var mapSrcX = Math.max(0, $this.center.x-_view.width/2);
+		var mapSrcY = Math.max(0, $this.center.y-_view.height/2);
+		var ctxDstX = Math.max(0, _view.width/2-$this.center.x);
+		var ctxDstY = Math.max(0, _view.height/2-$this.center.y);
+
+		var sceneEvent = new SS.MouseEvent(type, {'x':ctxDstX-mapSrcX, 'y':ctxDstY-mapSrcY, 'parentEvent':viewportEvent});
+		var targets = SS.helper.MouseEventHelper.getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root.child('objects'));
+		var eventList = [];
+		var curEvent = sceneEvent;
+		for( var i=0; i<targets.length; i++ ) {
+			curEvent = new SS.MouseEvent(type, {'x':targets[i].x, 'y':targets[i].y, 'parentEvent':curEvent});
+			eventList.push(curEvent);
+		}
+		for( var i=targets.length-1; i>=0; i-- ) {
+			curEvent = eventList[i];
+			targets[i].fireEvent(type, type, curEvent);
+			if( curEvent.propagationStopped ) {
+				break;
+			}
+		}
 	};
 
 	(function() {

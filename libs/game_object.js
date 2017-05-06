@@ -49,7 +49,7 @@ SS.GameObject = function(application, classData, instanceData) {
 			}
 		});
 		if( widthUpdated || heightUpdated ) {
-			_hitboxMap['ui'] = {'x':0, 'y':0, 'width':_width, 'height':_height};
+			_hitboxMap['ui'] = [{'x':0, 'y':0, 'width':_width, 'height':_height}];
 			if( widthUpdated ) $this.fireEvent('size', 'valueChanged', {'propertyName':'width', 'before':beforeWidth, 'after':_width});
 			if( heightUpdated ) $this.fireEvent('size', 'valueChanged', {'propertyName':'height', 'before':beforeHeight, 'after':_height});
 		}
@@ -91,6 +91,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		})();
 		child.removeObserverGroup('__parent');
 		child.addObserver('__parent', function(evt) {
+			if( 'valueChanged' == evt.type ) {
 				switch(evt.data.propertyName) {
 				case 'y': case 'height': case 'z': // re-sort z-order
 					if( evt.data.before > evt.data.after ) {
@@ -110,7 +111,7 @@ SS.GameObject = function(application, classData, instanceData) {
 					}
 				}
 			}
-		);
+		});
 	};
 	this.child = function(childName) {
 		return _childMap[childName].inst;
@@ -132,11 +133,15 @@ SS.GameObject = function(application, classData, instanceData) {
 		var i;
 		if( reverse ) {
 			for( i=_childList.length-1; i>=0; i-- ) {
-				eachFunction(i, _childList[i].inst);
+				if( false === eachFunction.apply(_childList[i].inst, [i, _childList[i].inst]) ) {
+					break;
+				}
 			}
 		} else {
 			for( i=0; i<_childList.length; i++ ) {
-				eachFunction(i, _childList[i].inst);
+				if( false === eachFunction.apply(_childList[i].inst, [i, _childList[i].inst]) ) {
+					break;
+				}
 			}
 		}
 	}
@@ -192,7 +197,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		if( !_shiftedHitboxMap.hasOwnProperty(type) ) {
 			_shiftedHitboxMap[type] = [];
 			$.each(_hitboxMap[type], function(idx, box) {
-				_shiftedHitboxMap[type].push(SS.tool.HitChecker.shiftBox(box, $this.x, $this.y));
+				_shiftedHitboxMap[type].push(SS.helper.HitChecker.shiftBox(box, $this.x, $this.y));
 			})
 		}
 		return _shiftedHitboxMap[type];
@@ -263,7 +268,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		var result = false;
 		$.each($this.hitboxList(type), function(idx, a) {
 			$.each(boxList, function(idx, b) {
-				if( SS.tool.HitChecker.box2box(a, b) ) {
+				if( SS.helper.HitChecker.box2box(a, b) ) {
 					result = true;
 					return false;
 				}
@@ -274,11 +279,12 @@ SS.GameObject = function(application, classData, instanceData) {
 	this.hitCheckForPoint = function(type, point) {
 		var result = false;
 		$.each($this.hitboxList(type), function(idx, a) {
-			if( SS.tool.HitChecker.point2box(point, a) ) {
+			if( SS.helper.HitChecker.point2box(point, a) ) {
 				result = true;
 				return false;
 			}
 		});
+		return result;
 	}
 	this.update = function(t) {
 		if( 0 > _statusStartTime ) {
@@ -301,6 +307,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		statusData.render.apply($this, [t-_statusStartTime, ctx]);
 		if( _app.config.debug.hitbox ) {
 			$.each(_hitboxMap, function(type, hitboxList) {
+				if( type == 'ui' ) return true;
 				$.each(hitboxList, function(idx, hitbox) {
 					ctx.fillStyle = 'rgba(50,200,50,0.3)';
 					ctx.fillRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);

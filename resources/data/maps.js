@@ -119,6 +119,9 @@ var data_maps = {
 				$this.center.y = $this.height/2;
 				_character = $this.gameObject('doctorW');
 				_characterStartPosition = {'x':_character.x, 'y':_character.y};
+				_character.on('mousemove', function(evt) {
+					$this.app.cursor.status='action';
+				})
 			};
 			var keyboardEventListener = function(t, type, evt) {
 				switch(type) {

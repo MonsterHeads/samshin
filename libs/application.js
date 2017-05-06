@@ -1,9 +1,34 @@
 window['SS'] = {
 	'priv':{},
 	'tool':{},
+	'helper':{},
 	'assetClass':{},
 };
 
+SS.MouseEvent = function(_type, data, scale) {
+	var _propagationStopped = false;
+	this.type = _type;
+	if( data.hasOwnProperty('originalEvent') ) {
+		this.button = data.button;
+		this.buttons = data.buttons;
+		this.viewportX = Math.round(data.offsetX / scale);
+		this.viewportY = Math.round(data.offsetY / scale);
+		this.offsetX = Math.round(data.offsetX / scale);
+		this.offsetY = Math.round(data.offsetY / scale);
+	} else if( data.hasOwnProperty('parentEvent')) {
+		this.button = data.parentEvent.button;
+		this.buttons = data.parentEvent.buttons;
+		this.viewportX = data.parentEvent.viewportX;
+		this.viewportY = data.parentEvent.viewportY;
+		this.offsetX = data.parentEvent.offsetX - data.x;
+		this.offsetY = data.parentEvent.offsetY - data.y;
+	} else {
+		console.error('invalid mouse event');
+	}
+	this.stopPropagation = function() {
+		_propagationStopped = true;
+	};
+};
 
 SS.priv.Viewport = function(application) {
 	var _app = application;
@@ -31,22 +56,32 @@ SS.priv.Viewport = function(application) {
 		_ctx.msImageSmoothingEnabled = false;
 		_ctx.imageSmoothingEnabled = false;
 
-		$(window).on('keydown', function(evt) {
-			if( _scene && typeof _scene.keyboardEventListener == 'function' ) {
+		$(window).on('keypress', function(evt) {
+			if( _scene && typeof _scene.eventListener == 'function' ) {
 				var t = new Date().getTime();
-				_scene.keyboardEventListener(t, 'keydown', evt);
+				_scene.eventListener(t, 'keypress', evt);
+			}
+		});
+		$(window).on('keydown', function(evt) {
+			if( _scene && typeof _scene.eventListener == 'function' ) {
+				var t = new Date().getTime();
+				_scene.eventListener(t, 'keydown', evt);
 			}
 		});
 		$(window).on('keyup', function(evt) {
-			if( _scene && typeof _scene.keyboardEventListener == 'function' ) {
+			if( _scene && typeof _scene.eventListener == 'function' ) {
 				var t = new Date().getTime();
-				_scene.keyboardEventListener(t, 'keyup', evt);	
+				_scene.eventListener(t, 'keyup', evt);	
 			}
 		});
 		$(_canvas).on('mousemove', function(evt) {
 			if( _app.cursor ) {
 				_app.cursor.x = evt.offsetX / _config.scale;
 				_app.cursor.y = evt.offsetY / _config.scale;
+			}
+			if( _scene && typeof _scene.eventListener == 'function' ) {
+				var t = new Date().getTime();
+				_scene.eventListener(t, 'mousemove', new SS.MouseEvent('mousemove', evt, _config.scale));	
 			}
 		});
 		render();
@@ -92,7 +127,7 @@ SS.priv.Viewport = function(application) {
 	init();
 };
 
-SS.tool.HitChecker = (function() {
+SS.helper.HitChecker = (function() {
 	return {
 		'shiftBox' : function(box, x, y) {
 			return {'x':box.x+x, 'y':box.y+y, 'width':box.width, 'height':box.height};
@@ -101,11 +136,34 @@ SS.tool.HitChecker = (function() {
 			return ( a.x<=b.x+b.width-1 && a.x+a.width-1>=b.x && a.y<=b.y+b.height-1 && a.y+a.height-1>=b.y );
 		},
 		'point2box' : function(p, a) {
-			return ( p.x>=a.x && p.y>=b.y && p.x<=a.x+a.width-1 && p.y<=a.y+a.height-1 );
+			return ( p.x>=a.x && p.y>=a.y && p.x<=a.x+a.width-1 && p.y<=a.y+a.height-1 );
 		},
-	}
+	};
 })();
 
+SS.helper.MouseEventHelper = (function() {
+	var _checkTarget = function(targets, x, y, gameObject) {
+		if( gameObject.hitCheckForPoint('ui', {'x':x, 'y':y}) ){
+			targets.push(gameObject);
+			var newX = x + gameObject.x;
+			var newY = y + gameObject.y;
+			gameObject.eachChild(true, function(idx, child) {
+				if( _checkTarget(targets, newX, newY, child) ) {
+					return false;
+				}
+			});
+			return true;
+		}
+		return false;
+	}
+	return {
+		'getHitObjectList': function(x, y, gameObject) {
+			var targets = [];
+			_checkTarget(targets, x, y, gameObject);
+			return targets;
+		}
+	};
+})();
 SS.Application = function(config) {
 	var $this = this;
 	var _config = config;
