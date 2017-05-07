@@ -119,10 +119,16 @@ var data_maps = {
 				$this.center.y = $this.height/2;
 				_character = $this.gameObject('doctorW');
 				_characterStartPosition = {'x':_character.x, 'y':_character.y};
-				_character.on('mouseenter', function(evt) {
+				$this.gameObject('tv').on('mouseenter', function(evt) {
 					$this.app.cursor.status='action';
 				});
-				_character.on('mouseleave', function(evt) {
+				$this.gameObject('tv').on('mouseleave', function(evt) {
+					$this.app.cursor.status='normal';
+				});
+				$this.gameObject('teatable').child('stackbook').on('mouseenter', function(evt) {
+					$this.app.cursor.status='action';
+				});
+				$this.gameObject('teatable').child('stackbook').on('mouseleave', function(evt) {
 					$this.app.cursor.status='normal';
 				});
 			};

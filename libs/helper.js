@@ -21,8 +21,8 @@ SS.helper.MouseEventHelper = function(root) {
 	var _checkTarget = function(targets, x, y, gameObject) {
 		if( gameObject.hitCheckForPoint('ui', {'x':x, 'y':y}) ){
 			targets.push(gameObject);
-			var newX = x + gameObject.x;
-			var newY = y + gameObject.y;
+			var newX = x - gameObject.x;
+			var newY = y - gameObject.y;
 			gameObject.eachChild(true, function(idx, child) {
 				if( _checkTarget(targets, newX, newY, child) ) {
 					return false;
