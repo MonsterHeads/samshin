@@ -50,6 +50,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		});
 		if( widthUpdated || heightUpdated ) {
 			_hitboxMap['ui'] = [{'x':0, 'y':0, 'width':_width, 'height':_height}];
+			delete _shiftedHitboxMap['ui'];
 			if( widthUpdated ) $this.fireEvent('sizeChanged', {'propertyName':'width', 'before':beforeWidth, 'after':_width});
 			if( heightUpdated ) $this.fireEvent('sizeChanged', {'propertyName':'height', 'before':beforeHeight, 'after':_height});
 		}
@@ -156,7 +157,6 @@ SS.GameObject = function(application, classData, instanceData) {
 	});
 	Object.defineProperty(this, 'data', {
 		'get':function() { return _data; },
-		'set':function(data) { _data = data;},
 	});
 	Object.defineProperty(this, 'x', {
 		'get':function() { return _x; },
