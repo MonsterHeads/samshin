@@ -47,7 +47,7 @@ SS.helper.MouseEventHelper = function(root) {
 				_lastMouseMoveTargets = [];
 			} else {
 				var sceneEvent = new SS.MouseEvent(type, {'x':originPosition.x, 'y':originPosition.y, 'parentEvent':viewportEvent});
-				var targets = _getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root.child('objects'));
+				var targets = _getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root);
 				var eventList = [];
 				var curEvent = sceneEvent;
 				for( idx=0; idx<targets.length; idx++ ) {

@@ -167,7 +167,13 @@ var data_maps = {
 					_character[axis] = newValue;
 					var result = false;
 					if( !result ) {
-						result = $this.tileObject.hitCheckForBoxList('move', _character.hitboxList('move'));
+						$this.eachTileObject(true, function(idx, gameObject) {
+							if( _character == gameObject ) return true;
+							if( gameObject.hitCheckForBoxList('move', _character.hitboxList('move')) ) {
+								result = true;
+								return false;
+							}
+						});
 					}
 					if( !result ) {
 						$this.eachGameObject(true, function(idx, gameObject) {
