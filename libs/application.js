@@ -121,10 +121,12 @@ SS.priv.Viewport = function(application) {
 		}
 		
 		if( _app.config.debug.fps ) {
-			_ctx.fillStyle = '#00ff00';
+			_ctx.fillStyle = '#44ff44';
 			_ctx.font = '8px Arial';
-			_ctx.textAlign = 'right';
-			_ctx.fillText(""+Math.round(1000/(t-_lastRenderCalled)), _config.renderWidth, 8);
+			_ctx.textAlign = 'left';
+			_ctx.textBaseline = 'hanging';
+			var fpsText = ""+Math.round(1000/(t-_lastRenderCalled));
+			_ctx.fillText(fpsText, _config.renderWidth-_ctx.measureText(fpsText).width-1, 1);
 		}
 		_lastRenderCalled = t;
 		setTimeout(function(){render();}, delta);

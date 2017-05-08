@@ -17,15 +17,17 @@
 	<script src="libs/game_object.js"></script>
 	<script src="libs/game_object_status_type.js"></script>
 	<script src="libs/map_scene.js"></script>
+
+	<link href="resources/font/dunggeunmo.css" rel="stylesheet" />
 	<style>
 		*{margin:0; padding:0; box-sizing:border-box; position:relative;}
 		body{-moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; user-select: none;}
 		a, a:hover, a:focus{text-decoration:none; color:inherit; cursor:pointer;}
 		ul{list-style-type: none;}
 		html{background-color:#ffffff; color:#000000;}
-		html{font-family:'Muli', sans-serif; font-size:16px; font-weight:600; line-height:1.44; font-style:normal; font-stretch:normal; letter-spacing:normal;}
+		html{font-family:'DungGeunMo'; font-size:16px; font-weight:600; line-height:1.44; font-style:normal; font-stretch:normal; letter-spacing:normal;}
 		body{width:100vw; height:100vh; overflow-x:hidden;}
-		#debug{position:absolute; top:10px; right:10px; font-size:14px; height:20px; line-height:20px;}
+		#debug{position:absolute; top:10px; right:10px; font-size:16px; height:20px; line-height:20px;}
 		#debug label{position:relative; top:-2px;}
 		#viewport{position:absolute; width:1000px; height:750px; top:50%; left:50%; transform:translate(-50%,-50%);}
 	</style>
@@ -60,7 +62,7 @@ $(document).ready(function() {
 			ctx.fillStyle = '#bbccdd';
 			ctx.fillRect(0, 0, width, height);
 			ctx.fillStyle = 'rgba(0,0,0,'+opacity+')';
-			ctx.font = 'italic 50px Arial';
+			ctx.font = '32px DungGeunMo';
 			ctx.textAlign = 'center'
 			ctx.fillText("Loading...", width/2, height/2);
 		}

@@ -70,4 +70,24 @@ var data_assets = [
 		{'type':'asset', 'cls':'image', 'name':'talk', 'data':{'url':'resources/images/cursors/talk.png', 'x':0, 'y':0, 'width':14, 'height':14},},
 	],
 },
+{
+	'type':'group',
+	'name':'ui',
+	'children':[
+		{
+			'type':'group',
+			'name':'dialog',
+			'children':[
+				{'type':'asset', 'cls':'image', 'name':'tl', 'data':{'url':'resources/images/ui/dialogbox.png', 'x':0, 'y':0, 'width':3, 'height':3},},
+				{'type':'asset', 'cls':'image', 'name':'tm', 'data':{'url':'resources/images/ui/dialogbox.png', 'x':3, 'y':0, 'width':1, 'height':3},},
+				{'type':'asset', 'cls':'image', 'name':'tr', 'data':{'url':'resources/images/ui/dialogbox.png', 'x':4, 'y':0, 'width':3, 'height':3},},
+				{'type':'asset', 'cls':'image', 'name':'ml', 'data':{'url':'resources/images/ui/dialogbox.png', 'x':0, 'y':3, 'width':32, 'height':1},},
+				{'type':'asset', 'cls':'image', 'name':'mr', 'data':{'url':'resources/images/ui/dialogbox.png', 'x':4, 'y':3, 'width':32, 'height':1},},
+				{'type':'asset', 'cls':'image', 'name':'bl', 'data':{'url':'resources/images/ui/dialogbox.png', 'x':0, 'y':4, 'width':3, 'height':3},},
+				{'type':'asset', 'cls':'image', 'name':'bm', 'data':{'url':'resources/images/ui/dialogbox.png', 'x':3, 'y':4, 'width':1, 'height':3},},
+				{'type':'asset', 'cls':'image', 'name':'br', 'data':{'url':'resources/images/ui/dialogbox.png', 'x':4, 'y':4, 'width':3, 'height':3},},
+			],
+		}
+	],
+},
 ];

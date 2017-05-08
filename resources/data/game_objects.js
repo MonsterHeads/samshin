@@ -123,5 +123,32 @@ var data_game_object_classes =
 		},
 	],
 },
+{
+	'type':'group',
+	'name':'ui',
+	'children':[
+		{
+			'type':'class',
+			'name':'dialog',
+			'data': {
+				'status': {
+					'default': {
+						'type':'uiDialog',
+						'data': {
+							'font': '10px DungGeunMo',
+							'color': '#000000',
+							'bgcolor': '#f0d8b4',
+							'border': {
+								'tl':'/ui/dialog/tl','tm':'/ui/dialog/tm','tr':'/ui/dialog/tr',
+								'ml':'/ui/dialog/tl','mr':'/ui/dialog/tr',
+								'bl':'/ui/dialog/bl','bm':'/ui/dialog/bm','tr':'/ui/dialog/br',
+							},
+						}
+					}
+				}
+			},
+		},
+	],
+},
 ];
 
