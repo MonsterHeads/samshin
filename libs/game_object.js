@@ -21,18 +21,19 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _childList = [];
 	var _observeTypeMap = {};
 	var _observerMap = {}; // GroupMap > TypeMap > InstanceList
+	var _passMouseEvent = false;
 
 	var _updateBoxData = function(data) {
 		if( !data ) return;
 		var beforeWidth, beforeHeight;
 		var widthUpdated = false;
 		var heightUpdated = false;
-		if( data.hasOwnProperty('width') ) {
+		if( data.hasOwnProperty('width') && _width != data.width) {
 			beforeWidth = _width;
 			_width = data.width;
 			widthUpdated = true;
 		}
-		if( data.hasOwnProperty('height') ) {
+		if( data.hasOwnProperty('height') && _height != data.height) {
 			beforeHeight = _height;
 			_height = data.height;
 			heightUpdated = true;
@@ -144,6 +145,10 @@ SS.GameObject = function(application, classData, instanceData) {
 			}
 		}
 	}
+	Object.defineProperty(this, 'passMouseEvent', {
+		'get':function() { return _passMouseEvent; },
+		'set':function(passMouseEvent) { _passMouseEvent = passMouseEvent; },
+	});
 	Object.defineProperty(this, 'status', {
 		'get': function() { return _status; },
 		'set': function(status) {

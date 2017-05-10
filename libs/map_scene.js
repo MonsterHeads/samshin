@@ -5,6 +5,9 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	var _view = {'width':0, 'height':0};
 
 	var _root;
+	var _tileRoot;
+	var _gameRoot;
+	var _uiRoot;
 	var _sceneDescriptor = {};
 	var _mouseEventHelper;
 
@@ -12,27 +15,28 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		'get':function() { return _app; },
 	});
 	Object.defineProperty(this, 'width', {
-		'get':function() { return _root.child('tile').width; },
+		'get':function() { return _tileRoot.width; },
 	});
 	Object.defineProperty(this, 'height', {
-		'get':function() { return _root.child('tile').height; },
+		'get':function() { return _tileRoot.height; },
 	});
 	Object.defineProperty(this, 'center', {
 		'get':function() { return _center; },
 	});
 	this.gameObject = function() {
-		if( 0 == arguments.length ) {
-			return _root.child('game');
-		} else {
-			return _root.child('game').child(arguments[0]);
-		}
-	}
+		if( 0 == arguments.length ) return _gameRoot;
+		else return _gameRoot.child(arguments[0]);
+	};
+	this.uiObject = function() {
+		if( 0 == arguments.length ) return _uiRoot;
+		else return _uiRoot.child(arguments[0]);
+	};
 	this.eachGameObject = function() {
-		_root.child('game').eachChild.apply(_root.child('game'), Array.prototype.slice.call(arguments));
-	}
+		_gameRoot.eachChild.apply(_gameRoot, Array.prototype.slice.call(arguments));
+	};
 	this.eachTileObject = function() {
-		_root.child('tile').eachChild.apply(_root.child('tile'), Array.prototype.slice.call(arguments));
-	}
+		_tileRoot.eachChild.apply(_tileRoot, Array.prototype.slice.call(arguments));
+	};
 	this.eventListener = function(t, type, evt) {
 		switch(type) {
 		case 'keypress': case 'keydown': case 'keyup':
@@ -63,103 +67,100 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		_mouseEventHelper.handleEvent(t, type, viewportEvent, {'x':0, 'y':0});
 	};
 
-	(function() {
-		var tileObject;
-		(function() { // tiles && size of root object
-			var tileObjectList = [];
-			var x = 0;
-			var y = 0;
-			var maxWidth = 0;
-			$.each(mapData.ground, function(yIdx, row) {
-				var maxHeight = 0;
-				x = 0;
-				$.each(row, function(xIdx, tileIdx) {
-					var tileObjectData = $.extend({}, mapData.tiles[tileIdx], {'x':x, 'y':y});
-					var tileObject = _app.createGameObject(mapData.tiles[tileIdx].cls, tileObjectData);
-					tileObjectList.push({'name':'__tile_'+xIdx+'_'+yIdx, 'inst':tileObject});
-					x = x + tileObject.width;
-					maxHeight = Math.max(maxHeight, tileObject.height);
-				});
-				y = y + maxHeight;
-				maxWidth = Math.max(maxWidth, x);
-			});
-			var width = maxWidth;
-			var height = y;
-			var tileObjectClassData = {'status':{'default': {'type':'custom','data':{
-				'init': function(application) {return {'width':width,'height':height,}},
+	(function(){
+		var rootObjectClassData = {'status': {'default': {'type':'custom','data': (function(){
+			var _width = _view.width;
+			var _height = _view.height
+			return {
+				'init': function(application) { return { 'width':_width, 'height':_height, 'hitboxList':[],} },
+				'update': function(t) {
+					var result = {};
+					if( _view.width != _width ) {
+						var mapSrcX = Math.max(0, $this.center.x-_view.width/2);
+						var ctxDstX = Math.max(0, _view.width/2-$this.center.x);
+						_width = _view.width;
+						result.width = _width;
+						_tileRoot.x = ctxDstX-mapSrcX;
+						_gameRoot.x = ctxDstX-mapSrcX;
+					}
+					if( _view.height != _height ) {
+						var mapSrcY = Math.max(0, $this.center.y-_view.height/2);
+						var ctxDstY = Math.max(0, _view.height/2-$this.center.y);
+						_height = _view.height;
+						result.height = _height;
+						_tileRoot.y = ctxDstY-mapSrcY;
+						_gameRoot.y = ctxDstY-mapSrcY;
+					}
+					return result;
+				},
 				'render': function(t, ctx) {}
-			},},},};
-			tileObject = new SS.GameObject(_app, tileObjectClassData, {'x':0, 'y':0, 'status':'default'});
-			$.each(tileObjectList, function(idx, obj) {
-				tileObject.setChild(obj.name, obj.inst);
+			}
+		})(),},},};
+		_root = new SS.GameObject(_app, rootObjectClassData, {'status':'default'});		
+	})();
+	(function() { // tiles
+		var tileObjectList = [];
+		var x = 0;
+		var y = 0;
+		var maxWidth = 0;
+		$.each(mapData.ground, function(yIdx, row) {
+			var maxHeight = 0;
+			x = 0;
+			$.each(row, function(xIdx, tileIdx) {
+				var tileObjectData = $.extend({}, mapData.tiles[tileIdx], {'x':x, 'y':y});
+				var tileObject = _app.createGameObject(mapData.tiles[tileIdx].cls, tileObjectData);
+				tileObjectList.push({'name':'__tile_'+xIdx+'_'+yIdx, 'inst':tileObject});
+				x = x + tileObject.width;
+				maxHeight = Math.max(maxHeight, tileObject.height);
 			});
-			tileObject.z = 0;
-		})();
-
-		// game object
-		var gameObjectClassData = {
-			'status': {
-				'default': {
-					'type':'custom',
-					'data':{
-						'init': function(application) {
-							return { 'width':tileObject.width, 'height':tileObject.height, 'hitboxList':[],}
-						},
-						'render': function(t, ctx) {}
-					},
-				},
-			},
-		};
-		gameObject = new SS.GameObject(_app, gameObjectClassData, {'status':'default'});
-		gameObject.z = 1;
-		// other game objects
-		$.each(mapData.objects, function(name, objectConfig) {
-			gameObject.setChild(name, _app.createGameObject(objectConfig.cls, objectConfig.data));
+			y = y + maxHeight;
+			maxWidth = Math.max(maxWidth, x);
 		});
-
-		var rootObjectClassData = {
-			'status': {
-				'default': {
-					'type':'custom',
-					'data': (function(){
-						var width = _view.width;
-						var height = _view.height
-						return {
-							'init': function(application) { return { 'width':width, 'height':height, 'hitboxList':[],} },
-							'update': function(t) {
-								var result = {};
-								if( _view.width != width ) {
-									var mapSrcX = Math.max(0, $this.center.x-_view.width/2);
-									var ctxDstX = Math.max(0, _view.width/2-$this.center.x);
-									width = _view.width;
-									result.width = width;
-									this.eachChild(function(idx, child) {
-										child.x = ctxDstX-mapSrcX;
-									});
-								}
-								if( _view.height != height ) {
-									var mapSrcY = Math.max(0, $this.center.y-_view.height/2);
-									var ctxDstY = Math.max(0, _view.height/2-$this.center.y);
-									height = _view.height;
-									result.height = height;
-									this.eachChild(function(idx, child) {
-										child.y = ctxDstY-mapSrcY;
-									});
-								}
-								return result;
-							},
-							'render': function(t, ctx) {}
-						}
-					})(),
+		var width = maxWidth;
+		var height = y;
+		var tileObjectClassData = {'status':{'default': {'type':'custom','data':{
+			'init': function(application) {return {'width':width,'height':height,}},
+			'render': function(t, ctx) {}
+		},},},};
+		_tileRoot = new SS.GameObject(_app, tileObjectClassData, {'x':0, 'y':0, 'status':'default'});
+		$.each(tileObjectList, function(idx, obj) {
+			_tileRoot.setChild(obj.name, obj.inst);
+		});
+		_tileRoot.z = 0;
+		_root.setChild('tile', _tileRoot);
+	})();
+	(function() { // game object
+		var gameObjectClassData = {'status': {'default': {'type':'custom','data':{
+			'init': function(application) {return {'width':_tileRoot.width,'height':_tileRoot.height,}},
+			'render': function(t, ctx) {}
+		},},},};
+		_gameRoot = new SS.GameObject(_app, gameObjectClassData, {'status':'default'});
+		_gameRoot.z = 1;
+		// add game objects
+		$.each(mapData.objects, function(name, objectConfig) {
+			_gameRoot.setChild(name, _app.createGameObject(objectConfig.cls, objectConfig.data));
+		});
+		_root.setChild('game', _gameRoot);
+	})();
+	(function() { // ui object
+		var uiObjectClassData = {'status': {'default': {'type':'custom','data': (function(){
+			return {
+				'init': function(application) {
+					return { 'width': _root.width, 'height': _root.height };
 				},
-			},
-		};
-		_root = new SS.GameObject(_app, rootObjectClassData, {'status':'default'});
-		_root.setChild('tile', tileObject);
-		_root.setChild('game', gameObject);
-
+				'update': function(t) {
+					return { 'width': _root.width, 'height': _root.height };
+				},
+				'render': function(t, ctx) {}
+			};
+		})(),},},};
+		_uiRoot = new SS.GameObject(_app, uiObjectClassData, {'status':'default'});
+		_uiRoot.z = 2;
+		_uiRoot.passMouseEvent = true;
+		_root.setChild('ui', _uiRoot);
+	})();
+	(function() {
 		_mouseEventHelper = new SS.helper.MouseEventHelper(_root)
-
 		// scene_descriptor   #should be last
 		_sceneDescriptor = mapData.scenes[sceneName];
 		_sceneDescriptor.init.apply($this,[]);

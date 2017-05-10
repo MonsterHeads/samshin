@@ -131,6 +131,11 @@ var data_maps = {
 				$this.gameObject('teatable').child('stackbook').on('mouseleave', function(evt) {
 					$this.app.cursor.status='normal';
 				});
+
+				var dialog = $this.app.createGameObject('/ui/dialog', {'status':'default'});
+				dialog.x = ($this.app.width - dialog.width) / 2;
+				dialog.y = ($this.app.height - dialog.height) - 10;
+				$this.uiObject().setChild('dialog', dialog);
 			};
 			var keyboardEventListener = function(t, type, evt) {
 				switch(type) {
@@ -161,30 +166,19 @@ var data_maps = {
 				if( !plus ) delta = 0 - delta;
 				var org = _character[axis];
 				var newValue = Math.floor(_characterStartPosition[axis]+delta);
-				if( newValue == _character[axis] ) {
-					return;
-				} else {
+				if( newValue != _character[axis] ) {
 					_character[axis] = newValue;
-					var result = false;
-					if( !result ) {
-						$this.eachTileObject(true, function(idx, gameObject) {
-							if( _character == gameObject ) return true;
-							if( gameObject.hitCheckForBoxList('move', _character.hitboxList('move')) ) {
-								result = true;
-								return false;
-							}
-						});
-					}
-					if( !result ) {
-						$this.eachGameObject(true, function(idx, gameObject) {
-							if( _character == gameObject ) return true;
-							if( gameObject.hitCheckForBoxList('move', _character.hitboxList('move')) ) {
-								result = true;
-								return false;
-							}
-						});
-					}
-					if( result ) {
+					var hit = false;
+					var checkFunc = function(idx, gameObject) {
+						if( _character == gameObject ) return true;
+						if( gameObject.hitCheckForBoxList('move', _character.hitboxList('move')) ) {
+							hit = true;
+							return false;
+						}
+					};
+					if( !hit ) $this.eachTileObject(true, checkFunc);
+					if( !hit ) $this.eachGameObject(true, checkFunc);
+					if( hit ) {
 						_character[axis] = org;
 						_statusStartTime = t;
 						_characterStartPosition = {'x':_character.x, 'y':_character.y};

@@ -140,9 +140,14 @@ var data_game_object_classes =
 							'bgcolor': '#f0d8b4',
 							'border': {
 								'tl':'/ui/dialog/tl','tm':'/ui/dialog/tm','tr':'/ui/dialog/tr',
-								'ml':'/ui/dialog/tl','mr':'/ui/dialog/tr',
-								'bl':'/ui/dialog/bl','bm':'/ui/dialog/bm','tr':'/ui/dialog/br',
+								'ml':'/ui/dialog/ml','mr':'/ui/dialog/mr',
+								'bl':'/ui/dialog/bl','bm':'/ui/dialog/bm','br':'/ui/dialog/br',
 							},
+							'width': 250,
+							'line': 3,
+							'lineHeight':10,
+							'lineSpace': 2,
+							'padding': 10,
 						}
 					}
 				}

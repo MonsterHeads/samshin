@@ -72,5 +72,60 @@ SS.gameObjectStatusType = $.extend({}, SS.gameObjectStatusType, {
 				asset.draw(ctx, 0, 0, _width, _height);
 			}
 		}
-	}
+	},
+	'uiDialog': function(clsData) {
+		var _app;
+		var $this;
+		var _assetMap = {};
+
+		var _width;
+		var _height;
+		var _bgColor = clsData.bgcolor;
+
+		return {
+			'init': function(application) {
+				_app = application;
+				$this = this;
+				$.each(clsData.border, function(key, assetName) {
+					_assetMap[key] = _app.getAsset(assetName);
+				});
+				_width = Math.max(_assetMap['tm'].width, _assetMap['bm'].width, clsData.width + clsData.padding*2);
+				_width += Math.max(_assetMap['tl'].width, _assetMap['ml'].width, _assetMap['bl'].width);
+				_width += Math.max(_assetMap['tr'].width, _assetMap['mr'].width, _assetMap['br'].width);
+				_height = Math.max(_assetMap['ml'].height, _assetMap['mr'].height, clsData.line*(clsData.lineHeight+clsData.lineSpace)-clsData.lineSpace + clsData.padding*2);
+				_height += Math.max(_assetMap['tl'].height, _assetMap['tm'].height, _assetMap['tr'].height);
+				_height += Math.max(_assetMap['bl'].height, _assetMap['bm'].height, _assetMap['br'].height);
+				console.log(_width, _height);
+				return { 'width':_width, 'height':_height, };
+			},
+			'render': function(t, ctx) {
+				ctx.fillStyle = _bgColor;
+				ctx.fillRect(0,0,_width,_height);
+				var trX = _width-_assetMap['tr'].width;
+				var blY = _height-_assetMap['bl'].height;
+				var brX = _width-_assetMap['br'].width;
+				var brY = _height-_assetMap['br'].height;
+				var bmY = _height-_assetMap['bm'].height;
+				var mrX = _width-_assetMap['mr'].width;
+				_assetMap['tl'].draw(ctx, 0, 0, _width, _height);
+				_assetMap['tr'].draw(ctx, trX, 0, _width, _height);
+				_assetMap['bl'].draw(ctx, 0, blY, _width, _height);
+				_assetMap['br'].draw(ctx, brX, brY, _width, _height);
+				var x;
+				for( x=_assetMap['tl'].width; x<trX; x+=_assetMap['tm'].width ) {
+					_assetMap['tm'].draw(ctx, x, 0, _width, _height);
+				}
+				for( x=_assetMap['bl'].width; x<brX; x+=_assetMap['bm'].width ) {
+					_assetMap['bm'].draw(ctx, x, bmY, _width, _height);
+				}
+				var y;
+				for( y=_assetMap['tl'].height; y<blY; y+=_assetMap['ml'].height ) {
+					_assetMap['ml'].draw(ctx, 0, y, _width, _height);
+				}
+				for( y=_assetMap['tr'].height; y<brY; y+=_assetMap['mr'].height ) {
+					_assetMap['mr'].draw(ctx, mrX, y, _width, _height);
+				}
+			},
+		}
+	},
 });

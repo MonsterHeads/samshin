@@ -21,6 +21,7 @@ SS.helper.MouseEventHelper = function(root) {
 	var _checkTarget = function(targets, x, y, gameObject) {
 		if( gameObject.hitCheckForPoint('ui', {'x':x, 'y':y}) ){
 			targets.push(gameObject);
+			var nTargetLength = targets.length;
 			var newX = x - gameObject.x;
 			var newY = y - gameObject.y;
 			gameObject.eachChild(true, function(idx, child) {
@@ -28,7 +29,12 @@ SS.helper.MouseEventHelper = function(root) {
 					return false;
 				}
 			});
-			return true;
+			if( targets.length == nTargetLength && gameObject.passMouseEvent ) {
+				targets.pop();
+				return false;
+			} else {
+				return true;
+			}
 		}
 		return false;
 	};

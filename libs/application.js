@@ -136,6 +136,12 @@ SS.priv.Viewport = function(application) {
 		'get': function() { return _scene; },
 		'set': function(scene) { _scene = scene; },
 	});
+	Object.defineProperty(this, 'width', {
+		'get': function() { return _config.renderWidth; },
+	});
+	Object.defineProperty(this, 'height', {
+		'get': function() { return _config.renderHeight; },
+	});
 	init();
 };
 
@@ -154,6 +160,12 @@ SS.Application = function(config) {
 	Object.defineProperty(this, 'cursor', {
 		'get': function() { return _cursorGameObject; },
 		'set': function(cursor) { if( cursor instanceof SS.GameObject ) _cursorGameObject = cursor; },
+	});
+	Object.defineProperty(this, 'width', {
+		'get': function() { return _viewport.width; },
+	});
+	Object.defineProperty(this, 'height', {
+		'get': function() { return _viewport.height; },
 	});
 	this.loadAssets = function(assetData, loadingCallback) {
 		_assetPool.loadAssets(assetData, loadingCallback);
