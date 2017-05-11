@@ -112,30 +112,36 @@ var data_maps = {
 			var _characterStartPosition;
 			var _statusStartTime = -1;
 			var _keyPressed = -1;
+			var _textDialog;
+
+			var setHoverCursor = function(gameObject, hoverStatus) {
+				gameObject.on('mouseenter', function(evt) {$this.app.cursor.status=hoverStatus;});
+				gameObject.on('mouseleave', function(evt) {$this.app.cursor.status='normal';});
+			}
 
 			var init = function() {
 				$this = this;
 				$this.center.x = $this.width/2;
 				$this.center.y = $this.height/2;
+
+				_textDialog = $this.app.createGameObject('/ui/dialog', {'status':'default'});
+				_textDialog.x = ($this.app.width - _textDialog.width) / 2;
+				_textDialog.y = ($this.app.height - _textDialog.height) - 10;
+
 				_character = $this.gameObject('doctorW');
+				setHoverCursor(_character, 'action');
 				_characterStartPosition = {'x':_character.x, 'y':_character.y};
-				$this.gameObject('tv').on('mouseenter', function(evt) {
-					$this.app.cursor.status='action';
-				});
-				$this.gameObject('tv').on('mouseleave', function(evt) {
-					$this.app.cursor.status='normal';
-				});
-				$this.gameObject('teatable').child('stackbook').on('mouseenter', function(evt) {
-					$this.app.cursor.status='action';
-				});
-				$this.gameObject('teatable').child('stackbook').on('mouseleave', function(evt) {
-					$this.app.cursor.status='normal';
+
+				var tv = $this.gameObject('tv');
+				setHoverCursor(tv, 'action');
+
+				var stackbook = $this.gameObject('teatable').child('stackbook');
+				setHoverCursor(stackbook, 'action');
+				stackbook.on('mouseup', function(evt){
+					$this.setModal(_textDialog);
 				});
 
-				var dialog = $this.app.createGameObject('/ui/dialog', {'status':'default'});
-				dialog.x = ($this.app.width - dialog.width) / 2;
-				dialog.y = ($this.app.height - dialog.height) - 10;
-				$this.uiObject().setChild('dialog', dialog);
+				
 			};
 			var keyboardEventListener = function(t, type, evt) {
 				switch(type) {

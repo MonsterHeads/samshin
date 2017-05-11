@@ -74,26 +74,30 @@ SS.priv.Viewport = function(application) {
 				_scene.eventListener(t, 'keyup', evt);	
 			}
 		});
-		$(_canvas).on('mousemove', function(evt) {
+		var handleMouseEvent = function(type, evt) {
 			if( _app.cursor ) {
 				_app.cursor.x = evt.offsetX / _config.scale;
 				_app.cursor.y = evt.offsetY / _config.scale;
 			}
 			if( _scene && typeof _scene.eventListener == 'function' ) {
 				var t = new Date().getTime();
-				_scene.eventListener(t, 'mousemove', new SS.MouseEvent('mousemove', evt, _config.scale));
+				switch(type) {
+					case 'mousedown':
+					case 'mouseup':
+					case 'mousemove':
+						_scene.eventListener(t, type, new SS.MouseEvent(type, evt, _config.scale));	
+						break;
+					case 'mouseleave':
+						_scene.eventListener(t, type, {});
+						break;
+				}
+				
 			}
-		});
-		$(_canvas).on('mouseleave', function(evt) {
-			if( _app.cursor ) {
-				_app.cursor.x = 0 - _app.cursor.width - 10;
-				_app.cursor.y = 0 - _app.cursor.height - 10;
-			}
-			if( _scene && typeof _scene.eventListener == 'function' ) {
-				var t = new Date().getTime();
-				_scene.eventListener(t, 'mouseleave', {});
-			}
-		});
+		}
+		$(_canvas).on('mousedown', function(evt) {handleMouseEvent('mousedown', evt)});
+		$(_canvas).on('mouseup', function(evt) {handleMouseEvent('mouseup', evt)});
+		$(_canvas).on('mousemove', function(evt) {handleMouseEvent('mousemove', evt)});
+		$(_canvas).on('mouseleave', function(evt) {handleMouseEvent('mouseleave', evt)});
 		render();
 	}
 	var render = function() {
@@ -107,10 +111,7 @@ SS.priv.Viewport = function(application) {
 		var cursor = _app.cursor;
 		if( cursor ) {
 			_canvas.css('cursor','none');
-			_ctx.save();
-			_ctx.translate(cursor.x, cursor.y);
 			cursor.render(t, _ctx);
-			_ctx.restore();
 		} else {
 			_canvas.css('cursor','');
 		}

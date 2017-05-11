@@ -8,6 +8,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	var _tileRoot;
 	var _gameRoot;
 	var _uiRoot;
+	var _modalRoot;
 	var _sceneDescriptor = {};
 	var _mouseEventHelper;
 
@@ -42,7 +43,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		case 'keypress': case 'keydown': case 'keyup':
 			_sceneDescriptor.keyboardEventListener.apply($this, [t, type, evt]);
 			break;
-		case 'mousemove': case 'mouseleave':
+		case 'mousemove': case 'mouseleave': case 'mousedown': case 'mouseup':
 			_handleMouseEvent(t, type, evt);
 		}
 	};
@@ -62,6 +63,16 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		_root.render(t, ctx);
 		ctx.restore();
 	};
+
+	this.setModal = function(gameObject) {
+		if( gameObject ) {
+			_modalRoot.passMouseEvent = false;
+			_modalRoot.hide = false;
+			_modalRoot.setChild('obj', gameObject);
+		} else {
+			_modalRoot.passMouseEvent = true;
+		}
+	}
 
 	var _handleMouseEvent = function(t, type, viewportEvent) {
 		_mouseEventHelper.handleEvent(t, type, viewportEvent, {'x':0, 'y':0});
@@ -158,6 +169,24 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		_uiRoot.z = 2;
 		_uiRoot.passMouseEvent = true;
 		_root.setChild('ui', _uiRoot);
+	})();
+	(function() { // modal object
+		var modalObjectClassData = {'status': {'default': {'type':'custom','data': (function(){
+			return {
+				'init': function(application) {
+					return { 'width': _root.width, 'height': _root.height };
+				},
+				'update': function(t) {
+					return { 'width': _root.width, 'height': _root.height };
+				},
+				'render': function(t, ctx) {}
+			};
+		})(),},},};
+		_modalRoot = new SS.GameObject(_app, modalObjectClassData, {'status':'default'});
+		_modalRoot.z = 3;
+		_modalRoot.passMouseEvent = true;
+		_modalRoot.hide = true;
+		_root.setChild('modal', _modalRoot);
 	})();
 	(function() {
 		_mouseEventHelper = new SS.helper.MouseEventHelper(_root)

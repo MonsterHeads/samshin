@@ -15,6 +15,7 @@ SS.GameObject = function(application, classData, instanceData) {
 
 	var _statusMap = {};
 	var _data = {};
+	var _hide = false;
 	var _status = '';
 	var _statusStartTime = -1;
 	var _childMap = {};
@@ -149,6 +150,10 @@ SS.GameObject = function(application, classData, instanceData) {
 		'get':function() { return _passMouseEvent; },
 		'set':function(passMouseEvent) { _passMouseEvent = passMouseEvent; },
 	});
+	Object.defineProperty(this, 'hide', {
+		'get':function() { return _hide; },
+		'set':function(hide) { _hide = hide; },
+	});
 	Object.defineProperty(this, 'status', {
 		'get': function() { return _status; },
 		'set': function(status) {
@@ -196,6 +201,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		'get':function() { return _height; },
 	});
 	this.hitboxList = function(type) {
+		if( _hide ) return [];
 		if( !_hitboxMap.hasOwnProperty(type) ) return undefined;
 		if( !_shiftedHitboxMap.hasOwnProperty(type) ) {
 			_shiftedHitboxMap[type] = [];
@@ -308,7 +314,10 @@ SS.GameObject = function(application, classData, instanceData) {
 		if( 0 > _statusStartTime ) {
 			_statusStartTime = t;
 		}
+		if( _hide ) return;
 		var statusData = _statusMap[_status];
+		ctx.save();
+		ctx.translate($this.x, $this.y);
 		statusData.render.apply($this, [t-_statusStartTime, ctx]);
 		if( _app.config.debug.hitbox ) {
 			$.each(_hitboxMap, function(type, hitboxList) {
@@ -326,11 +335,9 @@ SS.GameObject = function(application, classData, instanceData) {
 			});
 		}
 		$.each(_childList, function(idx, childWrap) {
-			ctx.save();
-			ctx.translate(childWrap.inst.x, childWrap.inst.y);
 			childWrap.inst.render(t, ctx);
-			ctx.restore();
 		});
+		ctx.restore();
 	};
 	
 	$.each(classData.status, function(status, statusData) {
