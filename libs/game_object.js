@@ -61,13 +61,19 @@ SS.GameObject = function(application, classData, instanceData) {
 
 	Object.defineProperty(this, 'parent', {
 		'get':function() { return _parent; },
-		'set':function(parent) {_parent = parent;},
 	});
+	this.priv = {
+		'setParent': function(parent) {_parent = parent;}
+	};
 	this.removeChild = function(childName) {
-		var childWrap = _childMap[childName];
-		childWrap.inst.parent = undefined;
-		_childList.splice(childWrap.idx, 1);
-		delete _childMap[childName];
+		if( _childMap.hasOwnProperty(childName) ) {
+			var childWrap = _childMap[childName];
+			childWrap.inst.priv.setParent(undefined);
+			_childList.splice(childWrap.idx, 1);
+			delete _childMap[childName];
+			$this.fireEvent('childRemoved', {'childName':childName, 'child':childWrap.inst});
+			return childWrap.inst;
+		}
 	}
 	this.setChild = function(childName, child) {
 		var compareZOrder = function(childA, childB) {
@@ -103,7 +109,7 @@ SS.GameObject = function(application, classData, instanceData) {
 			var childWrap = {'inst':child, 'name':childName, 'idx':insertIdx};
 			_childList.splice(insertIdx, 0, childWrap);
 			_childMap[childName] = childWrap;
-			child.parent = $this;
+			child.priv.setParent($this);
 			for( var idx=insertIdx+1; idx<_childList.length; idx++ ) {
 				_childList[idx].idx = idx;
 			}
@@ -129,6 +135,7 @@ SS.GameObject = function(application, classData, instanceData) {
 				}
 			}
 		}, ['positionChanged', 'sizeChanged']);
+		$this.fireEvent('childSet', {'childName':childName, 'child':child});
 	};
 	this.child = function(childName) {
 		return _childMap[childName].inst;
