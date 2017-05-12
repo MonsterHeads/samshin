@@ -6,7 +6,7 @@ var room01_default_scene = (function() {
 	var _keyPressed = -1;
 	var _textDialog;
 
-	var setHoverCursorForNearCharacter = function(gameObject, hoverStatus, name) {
+	var setHoverCursorForNearCharacter = function(gameObject, hoverStatus) {
 		var mouseOver = false;
 		var checkNearAndSet = function() {
 			var dist = Math.max(gameObject.width, gameObject.height)/2 + Math.max(_character.width, _character.height)/2;
@@ -48,10 +48,10 @@ var room01_default_scene = (function() {
 		_characterStartPosition = {'x':_character.x, 'y':_character.y};
 
 		var tv = $this.gameObject('tv');
-		setHoverCursorForNearCharacter(tv, 'action' ,'tv');
+		setHoverCursorForNearCharacter(tv, 'action');
 
 		var stackbook = $this.gameObject('teatable').child('stackbook');
-		setHoverCursorForNearCharacter(stackbook, 'action' ,'stackbook');
+		setHoverCursorForNearCharacter(stackbook, 'action');
 		stackbook.on('mouseup', function(evt){
 			if( stackbook.data.nearCharacter ) {
 				_textDialog.hide = false;
