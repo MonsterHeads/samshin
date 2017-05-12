@@ -44,7 +44,7 @@ SS.helper.MouseEventHelper = function(root) {
 		return targets;
 	}
 	return {
-		'handleEvent': function(t, type, viewportEvent, originPosition) {
+		'handleEvent': function(t, type, viewportEvent) {
 			var idx;
 			if( 'mouseleave' == type ) {
 				for( idx=_lastMouseMoveTargets.length-1; idx>=0; idx-- ) {
@@ -52,7 +52,7 @@ SS.helper.MouseEventHelper = function(root) {
 				}
 				_lastMouseMoveTargets = [];
 			} else {
-				var sceneEvent = new SS.MouseEvent(type, {'x':originPosition.x, 'y':originPosition.y, 'parentEvent':viewportEvent});
+				var sceneEvent = new SS.MouseEvent(type, {'x':0, 'y':0, 'parentEvent':viewportEvent});
 				var targets = _getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root);
 				var eventList = [];
 				var curEvent = sceneEvent;

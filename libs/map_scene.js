@@ -81,7 +81,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 
 
 	var _handleMouseEvent = function(t, type, viewportEvent) {
-		_mouseEventHelper.handleEvent(t, type, viewportEvent, {'x':0, 'y':0});
+		_mouseEventHelper.handleEvent(t, type, viewportEvent);
 	};
 
 	(function(){
@@ -195,7 +195,6 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	})();
 	(function() {
 		_mouseEventHelper = new SS.helper.MouseEventHelper(_root)
-		// scene_descriptor   #should be last
 		_sceneDescriptor = mapData.scenes[sceneName];
 		_sceneDescriptor.init.apply($this,[]);
 	})();
