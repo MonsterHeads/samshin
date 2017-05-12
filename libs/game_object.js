@@ -13,6 +13,7 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _hitboxMap = {};
 	var _shiftedHitboxMap = {};
 
+	var _parent;
 	var _statusMap = {};
 	var _data = {};
 	var _hide = false;
@@ -57,6 +58,17 @@ SS.GameObject = function(application, classData, instanceData) {
 			if( heightUpdated ) $this.fireEvent('sizeChanged', {'propertyName':'height', 'before':beforeHeight, 'after':_height});
 		}
 	};
+
+	Object.defineProperty(this, 'parent', {
+		'get':function() { return _parent; },
+		'set':function(parent) {_parent = parent;},
+	});
+	this.removeChild = function(childName) {
+		var childWrap = _childMap[childName];
+		childWrap.inst.parent = undefined;
+		_childList.splice(childWrap.idx, 1);
+		delete _childMap[childName];
+	}
 	this.setChild = function(childName, child) {
 		var compareZOrder = function(childA, childB) {
 			if( childA.z < childB.z  ) return -1;
@@ -78,6 +90,9 @@ SS.GameObject = function(application, classData, instanceData) {
 				_childList[idx].idx = idx;
 			}
 		};
+		if( _childMap.hasOwnProperty(childName) ) {
+			$this.removeChild(childName);
+		}
 		(function() {
 			var insertIdx = 0;
 			for(var idx=0; idx<_childList.length; idx++) {
@@ -88,6 +103,7 @@ SS.GameObject = function(application, classData, instanceData) {
 			var childWrap = {'inst':child, 'name':childName, 'idx':insertIdx};
 			_childList.splice(insertIdx, 0, childWrap);
 			_childMap[childName] = childWrap;
+			child.parent = $this;
 			for( var idx=insertIdx+1; idx<_childList.length; idx++ ) {
 				_childList[idx].idx = idx;
 			}
