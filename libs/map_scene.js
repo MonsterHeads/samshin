@@ -11,6 +11,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	var _modalRoot;
 	var _sceneDescriptor = {};
 	var _mouseEventHelper;
+	var _modal = false;
 
 	Object.defineProperty(this, 'app', {
 		'get':function() { return _app; },
@@ -24,6 +25,19 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	Object.defineProperty(this, 'center', {
 		'get':function() { return _center; },
 	});
+	Object.defineProperty(this, 'modal', {
+		'get':function() { return _modal; },
+		'set':function(modal) {
+			if( modal != _modal ) {
+				_modal = modal;
+				_modalRoot.hide = !modal;
+			}
+		},
+	});
+	this.modalObject = function() {
+		if( 0 == arguments.length ) return _modalRoot;
+		else return _modalRoot.child(arguments[0]);
+	};
 	this.gameObject = function() {
 		if( 0 == arguments.length ) return _gameRoot;
 		else return _gameRoot.child(arguments[0]);
@@ -64,15 +78,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		ctx.restore();
 	};
 
-	this.setModal = function(gameObject) {
-		if( gameObject ) {
-			_modalRoot.passMouseEvent = false;
-			_modalRoot.hide = false;
-			_modalRoot.setChild('obj', gameObject);
-		} else {
-			_modalRoot.passMouseEvent = true;
-		}
-	}
+
 
 	var _handleMouseEvent = function(t, type, viewportEvent) {
 		_mouseEventHelper.handleEvent(t, type, viewportEvent, {'x':0, 'y':0});
@@ -184,7 +190,6 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		})(),},},};
 		_modalRoot = new SS.GameObject(_app, modalObjectClassData, {'status':'default'});
 		_modalRoot.z = 3;
-		_modalRoot.passMouseEvent = true;
 		_modalRoot.hide = true;
 		_root.setChild('modal', _modalRoot);
 	})();
