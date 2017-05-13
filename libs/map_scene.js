@@ -78,10 +78,8 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		ctx.restore();
 	};
 
-
-
 	var _handleMouseEvent = function(t, type, viewportEvent) {
-		_mouseEventHelper.handleEvent(t, type, viewportEvent);
+		_mouseEventHelper.handleEvent(type, viewportEvent);
 	};
 
 	(function(){
