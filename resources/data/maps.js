@@ -29,6 +29,7 @@ var room01_default_scene = (function() {
 		}
 		_character.addObserver('nearCursorCheck', function(evt){checkNearAndSet();}, ['positionChanged']);
 		gameObject.addObserver('nearCursorCheck', function(evt){checkNearAndSet();}, ['positionChanged']);
+		gameObject.on('mouseenter', function(evt) {mouseOver = true; checkNearAndSet();});
 		gameObject.on('mousemove', function(evt) {mouseOver = true; checkNearAndSet();});
 		gameObject.on('mouseleave', function(evt) {mouseOver = false; $this.app.cursor.status='normal';});
 	}

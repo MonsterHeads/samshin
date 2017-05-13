@@ -17,7 +17,9 @@ SS.helper.HitChecker = (function() {
 
 SS.helper.MouseEventHelper = function(root) {
 	var _root = root;
+	var _lastViewportEvent = undefined;
 	var _lastMouseMoveTargets = [];
+
 	var _checkTarget = function(targets, x, y, gameObject) {
 		if( gameObject.hitCheckForPoint('ui', {'x':x, 'y':y}) ){
 			targets.push(gameObject);
@@ -43,32 +45,32 @@ SS.helper.MouseEventHelper = function(root) {
 		_checkTarget(targets, x, y, gameObject);
 		return targets;
 	}
-	return {
-		'handleEvent': function(t, type, viewportEvent) {
-			var idx;
-			if( 'mouseleave' == type ) {
-				for( idx=_lastMouseMoveTargets.length-1; idx>=0; idx-- ) {
-					_lastMouseMoveTargets[idx].fireEvent('mouseleave', {});
+	var _handleEvent = function(type, viewportEvent) {
+		var idx;
+		if( 'mouseleave' == type ) {
+			for( idx=_lastMouseMoveTargets.length-1; idx>=0; idx-- ) {
+				_lastMouseMoveTargets[idx].fireEvent('mouseleave', {});
+			}
+			_lastMouseMoveTargets = [];
+			_lastViewportEvent = undefined;
+		} else {
+			_lastViewportEvent = viewportEvent;
+			var sceneEvent = new SS.MouseEvent(type, {'x':0, 'y':0, 'parentEvent':viewportEvent});
+			var targets = _getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root);
+			var eventList = [];
+			var curEvent = sceneEvent;
+			for( idx=0; idx<targets.length; idx++ ) {
+				curEvent = new SS.MouseEvent(type, {'x':targets[idx].x, 'y':targets[idx].y, 'parentEvent':curEvent});
+				eventList.push(curEvent);
+			}
+			var leaveStartIdx = -1;
+			for( idx=0; idx<targets.length; idx++ ) {
+				if( _lastMouseMoveTargets.length-1 < idx || _lastMouseMoveTargets[idx] !== targets[idx] ) {
+					if( 0 > leaveStartIdx ) leaveStartIdx = idx;
+					targets[idx].fireEvent('mouseenter', {});
 				}
-				_lastMouseMoveTargets = [];
-			} else {
-				var sceneEvent = new SS.MouseEvent(type, {'x':0, 'y':0, 'parentEvent':viewportEvent});
-				var targets = _getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root);
-				var eventList = [];
-				var curEvent = sceneEvent;
-				for( idx=0; idx<targets.length; idx++ ) {
-					curEvent = new SS.MouseEvent(type, {'x':targets[idx].x, 'y':targets[idx].y, 'parentEvent':curEvent});
-					eventList.push(curEvent);
-				}
-				var leaveStartIdx = -1;
-				for( idx=0; idx<targets.length; idx++ ) {
-					if( _lastMouseMoveTargets.length-1 < idx || _lastMouseMoveTargets[idx] !== targets[idx] ) {
-						if( 0 > leaveStartIdx ) {
-							leaveStartIdx = idx;
-						}
-						targets[idx].fireEvent('mouseenter', {});
-					}
-				}
+			}
+			if( 'object_move' != type ) {
 				for( idx=targets.length-1; idx>=0; idx-- ) {
 					curEvent = eventList[idx];
 					targets[idx].fireEvent(type, curEvent);
@@ -76,14 +78,32 @@ SS.helper.MouseEventHelper = function(root) {
 						break;
 					}
 				}
-				if( 0 > leaveStartIdx ) {
-					leaveStartIdx = targets.length;
-				}
+			}
+			if( 0 <= leaveStartIdx ) {
 				for( idx=_lastMouseMoveTargets.length-1; idx>=leaveStartIdx; idx-- ) {
 					_lastMouseMoveTargets[idx].fireEvent('mouseleave', {});
 				}
-				_lastMouseMoveTargets = targets;
 			}
+			_lastMouseMoveTargets = targets;
+		}		
+	}
+	var _handleObjectChange = function(evt) {
+		if( _lastViewportEvent ) {
+			_handleEvent('object_move', _lastViewportEvent);
 		}
+	}
+	var _removeObserver = function(gameObject) {
+		gameObject.removeObserverGroup('_mouse_helper');
+		gameObject.eachChild(function(idx, child){_removeObserver(child)});
+	}
+	var _setObserver = function(gameObject) {
+		gameObject.addObserver('_mouse_helper', function(evt){_setObserver(evt.data.child);}, ['childSet']);
+		gameObject.addObserver('_mouse_helper', function(evt){_removeObserver(evt.data.child);}, ['childRemoved']);
+		gameObject.addObserver('_mouse_helper', _handleObjectChange, ['positionChanged', 'sizeChanged']);
+		gameObject.eachChild(function(idx, child){_setObserver(child)});
+	};
+	_setObserver(_root);
+	return {
+		'handleEvent': _handleEvent,
 	};
 };
