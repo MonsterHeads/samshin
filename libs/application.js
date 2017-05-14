@@ -3,6 +3,7 @@ window['SS'] = {
 	'tool':{},
 	'helper':{},
 	'assetClass':{},
+	'gameObjectStatusType':{}
 };
 
 SS.MouseEvent = function(_type, data, scale) {

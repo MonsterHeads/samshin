@@ -5,6 +5,7 @@ var room01_default_scene = (function() {
 	var _statusStartTime = -1;
 	var _keyPressed = -1;
 	var _textDialog;
+	var Scene = {};
 
 	var setHoverCursorForNearCharacter = function(gameObject, hoverStatus) {
 		var mouseOver = false;
@@ -33,52 +34,7 @@ var room01_default_scene = (function() {
 		gameObject.on('mousemove', function(evt) {mouseOver = true; checkNearAndSet();});
 		gameObject.on('mouseleave', function(evt) {mouseOver = false; $this.app.cursor.status='normal';});
 	}
-
-	var init = function() {
-		$this = this;
-		$this.center.x = $this.width/2;
-		$this.center.y = $this.height/2;
-
-		_textDialog = $this.app.createGameObject('/ui/dialog', {'status':'default'});
-		_textDialog.x = ($this.app.width - _textDialog.width) / 2;
-		_textDialog.y = ($this.app.height - _textDialog.height) - 10;
-		_textDialog.hide = true;
-		$this.modalObject().setChild('textDialog', _textDialog);
-
-		_character = $this.gameObject('doctorW');
-		_characterStartPosition = {'x':_character.x, 'y':_character.y};
-
-		var tv = $this.gameObject('tv');
-		setHoverCursorForNearCharacter(tv, 'action');
-
-		var stackbook = $this.gameObject('teatable').child('stackbook');
-		setHoverCursorForNearCharacter(stackbook, 'action');
-		stackbook.on('mouseup', function(evt){
-			if( stackbook.data.nearCharacter ) {
-				_textDialog.hide = false;
-				$this.modal = true;
-			}
-		});
-	};
-	var keyboardEventListener = function(t, type, evt) {
-		switch(type) {
-		case 'keydown':
-			switch(evt.keyCode) {
-			case 37: case 38: case 39: case 40: case 65: case 87: case 68: case 83:
-				_keyPressed = evt.keyCode;
-			}
-			break;
-		case 'keyup':
-			switch(evt.keyCode) {
-			case 37: case 38: case 39: case 40: case 65: case 87: case 68: case 83:
-				if( evt.keyCode == _keyPressed ) {
-					_keyPressed = -1;
-				}
-			}
-		}
-	};
-
-	var _checkAndChangeToWalk = function(t, status, axis, plus) {
+	var checkAndChangeToWalk = function(t, status, axis, plus) {
 		if( status != _character.status ) {
 			_character.status = status;
 			_characterStartPosition = {'x':_character.x, 'y':_character.y};
@@ -108,8 +64,50 @@ var room01_default_scene = (function() {
 			}
 		}
 	};
+	Scene.init = function() {
+		$this = this;
+		$this.center.x = $this.width/2;
+		$this.center.y = $this.height/2;
 
-	var update = function(t, view_width, view_height) {
+		_textDialog = $this.app.createGameObject('/ui/dialog', {'status':'default'});
+		_textDialog.x = ($this.app.width - _textDialog.width) / 2;
+		_textDialog.y = ($this.app.height - _textDialog.height) - 10;
+		_textDialog.hide = true;
+		$this.modalObject().setChild('textDialog', _textDialog);
+
+		_character = $this.gameObject('doctorW');
+		_characterStartPosition = {'x':_character.x, 'y':_character.y};
+
+		var tv = $this.gameObject('tv');
+		setHoverCursorForNearCharacter(tv, 'action');
+
+		var stackbook = $this.gameObject('teatable').child('stackbook');
+		setHoverCursorForNearCharacter(stackbook, 'action');
+		stackbook.on('mouseup', function(evt){
+			if( stackbook.data.nearCharacter ) {
+				_textDialog.hide = false;
+				$this.modal = true;
+			}
+		});
+	};
+	Scene.keyboardEventListener = function(t, type, evt) {
+		switch(type) {
+		case 'keydown':
+			switch(evt.keyCode) {
+			case 37: case 38: case 39: case 40: case 65: case 87: case 68: case 83:
+				_keyPressed = evt.keyCode;
+			}
+			break;
+		case 'keyup':
+			switch(evt.keyCode) {
+			case 37: case 38: case 39: case 40: case 65: case 87: case 68: case 83:
+				if( evt.keyCode == _keyPressed ) {
+					_keyPressed = -1;
+				}
+			}
+		}
+	};
+	Scene.update = function(t, view_width, view_height) {
 		if( 0 > _keyPressed ) {
 			switch(_character.status) {
 			case 'down_walk': _character.status = 'down_stop'; break;
@@ -119,14 +117,14 @@ var room01_default_scene = (function() {
 			}
 		} else {
 			switch(_keyPressed) {
-			case 37:case 65: _checkAndChangeToWalk(t, 'left_walk', 'x', false); break;
-			case 38:case 87: _checkAndChangeToWalk(t, 'up_walk', 'y', false); break;
-			case 39:case 68: _checkAndChangeToWalk(t, 'right_walk', 'x', true); break;
-			case 40:case 83: _checkAndChangeToWalk(t, 'down_walk', 'y', true); break;
+			case 37:case 65: checkAndChangeToWalk(t, 'left_walk', 'x', false); break;
+			case 38:case 87: checkAndChangeToWalk(t, 'up_walk', 'y', false); break;
+			case 39:case 68: checkAndChangeToWalk(t, 'right_walk', 'x', true); break;
+			case 40:case 83: checkAndChangeToWalk(t, 'down_walk', 'y', true); break;
 			}
 		}				
 	};
-	return {'init':init, 'keyboardEventListener': keyboardEventListener, 'update': update};
+	return Scene;
 })();
 
 var data_maps = {
