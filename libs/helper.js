@@ -79,10 +79,9 @@ SS.helper.MouseEventHelper = function(root) {
 					}
 				}
 			}
-			if( 0 <= leaveStartIdx ) {
-				for( idx=_lastMouseMoveTargets.length-1; idx>=leaveStartIdx; idx-- ) {
-					_lastMouseMoveTargets[idx].fireEvent('mouseleave', {});
-				}
+			if( 0 > leaveStartIdx ) leaveStartIdx = targets.length;
+			for( idx=_lastMouseMoveTargets.length-1; idx>=leaveStartIdx; idx-- ) {
+				_lastMouseMoveTargets[idx].fireEvent('mouseleave', {});
 			}
 			_lastMouseMoveTargets = targets;
 		}		
