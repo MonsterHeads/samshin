@@ -94,7 +94,9 @@ SS.GameObject = function(application, classData, instanceData) {
 			if( heightUpdated ) $this.fireEvent('sizeChanged', {'propertyName':'height', 'before':beforeHeight, 'after':_height});
 		}
 	};
-
+	Object.defineProperty(this, 'id', {
+		'value':_id, 'writable':false,
+	});
 	Object.defineProperty(this, 'parent', {
 		'get':function() { return _parent; },
 	});
@@ -444,6 +446,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		$this.setChild(name, child);
 	});
 	$this.status = instanceData.status;
+	console.log($this);
 };
 
 SS.priv.GameObjectPool = function(application) {
