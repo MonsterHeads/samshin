@@ -153,6 +153,13 @@ var data_game_object_classes =
 				}
 			},
 		},
+		{
+			'type':'class',
+			'name':'blackLayer',
+			'data': {
+				'status': { 'default': {'type':'colorLayer','data': {'color':'#000000'}} },
+			},
+		},
 	],
 },
 ];

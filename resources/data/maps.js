@@ -213,6 +213,12 @@ var data_maps = {
 				'status':'default', 'x':0, 'y':10, 'z':1, 'xOrigin':'center', 'yOrigin':'bottom', 'hide':true,
 			}
 		},
+		'colorLayer': {
+			'cls': '/ui/blackLayer',
+			'data': {
+				'status':'default', 'x':0, 'y':0, 'z':10, 'hide':true,
+			}
+		},
 	},
 	'tiles': {
 		101:{'cls':'/tiles/room01', 'status':'101'},
