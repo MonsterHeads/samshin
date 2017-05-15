@@ -1,13 +1,20 @@
+SS.priv.gameObjectId = 1;
+
 SS.GameObject = function(application, classData, instanceData) {
 	var $this = this;
+	var _id = SS.priv.gameObjectId++;
 	var _app = application;
+	var defaultInstanceData = {'x':0, 'y':0, 'z':0, 'xOrigin':'left', 'yOrigin':'top', 'hide':false,};
+	instanceData = $.extend({}, defaultInstanceData, instanceData);
+
+	var _x = instanceData.x;
+	var _y = instanceData.y;
+	var _z = instanceData.z;
+	var _position = {'left':0,'right':0,'top':0,'bottom':0};
+	var _xOrigin = instanceData.xOrigin;
+	var _yOrigin = instanceData.yOrigin;
+	var _hide = instanceData.hide;
 	
-	var _x = 0;
-	var _y = 0;
-	var _z = 0;
-	if( instanceData.hasOwnProperty('x') ) { _x = instanceData.x; }
-	if( instanceData.hasOwnProperty('y') ) { _y = instanceData.y; }
-	if( instanceData.hasOwnProperty('z') ) { _z = instanceData.z; }
 	var _width = 0;
 	var _height = 0;
 	var _hitboxMap = {};
@@ -16,7 +23,7 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _parent;
 	var _statusMap = {};
 	var _data = {};
-	var _hide = false;
+	
 	var _status = '';
 	var _statusStartTime = -1;
 	var _childMap = {};
@@ -25,6 +32,32 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _observerMap = {}; // GroupMap > TypeMap > InstanceList
 	var _passMouseEvent = false;
 
+	var _updatePositionX = function() {
+		var left = $this.x;
+		if( $this.parent ) {
+			switch(_xOrigin) {
+				case 'center': left = ($this.parent.width-_width)/2 + $this.x; break;
+				case 'right': left = $this.parent.width-_width-$this.x; break;
+				case 'left':default: break;
+			}
+		}
+		var right = left + _width;
+		_position.left = left;
+		_position.right = right;
+	};
+	var _updatePositionY = function() {
+		var top = $this.y;
+		if( $this.parent ) {
+			switch(_yOrigin) {
+				case 'center': top = ($this.parent.height-_height)/2 + $this.y; break;
+				case 'bottom': top = $this.parent.height-_height-$this.y; break;
+				case 'top':default: break;
+			}
+		}
+		var bottom = top + _height;
+		_position.top = top;
+		_position.bottom = bottom;
+	};
 	var _updateBoxData = function(data) {
 		if( !data ) return;
 		var beforeWidth, beforeHeight;
@@ -33,11 +66,13 @@ SS.GameObject = function(application, classData, instanceData) {
 		if( data.hasOwnProperty('width') && _width != data.width) {
 			beforeWidth = _width;
 			_width = data.width;
+			_updatePositionX();
 			widthUpdated = true;
 		}
 		if( data.hasOwnProperty('height') && _height != data.height) {
 			beforeHeight = _height;
 			_height = data.height;
+			_updatePositionY();
 			heightUpdated = true;
 		}
 
@@ -63,7 +98,24 @@ SS.GameObject = function(application, classData, instanceData) {
 		'get':function() { return _parent; },
 	});
 	this.priv = {
-		'setParent': function(parent) {_parent = parent;}
+		'setParent': function(parent) {
+			if( _parent != parent ) {
+				if( _parent ) {
+					_parent.removeObserverGroup('__child_'+_id);
+				}
+				if( _parent != parent && parent ) {
+					parent.addObserver('__child_'+_id, function(evt) {
+						switch(evt.data.propertyName) {
+							case 'x': case 'width': _updatePositionX(); break;
+							case 'y': case 'height': _updatePositionY(); break;
+						}
+					}, ['positionChanged', 'sizeChanged']);
+				}
+			}
+			_parent = parent;
+			_updatePositionX();
+			_updatePositionY();
+		}
 	};
 	this.removeChild = function(childName) {
 		if( _childMap.hasOwnProperty(childName) ) {
@@ -79,10 +131,8 @@ SS.GameObject = function(application, classData, instanceData) {
 		var compareZOrder = function(childA, childB) {
 			if( childA.z < childB.z  ) return -1;
 			else if( childA.z > childB.z ) return 1;
-			var aBottom = childA.y + childA.height;
-			var bBottom = childB.y + childB.height;
-			if( aBottom < bBottom ) return -1;
-			else if( aBottom > bBottom ) return 1;
+			if( childA.bottom < childB.bottom ) return -1;
+			else if( childA.bottom > childB.bottom ) return 1;
 			return 0;
 		};
 		var reindexChild = function(curIdx, targetIdx) {
@@ -197,6 +247,7 @@ SS.GameObject = function(application, classData, instanceData) {
 			var before = _x;
 			_x = x;
 			_shiftedHitboxMap = {};
+			_updatePositionX();
 			$this.fireEvent('positionChanged', {'propertyName':'x', 'before':before, 'after':_x});
 		},
 	});
@@ -206,6 +257,7 @@ SS.GameObject = function(application, classData, instanceData) {
 			var before = _y;
 			_y = y;
 			_shiftedHitboxMap = {};
+			_updatePositionY();
 			$this.fireEvent('positionChanged', {'propertyName':'y', 'before':before, 'after':_y});
 		},
 	});
@@ -223,13 +275,25 @@ SS.GameObject = function(application, classData, instanceData) {
 	Object.defineProperty(this, 'height', {
 		'get':function() { return _height; },
 	});
+	Object.defineProperty(this, 'left', {
+		'get':function() { return _position.left; },
+	});
+	Object.defineProperty(this, 'right', {
+		'get':function() { return _position.right; },
+	});
+	Object.defineProperty(this, 'top', {
+		'get':function() { return _position.top; },
+	});
+	Object.defineProperty(this, 'bottom', {
+		'get':function() { return _position.bottom; },
+	});
 	this.hitboxList = function(type) {
 		if( _hide ) return [];
 		if( !_hitboxMap.hasOwnProperty(type) ) return undefined;
 		if( !_shiftedHitboxMap.hasOwnProperty(type) ) {
 			_shiftedHitboxMap[type] = [];
 			$.each(_hitboxMap[type], function(idx, box) {
-				_shiftedHitboxMap[type].push(SS.helper.HitChecker.shiftBox(box, $this.x, $this.y));
+				_shiftedHitboxMap[type].push(SS.helper.HitChecker.shiftBox(box, $this.left, $this.top));
 			})
 		}
 		return _shiftedHitboxMap[type];
@@ -340,7 +404,7 @@ SS.GameObject = function(application, classData, instanceData) {
 		if( _hide ) return;
 		var statusData = _statusMap[_status];
 		ctx.save();
-		ctx.translate($this.x, $this.y);
+		ctx.translate($this.left, $this.top);
 		statusData.render.apply($this, [t-_statusStartTime, ctx]);
 		if( _app.config.debug.hitbox ) {
 			$.each(_hitboxMap, function(type, hitboxList) {
