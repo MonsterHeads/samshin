@@ -14,7 +14,8 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _xOrigin = instanceData.xOrigin;
 	var _yOrigin = instanceData.yOrigin;
 	var _hide = instanceData.hide;
-	
+	var _opacity = 1;
+
 	var _width = 0;
 	var _height = 0;
 	var _hitboxMap = {};
@@ -269,6 +270,10 @@ SS.GameObject = function(application, classData, instanceData) {
 			$this.fireEvent('positionChanged', {'propertyName':'z', 'before':before, 'after':_z});
 		},
 	});
+	Object.defineProperty(this, 'opacity', {
+		'get':function() { return _opacity; },
+		'set':function(opacity) { _opacity=Math.max(0, Math.min(opacity, 1)); },
+	});
 	Object.defineProperty(this, 'width', {
 		'get':function() { return _width; },
 	});
@@ -404,6 +409,9 @@ SS.GameObject = function(application, classData, instanceData) {
 		if( _hide ) return;
 		var statusData = _statusMap[_status];
 		ctx.save();
+		if( _opacity != 1 ) {
+			ctx.globalAlpha = _opacity;
+		}
 		ctx.translate($this.left, $this.top);
 		statusData.render.apply($this, [t-_statusStartTime, ctx]);
 		if( _app.config.debug.hitbox ) {
