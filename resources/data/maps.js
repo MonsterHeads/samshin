@@ -1,10 +1,23 @@
+var room01_scene01 = (function(){
+	var Scene = {};
+
+	Scene.init = function() {
+
+	};
+	Scene.keyboardEventListener = function() {
+
+	};
+	Scene.update = function() {
+
+	};
+})();
+
 var room01_default_scene = (function() {
 	var $this;
 	var _character;
 	var _characterStartPosition;
 	var _statusStartTime = -1;
 	var _keyPressed = -1;
-	var _textDialog;
 	var Scene = {};
 
 	var setHoverCursorForNearCharacter = function(gameObject, hoverStatus) {
@@ -69,12 +82,6 @@ var room01_default_scene = (function() {
 		$this.center.x = $this.width/2;
 		$this.center.y = $this.height/2;
 
-		_textDialog = $this.app.createGameObject('/ui/dialog', {'status':'default'});
-		_textDialog.x = ($this.app.width - _textDialog.width) / 2;
-		_textDialog.y = ($this.app.height - _textDialog.height) - 10;
-		_textDialog.hide = true;
-		$this.modalObject().setChild('textDialog', _textDialog);
-
 		_character = $this.gameObject('doctorW');
 		_characterStartPosition = {'x':_character.x, 'y':_character.y};
 
@@ -85,7 +92,7 @@ var room01_default_scene = (function() {
 		setHoverCursorForNearCharacter(stackbook, 'action');
 		stackbook.on('mouseup', function(evt){
 			if( stackbook.data.nearCharacter ) {
-				_textDialog.hide = false;
+				$this.uiObject('textDialog').hide = false;
 				$this.modal = true;
 			}
 		});
@@ -197,6 +204,14 @@ var data_maps = {
 			'data':{
 				'status':'down_stop', 'x':72, 'y':100, 'z':1
 			},
+		},
+	},
+	'ui': {
+		'textDialog': {
+			'cls': '/ui/dialog',
+			'data': {
+				'status':'default', 'x':0, 'y':10, 'z':1, 'xOrigin':'center', 'yOrigin':'bottom', 'hide':true,
+			}
 		},
 	},
 	'tiles': {
