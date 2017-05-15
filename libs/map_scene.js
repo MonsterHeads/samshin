@@ -172,6 +172,10 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 		_uiRoot = new SS.GameObject(_app, uiObjectClassData, {'status':'default'});
 		_uiRoot.z = 2;
 		_uiRoot.passMouseEvent = true;
+		// add ui objects
+		$.each(mapData.ui, function(name, objectConfig) {
+			_uiRoot.setChild(name, _app.createGameObject(objectConfig.cls, objectConfig.data));
+		});
 		_root.setChild('ui', _uiRoot);
 	})();
 	(function() { // modal object
