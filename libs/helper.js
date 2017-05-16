@@ -107,8 +107,80 @@ SS.helper.MouseEventHelper = function(root) {
 	};
 };
 
+
 //t: current time, b: begInnIng value, c: change In value, d: duration
 SS.helper.EasingFunction = {
 	'easeInQuad': function(x, t, b, c, d) {return c*(t/=d)*t+b;},
 	'easeOutQuad': function(x, t, b, c, d) {return -c *(t/=d)*(t-2)+b;},
+};
+
+SS.priv.Timeline = {};
+SS.priv.Timeline.Timeline = function() {
+	var $this = this;
+	var _timeline = [];
+	var _duration = 0;
+	Object.defineProperty(this, 'duration', {
+		'get':function() { return _duration; },
+	});
+	this.now = function(object, properties) {
+		var copy = [];
+		$.each(properties, function(idx, property) {
+			copy.push($.extend({}, property));
+		});
+		_timeline.push({'obj':object, 'type':'now', 'begin':_duration, 'properties':copy});
+		return $this;
+	};
+	this.animate = function(object, duration, properties) {  // { 'name':'x', begin':0, 'to':10 }
+		var copy = [];
+		$.each(properties, function(idx, property) {
+			copy.push($.extend({}, property));
+		});
+		_timelines[idx].push({'obj':object, 'type':'animate', 'begin':_duration, 'duration':duration, 'properties':copy});
+		_duration += duration;
+		return $this;
+	};
+	this.wait = function(duration) {
+		_timelines[idx].push({'type':'wait', 'begin':_duration, 'duration':duration});
+		_duration += duration;
+		return $this;
+	};
+	this.clone = function() {
+		var result = new Ss.priv.Timeline.Timeline();
+		$.each(_timeline, function(idx, descriptor) {
+			switch(descriptor.type) {
+			case 'now': result.now(descriptor.obj, descriptor.properties); break;
+			case 'animate': result.animate(descriptor.obj, descriptor.duration, descriptor.properties); break;
+			case 'wait': result.wait(descriptor.duration); break;
+			}
+		});
+		return result;
+	};
+};
+SS.helper.Timeline = function(){
+	var $this = this;
+	var _timelines = [new Ss.priv.Timeline.Timeline(), ];
+	var _longestTimelineIdx = 0;
+
+	this.priv = {};
+	this.priv.timelines = function(){
+		return _timelines;
+	};
+	this.now = function(object, properties) {
+		_timelines[_longestTimelineIdx].immediate(object, properties);
+	};
+	this.animate = function(object, duration, properties) {
+		_timelines[_longestTimelineIdx].animate(object, duration, properties);
+	};
+	this.wait = function(duration) {
+		_timelines[_longestTimelineIdx].wait(duration);
+	};
+	this.parallelMerge = function(timeline) {
+		var newTimelines = timeline.priv.timelines();
+		$.each(newTimelines, function(idx, newTimeline) {
+			_timelines.push(newTimeline.clone());
+			if( newTimeline.duration > _timelines[_longestTimelineIdx].duration ) {
+				_longestTimelineIdx = _timelines.length-1;
+			}
+		});
+	};
 };

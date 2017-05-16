@@ -446,7 +446,6 @@ SS.GameObject = function(application, classData, instanceData) {
 		$this.setChild(name, child);
 	});
 	$this.status = instanceData.status;
-	console.log($this);
 };
 
 SS.priv.GameObjectPool = function(application) {
