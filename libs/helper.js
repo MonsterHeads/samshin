@@ -109,9 +109,9 @@ SS.helper.MouseEventHelper = function(root) {
 
 
 //t: current time, b: begInnIng value, c: change In value, d: duration
-SS.helper.EasingFunction = {
-	'easeInQuad': function(x, t, b, c, d) {return c*(t/=d)*t+b;},
-	'easeOutQuad': function(x, t, b, c, d) {return -c *(t/=d)*(t-2)+b;},
+SS.helper.Easing = {
+	'easeInQuad': function(t, b, c, d) {return c*(t/=d)*t+b;},
+	'easeOutQuad': function(t, b, c, d) {return -c *(t/=d)*(t-2)+b;},
 };
 
 SS.priv.Timeline = {};
@@ -119,6 +119,8 @@ SS.priv.Timeline.Timeline = function() {
 	var $this = this;
 	var _timeline = [];
 	var _duration = 0;
+	var _defaultEasing = SS.helper.Easing.easeOutQuad;
+
 	Object.defineProperty(this, 'duration', {
 		'get':function() { return _duration; },
 	});
@@ -135,15 +137,23 @@ SS.priv.Timeline.Timeline = function() {
 		$.each(properties, function(idx, property) {
 			copy.push($.extend({}, property));
 		});
-		_timelines[idx].push({'obj':object, 'type':'animate', 'begin':_duration, 'duration':duration, 'properties':copy});
+		_timeline.push({'obj':object, 'type':'animate', 'begin':_duration, 'duration':duration, 'properties':copy});
 		_duration += duration;
 		return $this;
 	};
 	this.wait = function(duration) {
-		_timelines[idx].push({'type':'wait', 'begin':_duration, 'duration':duration});
+		_timeline.push({'type':'wait', 'begin':_duration, 'duration':duration});
 		_duration += duration;
 		return $this;
 	};
+	this.pause = function(handler) {
+		_timeline.push({'type':'pause', 'begin':_duration, 'handler':handler});
+		return $this;
+	};
+	this.call = function(handler) {
+		_timeline.push({'type':'call', 'begin':_duration, 'handler':handler});
+		return $this;
+	}
 	this.clone = function() {
 		var result = new Ss.priv.Timeline.Timeline();
 		$.each(_timeline, function(idx, descriptor) {
@@ -154,6 +164,63 @@ SS.priv.Timeline.Timeline = function() {
 			}
 		});
 		return result;
+	};
+
+	var _curIdx = 0;
+	this.clearDone = function(t) {
+		_curIdx = 0;
+	};
+	this.do = function(t, pauseResolver) {
+		var current;
+		var easing;
+		while( true ) {
+			current = _timeline[_curIdx];
+			if( current.begin > t ) break;
+			switch( current.type ) {
+			case 'now':
+				_curIdx++;
+				$.each(current.properties, function(idx, property) {
+					current.obj[property.name] = property.value;
+				});
+				break;
+			case 'pause':
+				_curIdx++;
+				current.handler(pauseResolver);
+				return false;
+			case 'call':
+				_curIdx++;
+				current.handler();
+				break;
+			case 'wait':
+				if( current.begin+current.duration <= t ) {
+					_curIdx++;
+					break;
+				} else {
+					return true;
+				}
+			case 'animate':
+				if( current.begin+current.duration <= t ) {
+					_curIdx++;
+					$.each(current.properties, function(idx, property) {
+						current.obj[property.name] = property.end;
+					});
+					break;
+				} else {
+					$.each(current.properties, function(idx, property) {
+						if( property.hasOwnProperty('easing') ) {
+							easing = property.easing;
+						} else {
+							easing = _defaultEasing;
+						}
+						current.obj[property.name] = easing(t-current.begin, property.begin, property.end-property.begin, property.duration);
+					});
+					return true;
+				}
+			}
+			_curIdx++;
+			current = _timeline[_curIdx];
+		}
+		return true;
 	};
 };
 SS.helper.Timeline = function(){
@@ -174,6 +241,12 @@ SS.helper.Timeline = function(){
 	this.wait = function(duration) {
 		_timelines[_longestTimelineIdx].wait(duration);
 	};
+	this.pause = function(handler) {
+		_timelines[_longestTimelineIdx].pause(handler);
+	};
+	this.call = function(handler) {
+		_timelines[_longestTimelineIdx].call(handler);
+	};
 	this.parallelMerge = function(timeline) {
 		var newTimelines = timeline.priv.timelines();
 		$.each(newTimelines, function(idx, newTimeline) {
@@ -183,4 +256,61 @@ SS.helper.Timeline = function(){
 			}
 		});
 	};
+
+	var _beginTime = -1;
+	var _running = false;
+	var _pausedCheck = {};
+	var _pauseBeginTime = -1;
+	var _totalPausedTime = 0;
+
+	var _isPaused = function() {
+		var result = false;
+		$.each(_pausedCheck, function(key, value) {
+			if( value ) {
+				result = true;
+				return false;
+			}
+		});
+	}
+	this.start = function() {
+		if( running ) {
+			delete _pausedCheck['main'];
+		} else {
+			_beginTime = -1;
+			_running = true;
+			_paused = {};
+			_pauseBeginTime = -1;
+			_totalPausedTime = 0;
+		}
+	};
+	this.stop = function() {
+		_running = false;
+	};
+	this.pause = function() {
+		_pausedCheck['main'] = true;
+	};
+	this.update = function(t) {
+		if( !running ) return;
+		if( 0 > _beginTime ) _beginTime = t;
+		var isPaused = _isPaused();
+		if( isPaused && 0 > _pauseBeginTime ) {
+			_pauseBeginTime = t;
+		}
+		if( isPaused ) return;
+		else if( 0 <= _pauseBeginTime ) {
+			_totalPausedTime += Math.max(0,t-_pauseBeginTime);
+			_pauseBeginTime = -1;
+		}
+		var aniT = Math.max(0,t-_beginTime+_totalPausedTime);
+		$.each(_timelines, function(idx, timeline) {
+			var result = timeline.do(aniT, function() { delete _pausedList[idx]; });
+			if( !result ) {
+				_pausedList[idx] = true;
+			}
+		});
+		if( _isPaused() && 0 > _pauseBeginTime ) {
+			_pauseBeginTime = t;
+		}
+		return;
+	}
 };
