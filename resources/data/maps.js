@@ -1,4 +1,4 @@
-var room01_scene01 = (function(){
+var tutorial_room01_scene01 = (function(){
 	var Scene = {};
 
 	Scene.init = function() {
@@ -10,6 +10,7 @@ var room01_scene01 = (function(){
 	Scene.update = function() {
 
 	};
+	return Scene;
 })();
 
 var room01_default_scene = (function() {
@@ -79,8 +80,6 @@ var room01_default_scene = (function() {
 	};
 	Scene.init = function() {
 		$this = this;
-		$this.center.x = $this.width/2;
-		$this.center.y = $this.height/2;
 
 		_character = $this.gameObject('doctorW');
 		_characterStartPosition = {'x':_character.x, 'y':_character.y};
@@ -134,8 +133,7 @@ var room01_default_scene = (function() {
 	return Scene;
 })();
 
-var data_maps = {
-'room01': {
+var tutorial_room01_map_data = {
 	'objects': {
 		'citywindow1':{
 			'cls':'/furnitures/room01',
@@ -254,9 +252,4 @@ var data_maps = {
 	[999,999,999,204,101,101,101,205,999,999,999],
 	[999,999,999,211,207,207,207,212,999,999,999],
 	],
-
-	'scenes': {
-		'default': room01_default_scene,
-	}
-}
 };

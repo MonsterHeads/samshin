@@ -80,7 +80,7 @@ $(document).ready(function() {
 	});
 	app.loadClasses(data_game_object_classes);
 	app.cursor = app.createGameObject('/cursors', {'status':'normal'})
-	var mapScene = new SS.tool.MapScene(app, data_maps['room01'], 'default');
+	var mapScene = new SS.tool.MapScene(app, tutorial_room01_map_data, room01_default_scene);
 
 	$('#debug_fps').on('change', function() {
 		if( $(this).prop('checked') ) {

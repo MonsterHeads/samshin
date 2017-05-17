@@ -1,7 +1,8 @@
-SS.tool.MapScene = function(application, mapData, sceneName) {
+SS.tool.MapScene = function(application, mapData, sceneHandler) {
 	var $this = this;
 	var _app = application;
-	var _center = {'x':0, 'y':0};
+	var _center = {};
+
 	var _view = {'width':0, 'height':0};
 
 	var _root;
@@ -9,10 +10,18 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	var _gameRoot;
 	var _uiRoot;
 	var _modalRoot;
-	var _sceneDescriptor = {};
+	var _sceneHandler = {};
 	var _mouseEventHelper;
 	var _modal = false;
 
+	Object.defineProperty(_center, 'x', {
+		'get':function() { return _gameRoot.x; },
+		'set':function(x) { _gameRoot.x = x; _tileRoot.x = x; },
+	});
+	Object.defineProperty(_center, 'y', {
+		'get':function() { return _gameRoot.y; },
+		'set':function(y) { _gameRoot.y = y; _tileRoot.y = y; },
+	});
 	Object.defineProperty(this, 'app', {
 		'get':function() { return _app; },
 	});
@@ -55,7 +64,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	this.eventListener = function(t, type, evt) {
 		switch(type) {
 		case 'keypress': case 'keydown': case 'keyup':
-			_sceneDescriptor.keyboardEventListener.apply($this, [t, type, evt]);
+			_sceneHandler.keyboardEventListener.apply($this, [t, type, evt]);
 			break;
 		case 'mousemove': case 'mouseleave': case 'mousedown': case 'mouseup':
 			_handleMouseEvent(t, type, evt);
@@ -64,7 +73,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	this.render = function(t, ctx, width, height) {
 		_view.width = width;
 		_view.height = height;
-		_sceneDescriptor.update.apply($this, [t, width, height]);
+		_sceneHandler.update.apply($this, [t, width, height]);
 		var mapSrcX = Math.max(0, $this.center.x-width/2);
 		var mapSrcY = Math.max(0, $this.center.y-height/2);
 		var ctxDstX = Math.max(0, width/2-$this.center.x);
@@ -91,27 +100,23 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 				'update': function(t) {
 					var result = {};
 					if( _view.width != _width ) {
-						var mapSrcX = Math.max(0, $this.center.x-_view.width/2);
-						var ctxDstX = Math.max(0, _view.width/2-$this.center.x);
 						_width = _view.width;
 						result.width = _width;
-						_tileRoot.x = ctxDstX-mapSrcX;
-						_gameRoot.x = ctxDstX-mapSrcX;
+						_tileRoot.x = $this.center.x;
+						_gameRoot.x = $this.center.x;
 					}
 					if( _view.height != _height ) {
-						var mapSrcY = Math.max(0, $this.center.y-_view.height/2);
-						var ctxDstY = Math.max(0, _view.height/2-$this.center.y);
 						_height = _view.height;
 						result.height = _height;
-						_tileRoot.y = ctxDstY-mapSrcY;
-						_gameRoot.y = ctxDstY-mapSrcY;
+						_tileRoot.y = $this.center.y;
+						_gameRoot.y = $this.center.y;
 					}
 					return result;
 				},
 				'render': function(t, ctx) {}
 			}
 		})(),},},};
-		_root = new SS.GameObject(_app, rootObjectClassData, {'status':'default'});		
+		_root = new SS.GameObject(_app, rootObjectClassData, {'status':'default'});	
 	})();
 	(function() { // tiles
 		var tileObjectList = [];
@@ -137,7 +142,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 			'init': function(application) {return {'width':width,'height':height,}},
 			'render': function(t, ctx) {}
 		},},},};
-		_tileRoot = new SS.GameObject(_app, tileObjectClassData, {'x':0, 'y':0, 'status':'default'});
+		_tileRoot = new SS.GameObject(_app, tileObjectClassData, {'x':0, 'y':0, 'status':'default', 'xOrigin':'center', 'yOrigin':'center'});
 		$.each(tileObjectList, function(idx, obj) {
 			_tileRoot.setChild(obj.name, obj.inst);
 		});
@@ -149,7 +154,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 			'init': function(application) {return {'width':_tileRoot.width,'height':_tileRoot.height,}},
 			'render': function(t, ctx) {}
 		},},},};
-		_gameRoot = new SS.GameObject(_app, gameObjectClassData, {'status':'default'});
+		_gameRoot = new SS.GameObject(_app, gameObjectClassData, {'x':0, 'y':0, 'status':'default', 'xOrigin':'center', 'yOrigin':'center'});
 		_gameRoot.z = 1;
 		// add game objects
 		$.each(mapData.objects, function(name, objectConfig) {
@@ -197,7 +202,7 @@ SS.tool.MapScene = function(application, mapData, sceneName) {
 	})();
 	(function() {
 		_mouseEventHelper = new SS.helper.MouseEventHelper(_root)
-		_sceneDescriptor = mapData.scenes[sceneName];
-		_sceneDescriptor.init.apply($this,[]);
+		_sceneHandler = sceneHandler;
+		_sceneHandler.init.apply($this,[]);
 	})();
 };
