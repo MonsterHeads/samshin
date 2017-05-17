@@ -198,6 +198,10 @@ SS.tool.MapScene = function(application, mapData, sceneHandler) {
 		_modalRoot = new SS.GameObject(_app, modalObjectClassData, {'status':'default'});
 		_modalRoot.z = 3;
 		_modalRoot.hide = true;
+		// add modal objects
+		$.each(mapData.modal, function(name, objectConfig) {
+			_modalRoot.setChild(name, _app.createGameObject(objectConfig.cls, objectConfig.data));
+		});
 		_root.setChild('modal', _modalRoot);
 	})();
 	(function() {

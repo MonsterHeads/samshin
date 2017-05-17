@@ -73,6 +73,7 @@ SS.helper.MouseEventHelper = function(root) {
 			if( 'object_move' != type ) {
 				for( idx=targets.length-1; idx>=0; idx-- ) {
 					curEvent = eventList[idx];
+					if( targets[idx].passMouseEvent ) continue;
 					targets[idx].fireEvent(type, curEvent);
 					if( curEvent.propagationStopped ) {
 						break;
@@ -110,6 +111,7 @@ SS.helper.MouseEventHelper = function(root) {
 
 //t: current time, b: begInnIng value, c: change In value, d: duration
 SS.helper.Easing = {
+	'linear': function(t, b, c, d) {return c*(t/=d)+b;},
 	'easeInQuad': function(t, b, c, d) {return c*(t/=d)*t+b;},
 	'easeOutQuad': function(t, b, c, d) {return -c *(t/=d)*(t-2)+b;},
 };
@@ -119,25 +121,17 @@ SS.priv.Timeline.Timeline = function() {
 	var $this = this;
 	var _timeline = [];
 	var _duration = 0;
-	var _defaultEasing = SS.helper.Easing.easeOutQuad;
+	var _defaultEasing = SS.helper.Easing.linear;
 
 	Object.defineProperty(this, 'duration', {
 		'get':function() { return _duration; },
 	});
 	this.now = function(object, properties) {
-		var copy = [];
-		$.each(properties, function(idx, property) {
-			copy.push($.extend({}, property));
-		});
-		_timeline.push({'obj':object, 'type':'now', 'begin':_duration, 'properties':copy});
+		_timeline.push({'obj':object, 'type':'now', 'begin':_duration, 'properties':$.extend({},properties)});
 		return $this;
 	};
 	this.animate = function(object, duration, properties) {  // { 'name':'x', begin':0, 'to':10 }
-		var copy = [];
-		$.each(properties, function(idx, property) {
-			copy.push($.extend({}, property));
-		});
-		_timeline.push({'obj':object, 'type':'animate', 'begin':_duration, 'duration':duration, 'properties':copy});
+		_timeline.push({'obj':object, 'type':'animate', 'begin':_duration, 'duration':duration, 'properties':$.extend({},properties)});
 		_duration += duration;
 		return $this;
 	};
@@ -146,8 +140,8 @@ SS.priv.Timeline.Timeline = function() {
 		_duration += duration;
 		return $this;
 	};
-	this.pause = function(handler) {
-		_timeline.push({'type':'pause', 'begin':_duration, 'handler':handler});
+	this.waitFunc = function(handler) {
+		_timeline.push({'type':'waitFunc', 'begin':_duration, 'handler':handler});
 		return $this;
 	};
 	this.call = function(handler) {
@@ -155,7 +149,7 @@ SS.priv.Timeline.Timeline = function() {
 		return $this;
 	}
 	this.clone = function() {
-		var result = new Ss.priv.Timeline.Timeline();
+		var result = new SS.priv.Timeline.Timeline();
 		$.each(_timeline, function(idx, descriptor) {
 			switch(descriptor.type) {
 			case 'now': result.now(descriptor.obj, descriptor.properties); break;
@@ -170,22 +164,24 @@ SS.priv.Timeline.Timeline = function() {
 	this.clearDone = function(t) {
 		_curIdx = 0;
 	};
-	this.do = function(t, pauseResolver) {
+	this.do = function(t, waitResolver) {
 		var current;
 		var easing;
 		while( true ) {
+			if( _timeline.length <= _curIdx ) break;
 			current = _timeline[_curIdx];
+			//console.log(t, _curIdx, current);
 			if( current.begin > t ) break;
 			switch( current.type ) {
 			case 'now':
 				_curIdx++;
-				$.each(current.properties, function(idx, property) {
-					current.obj[property.name] = property.value;
+				$.each(current.properties, function(key, value) {
+					current.obj[key] = value;
 				});
 				break;
-			case 'pause':
+			case 'waitFunc':
 				_curIdx++;
-				current.handler(pauseResolver);
+				current.handler(waitResolver);
 				return false;
 			case 'call':
 				_curIdx++;
@@ -201,23 +197,22 @@ SS.priv.Timeline.Timeline = function() {
 			case 'animate':
 				if( current.begin+current.duration <= t ) {
 					_curIdx++;
-					$.each(current.properties, function(idx, property) {
-						current.obj[property.name] = property.end;
+					$.each(current.properties, function(key, value) {
+						current.obj[key] = value.end;
 					});
 					break;
 				} else {
-					$.each(current.properties, function(idx, property) {
-						if( property.hasOwnProperty('easing') ) {
-							easing = property.easing;
+					$.each(current.properties, function(key, value) {
+						if( value.hasOwnProperty('easing') ) {
+							easing = value.easing;
 						} else {
 							easing = _defaultEasing;
 						}
-						current.obj[property.name] = easing(t-current.begin, property.begin, property.end-property.begin, property.duration);
+						current.obj[key] = easing(t-current.begin, value.begin, value.end-value.begin, current.duration);
 					});
 					return true;
 				}
 			}
-			_curIdx++;
 			current = _timeline[_curIdx];
 		}
 		return true;
@@ -225,7 +220,7 @@ SS.priv.Timeline.Timeline = function() {
 };
 SS.helper.Timeline = function(){
 	var $this = this;
-	var _timelines = [new Ss.priv.Timeline.Timeline(), ];
+	var _timelines = [new SS.priv.Timeline.Timeline(), ];
 	var _longestTimelineIdx = 0;
 
 	this.priv = {};
@@ -233,19 +228,24 @@ SS.helper.Timeline = function(){
 		return _timelines;
 	};
 	this.now = function(object, properties) {
-		_timelines[_longestTimelineIdx].immediate(object, properties);
+		_timelines[_longestTimelineIdx].now(object, properties);
+		return $this;
 	};
 	this.animate = function(object, duration, properties) {
 		_timelines[_longestTimelineIdx].animate(object, duration, properties);
+		return $this;
 	};
 	this.wait = function(duration) {
 		_timelines[_longestTimelineIdx].wait(duration);
+		return $this;
 	};
-	this.pause = function(handler) {
-		_timelines[_longestTimelineIdx].pause(handler);
+	this.waitFunc = function(handler) {
+		_timelines[_longestTimelineIdx].waitFunc(handler);
+		return $this;
 	};
 	this.call = function(handler) {
 		_timelines[_longestTimelineIdx].call(handler);
+		return $this;
 	};
 	this.parallelMerge = function(timeline) {
 		var newTimelines = timeline.priv.timelines();
@@ -255,6 +255,7 @@ SS.helper.Timeline = function(){
 				_longestTimelineIdx = _timelines.length-1;
 			}
 		});
+		return $this;
 	};
 
 	var _beginTime = -1;
@@ -271,9 +272,10 @@ SS.helper.Timeline = function(){
 				return false;
 			}
 		});
+		return result;
 	}
 	this.start = function() {
-		if( running ) {
+		if( _running ) {
 			delete _pausedCheck['main'];
 		} else {
 			_beginTime = -1;
@@ -281,6 +283,9 @@ SS.helper.Timeline = function(){
 			_paused = {};
 			_pauseBeginTime = -1;
 			_totalPausedTime = 0;
+			$.each(_timelines, function(idx, timeline) {
+				timeline.clearDone();
+			});
 		}
 	};
 	this.stop = function() {
@@ -290,7 +295,7 @@ SS.helper.Timeline = function(){
 		_pausedCheck['main'] = true;
 	};
 	this.update = function(t) {
-		if( !running ) return;
+		if( !_running ) return;
 		if( 0 > _beginTime ) _beginTime = t;
 		var isPaused = _isPaused();
 		if( isPaused && 0 > _pauseBeginTime ) {
@@ -303,9 +308,9 @@ SS.helper.Timeline = function(){
 		}
 		var aniT = Math.max(0,t-_beginTime+_totalPausedTime);
 		$.each(_timelines, function(idx, timeline) {
-			var result = timeline.do(aniT, function() { delete _pausedList[idx]; });
+			var result = timeline.do(aniT, function() { delete _pausedCheck[idx]; });
 			if( !result ) {
-				_pausedList[idx] = true;
+				_pausedCheck[idx] = true;
 			}
 		});
 		if( _isPaused() && 0 > _pauseBeginTime ) {
