@@ -81,6 +81,11 @@ SS.gameObjectStatusType.uiDialog = function(clsData) {
 	var _width;
 	var _height;
 	var _bgColor = clsData.bgcolor;
+	var _font = clsData.font;
+	var _color = clsData.color;
+	var _padding = clsData.padding;
+	var _lineHeight = clsData.lineHeight;
+	var _lineSpace = clsData.lineSpace;
 
 	return {
 		'init': function(application) {
@@ -123,6 +128,18 @@ SS.gameObjectStatusType.uiDialog = function(clsData) {
 			}
 			for( y=_assetMap['tr'].height; y<brY; y+=_assetMap['mr'].height ) {
 				_assetMap['mr'].draw(ctx, mrX, y, _width, _height);
+			}
+			var txtY = _assetMap['tm'].height + _padding;
+			var txtX = _assetMap['tm'].width + _padding;
+			if( $this.data.txt ) {
+				ctx.font = _font;
+				ctx.fillStyle = _color;
+				ctx.textAlign = 'left'
+				ctx.textBaseline = 'hanging';
+				$.each($this.data.txt.split('\n'), function(idx, txt) {
+					ctx.fillText(txt, txtX, txtY);
+					txtY += _lineHeight + _lineSpace;
+				})
 			}
 		},
 	}
