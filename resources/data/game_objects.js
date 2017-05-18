@@ -146,8 +146,8 @@ var data_game_object_classes =
 							'width': 250,
 							'line': 3,
 							'lineHeight':10,
-							'lineSpace': 2,
-							'padding': 10,
+							'lineSpace': 3,
+							'padding': 7,
 						}
 					}
 				}

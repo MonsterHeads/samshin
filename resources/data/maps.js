@@ -1,14 +1,32 @@
 var txt = $.extend({}, txt, {
-	'tutorial.room01.scene01.01':'아르바이트가 끝난 후 아무도 없는 집으로 돌아오는 건 역시 외로운 일이다.',
-	'tutorial.room01.scene01.02':'얼마 전만 해도 집에 돌아오면 할아버지가 나를 기다리고 계셨는데.',
-	'tutorial.room01.scene01.03':'',
-
+	'tutorial.scene01.room01.01':'아르바이트가 끝난 후 아무도 없는 집으로 돌아오는 건\n역시 외로운 일이다. 얼마 전만 해도 집에 돌아오면\n할아버지가 나를 기다리고 계셨는데...',
+	'tutorial.scene01.room01.02':'모험가이자 여행기 작가인 할아버지는 부모님의 사고로\n내가 고아가 된 후 나를 키우는 데에 전념하려\n사랑하던 여행과 모험도 미루고 날 길러주었다.',
+	'tutorial.scene01.room01.03':'그리고 내가 드디어 성인이 되자,\n할아버지는 자신만의 모험을 찾아 떠나셨고\n나는 독립하는 법을 배웠다.',
+	'tutorial.scene01.room01.04':'너무 조용하니까 기분이 점점 우울해진다.\n텔레비전이라도 틀어놔야지.',
 });
 
-var tutorial_room01_scene01 = (function(){
+
+
+var tutorial_scene01_room01 = (function(){
 	var Scene = {};
 	var $this;
 	var _timeline;
+
+	var addTextDialog = function(mapScene, textDialog, timeline, txt) {
+		timeline.call(function(){
+			textDialog.hide = false;
+			textDialog.data.txt = txt;
+			mapScene.modal = true;
+		});
+		timeline.waitFunc(function(resolver){
+			mapScene.modalObject().on('mouseup', function(evt){
+				mapScene.modalObject().off('mouseup');
+				textDialog.hide = true;
+				mapScene.modal = false;
+				resolver();
+			});
+		});
+	}
 
 	Scene.init = function() {
 		$this = this;
@@ -17,42 +35,32 @@ var tutorial_room01_scene01 = (function(){
 		var textDialog = $this.modalObject('textDialog');
 
 		var tl01 = new SS.helper.Timeline();
-		var uiObjectClick = undefined;
 		tl01.now(character, {'status':'up_stop', 'x':72, 'y':170});
-		// tl01.now(blackLayer,{'hide':false,});
-		// tl01.animate(blackLayer, 3000, {'opacity':{'begin':1,'end':0,'easing':SS.helper.Easing.easeInQuad}});
-		// tl01.now(blackLayer,{'hide':true});
+		tl01.now(blackLayer,{'hide':false,});
+		tl01.animate(blackLayer, 3000, {'opacity':{'begin':1,'end':0,'easing':SS.helper.Easing.easeInQuad}});
+		tl01.now(blackLayer,{'hide':true});
 		tl01.now(character, {'status':'up_walk'});
-		tl01.animate(character, 2200, {'y':{'begin':170,'end':110}});
+		tl01.animate(character, 2500, {'y':{'begin':170,'end':100}});
 		tl01.now(character, {'status':'up_stop'});
-		tl01.wait(700);
+		tl01.wait(500);
+		addTextDialog($this, textDialog, tl01, txt['tutorial.scene01.room01.01']);
+		addTextDialog($this, textDialog, tl01, txt['tutorial.scene01.room01.02']);
+		addTextDialog($this, textDialog, tl01, txt['tutorial.scene01.room01.03']);
+		addTextDialog($this, textDialog, tl01, txt['tutorial.scene01.room01.04']);
 		tl01.call(function(){
-			textDialog.hide = false;
-			$this.modal = true;
-		});
-		tl01.waitFunc(function(resolver){
-			uiObjectClick = function() {
-				textDialog.hide = true;
-				$this.modal = false;
-				resolver();
-			};
-		});
-		tl01.call(function(){
-			console.log('finished');
+			tl01.stop();
+			_timeline = undefined;
 		});
 		tl01.start();
 		_timeline = tl01;
-
-		$this.modalObject().on('mouseup', function(evt){
-			if( uiObjectClick ) uiObjectClick();
-			uiObjectClick = undefined;
-		});
 	};
 	Scene.keyboardEventListener = function() {
 
 	};
 	Scene.update = function(t, view_width, view_height) {
-		_timeline.update(t);
+		if( _timeline ) {
+			_timeline.update(t);
+		}
 	};
 	return Scene;
 })();
