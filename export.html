@@ -7,29 +7,31 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 	<script src="g.js"></script>
+	<link href="resources/font/dunggeunmo.css" rel="stylesheet" />
 	<style>
 		*{margin:0; padding:0; box-sizing:border-box; position:relative;}
 		body{-moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; user-select: none;}
 		a, a:hover, a:focus{text-decoration:none; color:inherit; cursor:pointer;}
 		ul{list-style-type: none;}
 		html{background-color:#ffffff; color:#000000;}
-		html{font-family:'Muli', sans-serif; font-size:16px; font-weight:600; line-height:1.44; font-style:normal; font-stretch:normal; letter-spacing:normal;}
+		html{font-family:'DungGeunMo'; font-size:16px; font-weight:600; line-height:1.44; font-style:normal; font-stretch:normal; letter-spacing:normal;}
 		body{width:100vw; height:100vh; overflow-x:hidden;}
-		#debug{position:absolute; top:10px; right:10px; font-size:14px; height:20px; line-height:20px;}
+		#debug{position:absolute; top:10px; right:10px; font-size:16px; height:20px; line-height:20px;}
 		#debug label{position:relative; top:-2px;}
-		#viewport{position:absolute; width:960px; height:720px; top:50%; left:50%; transform:translate(-50%,-50%);}
+		#viewport{position:absolute; width:1000px; height:750px; top:50%; left:50%; transform:translate(-50%,-50%);}
 	</style>
 	<script>
 $(document).ready(function() {
 	var config = {
 		'debug': {
+			'fps':false,
 			'hitbox':false,
 		},
 		'viewport': {
 			'el':$('#viewport'),
 			'fps':60,
-			'width':960,
-			'height':720,
+			'width':1000,
+			'height':750,
 			'scale':3,
 			'background_color':'#000000',
 		},
@@ -49,7 +51,7 @@ $(document).ready(function() {
 			ctx.fillStyle = '#bbccdd';
 			ctx.fillRect(0, 0, width, height);
 			ctx.fillStyle = 'rgba(0,0,0,'+opacity+')';
-			ctx.font = 'italic 50px Arial';
+			ctx.font = '32px DungGeunMo';
 			ctx.textAlign = 'center'
 			ctx.fillText("Loading...", width/2, height/2);
 		}
@@ -61,14 +63,20 @@ $(document).ready(function() {
 			case 'finished':
 				console.log('assets loading finished');
 				setTimeout(function(){
-					app.scene = mapScene;
+					app.scene = new SS.tool.MapScene(app, tutorial_room01_map_data, tutorial_scene01_room01);
 				}, 1500);
 		}
 	});
 	app.loadClasses(data_game_object_classes);
-	var mapScene = new SS.tool.MapScene(app, data_maps['room01'], 'default');
+	app.cursor = app.createGameObject('/cursors', {'status':'normal'})
 
-
+	$('#debug_fps').on('change', function() {
+		if( $(this).prop('checked') ) {
+			config.debug.fps = true;
+		} else {
+			config.debug.fps = false;
+		}
+	});
 	$('#debug_hitbox').on('change', function() {
 		if( $(this).prop('checked') ) {
 			config.debug.hitbox = true;
@@ -76,11 +84,13 @@ $(document).ready(function() {
 			config.debug.hitbox = false;
 		}
 	});
+	$('#viewport').focus();
 });
 	</script>
 </head>
 <body>
 <div id="debug">
+	<input id="debug_fps" type="checkbox" /> <label for="debug_fps">fps</label>
 	<input id="debug_hitbox" type="checkbox" /> <label for="debug_hitbox">hitbox</label>
 	
 </div>
