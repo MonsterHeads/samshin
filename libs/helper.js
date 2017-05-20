@@ -24,8 +24,8 @@ SS.helper.MouseEventHelper = function(root) {
 		if( gameObject.hitCheckForPoint('ui', {'x':x, 'y':y}) ){
 			targets.push(gameObject);
 			var nTargetLength = targets.length;
-			var newX = x - gameObject.x;
-			var newY = y - gameObject.y;
+			var newX = x - gameObject.left;
+			var newY = y - gameObject.top;
 			gameObject.eachChild(true, function(idx, child) {
 				if( _checkTarget(targets, newX, newY, child) ) {
 					return false;
@@ -57,6 +57,7 @@ SS.helper.MouseEventHelper = function(root) {
 			_lastViewportEvent = viewportEvent;
 			var sceneEvent = new SS.MouseEvent(type, {'x':0, 'y':0, 'parentEvent':viewportEvent});
 			var targets = _getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root);
+			//console.log(targets);
 			var eventList = [];
 			var curEvent = sceneEvent;
 			for( idx=0; idx<targets.length; idx++ ) {
