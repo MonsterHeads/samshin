@@ -21,7 +21,8 @@ SS.helper.MouseEventHelper = function(root) {
 	var _lastMouseMoveTargets = [];
 
 	var _checkTarget = function(targets, x, y, gameObject) {
-		if( gameObject.hitCheckForPoint('ui', {'x':x, 'y':y}) ){
+		var check = gameObject.hitCheckForPoint('ui', {'x':x, 'y':y});
+		if( check ){
 			targets.push(gameObject);
 			var nTargetLength = targets.length;
 			var newX = x - gameObject.left;
@@ -57,7 +58,6 @@ SS.helper.MouseEventHelper = function(root) {
 			_lastViewportEvent = viewportEvent;
 			var sceneEvent = new SS.MouseEvent(type, {'x':0, 'y':0, 'parentEvent':viewportEvent});
 			var targets = _getHitObjectList(sceneEvent.offsetX, sceneEvent.offsetY, _root);
-			//console.log(targets);
 			var eventList = [];
 			var curEvent = sceneEvent;
 			for( idx=0; idx<targets.length; idx++ ) {
@@ -171,7 +171,6 @@ SS.priv.Timeline.Timeline = function() {
 		while( true ) {
 			if( _timeline.length <= _curIdx ) break;
 			current = _timeline[_curIdx];
-			//console.log(t, _curIdx, current);
 			if( current.begin > t ) break;
 			switch( current.type ) {
 			case 'now':
