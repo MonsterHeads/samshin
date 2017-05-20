@@ -6,6 +6,7 @@ var tutorial_scene01_room01 = (function(){
 	var _textDialog;
 	var _charMove;
 	var _timeline;
+	var _partKeyboardListener;
 
 	var setHoverCursorForNearCharacter = function(gameObject, hoverStatus) {
 		var mouseOver = false;
@@ -41,27 +42,51 @@ var tutorial_scene01_room01 = (function(){
 			$this.modal = true;
 		});
 		timeline.waitFunc(function(resolver){
-			$this.modalObject().on('mouseup', function(evt){
+			var close = function() {
 				$this.modalObject().off('mouseup');
+				_partKeyboardListener = false;
 				_textDialog.hide = true;
 				$this.modal = false;
 				resolver();
-			});
+			}
+			_partKeyboardListener = function(t, type, evt) {
+				if('keydown'==type) {
+					switch(evt.keyCode) {
+					case 13: case 32: close(); break;
+					}
+				}
+			}
+			$this.modalObject().on('mouseup', function(evt){close();});
 		});
 	};
 	var openTextDialog = function(txt, closeCallback) {
-		var timeline= new SS.helper.Timeline();
-		timeline.call(function(){
+		var tl= new SS.helper.Timeline();
+		tl.call(function(){
+			_charMove.stop();
 			_textDialog.data.txt = txt;
+			_textDialog.hide = false;
 			$this.modal = true;
 		});
-		timeline.waitFunc(function(resolver){
-			$this.modalObject().on('mouseup', function(evt){
+		tl.waitFunc(function(resolver){
+			var close = function() {
 				$this.modalObject().off('mouseup');
+				_partKeyboardListener = false;
+				_textDialog.hide = true;
 				$this.modal = false;
+				_charMove.start();
 				resolver();
-			});
+			}
+			_partKeyboardListener = function(t, type, evt) {
+				if('keydown'==type) {
+					switch(evt.keyCode) {
+					case 13: case 32: close(); break;
+					}
+				}
+			}
+			$this.modalObject().on('mouseup', function(evt){close();});
 		});
+		tl.start();
+		_timeline = tl;
 	};
 
 	var part01 = function(callback) {
@@ -89,13 +114,18 @@ var tutorial_scene01_room01 = (function(){
 	var part02 = function(callback) {
 		var tv = $this.gameObject('tv');
 		var stackbook = $this.gameObject('teatable').child('stackbook');
+		var diningtable = $this.gameObject('diningtable');
 
 		_charMove.start();
 
 		setHoverCursorForNearCharacter(tv, 'action');
-		var stackbook = $this.gameObject('teatable').child('stackbook');
 		setHoverCursorForNearCharacter(stackbook, 'action');
+		setHoverCursorForNearCharacter(diningtable, 'action');
 		stackbook.on('mouseup', function(evt){
+			openTextDialog(txt['tutorial.scene01.room01.book'], function(){});
+		});
+		diningtable.on('mouseup', function(evt){
+			openTextDialog(txt['tutorial.scene01.room01.diningtable'], function(){});
 		});
 	}
 
@@ -111,6 +141,7 @@ var tutorial_scene01_room01 = (function(){
 	};
 	Scene.keyboardEventListener = function(t, type, evt) {
 		_charMove.keyboardEventListener(t, type, evt);
+		if( _partKeyboardListener ) _partKeyboardListener(t, type, evt);
 	};
 	Scene.update = function(t, view_width, view_height) {
 		if( _timeline ) {
