@@ -210,12 +210,14 @@ SS.GameObject = function(application, classData, instanceData) {
 		var i;
 		if( reverse ) {
 			for( i=_childList.length-1; i>=0; i-- ) {
+				if( _childList[i].inst.hide ) continue;
 				if( false === eachFunction.apply(_childList[i].inst, [i, _childList[i].inst]) ) {
 					break;
 				}
 			}
 		} else {
 			for( i=0; i<_childList.length; i++ ) {
+				if( _childList[i].inst.hide ) continue;
 				if( false === eachFunction.apply(_childList[i].inst, [i, _childList[i].inst]) ) {
 					break;
 				}
