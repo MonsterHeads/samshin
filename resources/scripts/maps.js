@@ -13,13 +13,13 @@ var tutorial_scene01_room01 = (function(){
 		var checkNearAndSet = function() {
 			var dist = Math.max(gameObject.width, gameObject.height)/2 + Math.max(_character.width, _character.height)/2;
 			var obj = gameObject;
-			var p1 = {'x':obj.x+obj.width/2, 'y':obj.y+obj.height/2,};
+			var p1 = {'x':obj.left+obj.width/2, 'y':obj.top+obj.height/2,};
 			while( obj.parent && obj.parent != _character.parent ) {
 				obj = obj.parent;
-				p1.x += obj.x;
-				p1.y += obj.y;
+				p1.x += obj.left;
+				p1.y += obj.top;
 			}
-			var p2 = {'x':_character.x+_character.width/2, 'y':_character.y+_character.height/2,};
+			var p2 = {'x':_character.left+_character.width/2, 'y':_character.top+_character.height/2,};
 			if( !mouseOver ) return;
 			if( obj.parent && SS.helper.HitChecker.pointDistance(p1, p2, dist) ) {
 				gameObject.data.nearCharacter = true;
@@ -31,7 +31,7 @@ var tutorial_scene01_room01 = (function(){
 		}
 		_character.addObserver('nearCursorCheck', function(evt){checkNearAndSet();}, ['positionChanged']);
 		gameObject.addObserver('nearCursorCheck', function(evt){checkNearAndSet();}, ['positionChanged']);
-		gameObject.on('mouseenter', function(evt) {console.log('test'); mouseOver = true; checkNearAndSet();});
+		gameObject.on('mouseenter', function(evt) {mouseOver = true; checkNearAndSet();});
 		gameObject.on('mousemove', function(evt) {mouseOver = true; checkNearAndSet();});
 		gameObject.on('mouseleave', function(evt) {mouseOver = false; $this.app.cursor.status='normal';});
 	};
@@ -122,10 +122,14 @@ var tutorial_scene01_room01 = (function(){
 		setHoverCursorForNearCharacter(stackbook, 'action');
 		setHoverCursorForNearCharacter(diningtable, 'action');
 		stackbook.on('mouseup', function(evt){
-			openTextDialog(txt['tutorial.scene01.room01.book'], function(){});
+			if( stackbook.data.nearCharacter ) {
+				openTextDialog(txt['tutorial.scene01.room01.book'], function(){});
+			}
 		});
 		diningtable.on('mouseup', function(evt){
-			openTextDialog(txt['tutorial.scene01.room01.diningtable'], function(){});
+			if( diningtable.data.nearCharacter ) {
+				openTextDialog(txt['tutorial.scene01.room01.diningtable'], function(){});
+			}
 		});
 	}
 
