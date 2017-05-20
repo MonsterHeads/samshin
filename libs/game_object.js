@@ -109,13 +109,14 @@ SS.GameObject = function(application, classData, instanceData) {
 				if( _parent != parent && parent ) {
 					parent.addObserver('__child_'+_id, function(evt) {
 						switch(evt.data.propertyName) {
-							case 'x': case 'width': _updatePositionX(); break;
-							case 'y': case 'height': _updatePositionY(); break;
+							case 'x': case 'width': _shiftedHitboxMap = {}; _updatePositionX(); break;
+							case 'y': case 'height': _shiftedHitboxMap = {}; _updatePositionY(); break;
 						}
 					}, ['positionChanged', 'sizeChanged']);
 				}
 			}
 			_parent = parent;
+			_shiftedHitboxMap = {};
 			_updatePositionX();
 			_updatePositionY();
 		}
@@ -210,14 +211,12 @@ SS.GameObject = function(application, classData, instanceData) {
 		var i;
 		if( reverse ) {
 			for( i=_childList.length-1; i>=0; i-- ) {
-				if( _childList[i].inst.hide ) continue;
 				if( false === eachFunction.apply(_childList[i].inst, [i, _childList[i].inst]) ) {
 					break;
 				}
 			}
 		} else {
 			for( i=0; i<_childList.length; i++ ) {
-				if( _childList[i].inst.hide ) continue;
 				if( false === eachFunction.apply(_childList[i].inst, [i, _childList[i].inst]) ) {
 					break;
 				}
