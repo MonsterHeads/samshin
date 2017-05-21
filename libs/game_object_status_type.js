@@ -2,6 +2,14 @@
 SS.gameObjectStatusType.custom = function(data) {
 	return data;
 };
+SS.gameObjectStatusType.none = function(data) {
+	return {
+		'init': function(application) {
+			return {'width':0,'height':0,}
+		},
+		'render': function(t, ctx) {}
+	}
+};
 SS.gameObjectStatusType.tile = function(data) {
 	var _app;
 	var _asset;
