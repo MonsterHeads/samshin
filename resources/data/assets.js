@@ -1,6 +1,13 @@
 var data_assets = [
 {
 	'type':'group',
+	'name':'emoticon',
+	'children':[
+		{'type':'asset', 'cls':'image', 'name':'silence', 'data':{'url':'resources/images/emoticon/silence.png', 'x':0, 'y':0, 'width':16, 'height':16},},
+	],
+},
+{
+	'type':'group',
 	'name':'characters',
 	'children':[
 		{

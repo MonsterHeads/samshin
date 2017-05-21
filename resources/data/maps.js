@@ -1,119 +1,3 @@
-var room01_default_scene = (function() {
-	var $this;
-	var _character;
-	var _characterStartPosition;
-	var _statusStartTime = -1;
-	var _keyPressed = -1;
-	var Scene = {};
-
-	var setHoverCursorForNearCharacter = function(gameObject, hoverStatus) {
-		var mouseOver = false;
-		var checkNearAndSet = function() {
-			var dist = Math.max(gameObject.width, gameObject.height)/2 + Math.max(_character.width, _character.height)/2;
-			var obj = gameObject;
-			var p1 = {'x':obj.x+obj.width/2, 'y':obj.y+obj.height/2,};
-			while( obj.parent && obj.parent != _character.parent ) {
-				obj = obj.parent;
-				p1.x += obj.x;
-				p1.y += obj.y;
-			}
-			var p2 = {'x':_character.x+_character.width/2, 'y':_character.y+_character.height/2,};
-			if( !mouseOver ) return;
-			if( obj.parent && SS.helper.HitChecker.pointDistance(p1, p2, dist) ) {
-				gameObject.data.nearCharacter = true;
-				$this.app.cursor.status=hoverStatus;
-			} else {
-				gameObject.data.nearCharacter = false;
-				$this.app.cursor.status='normal';
-			}
-		}
-		_character.addObserver('nearCursorCheck', function(evt){checkNearAndSet();}, ['positionChanged']);
-		gameObject.addObserver('nearCursorCheck', function(evt){checkNearAndSet();}, ['positionChanged']);
-		gameObject.on('mouseenter', function(evt) {mouseOver = true; checkNearAndSet();});
-		gameObject.on('mousemove', function(evt) {mouseOver = true; checkNearAndSet();});
-		gameObject.on('mouseleave', function(evt) {mouseOver = false; $this.app.cursor.status='normal';});
-	}
-	var checkAndChangeToWalk = function(t, status, axis, plus) {
-		if( status != _character.status ) {
-			_character.status = status;
-			_characterStartPosition = {'x':_character.x, 'y':_character.y};
-			_statusStartTime = t;
-			temp =0;
-		}
-		var delta = (t-_statusStartTime)/35;
-		if( !plus ) delta = 0 - delta;
-		var org = _character[axis];
-		var newValue = Math.floor(_characterStartPosition[axis]+delta);
-		if( newValue != _character[axis] ) {
-			_character[axis] = newValue;
-			var hit = false;
-			var checkFunc = function(idx, gameObject) {
-				if( _character == gameObject ) return true;
-				if( gameObject.hitCheckForBoxList('move', _character.hitboxList('move')) ) {
-					hit = true;
-					return false;
-				}
-			};
-			if( !hit ) $this.eachTileObject(true, checkFunc);
-			if( !hit ) $this.eachGameObject(true, checkFunc);
-			if( hit ) {
-				_character[axis] = org;
-				_statusStartTime = t;
-				_characterStartPosition = {'x':_character.x, 'y':_character.y};
-			}
-		}
-	};
-	Scene.init = function() {
-		$this = this;
-
-		_character = $this.gameObject('doctorW');
-		_characterStartPosition = {'x':_character.x, 'y':_character.y};
-
-		var tv = $this.gameObject('tv');
-		setHoverCursorForNearCharacter(tv, 'action');
-
-		var stackbook = $this.gameObject('teatable').child('stackbook');
-		setHoverCursorForNearCharacter(stackbook, 'action');
-		stackbook.on('mouseup', function(evt){
-		});
-	};
-	Scene.keyboardEventListener = function(t, type, evt) {
-		switch(type) {
-		case 'keydown':
-			switch(evt.keyCode) {
-			case 37: case 38: case 39: case 40: case 65: case 87: case 68: case 83:
-				_keyPressed = evt.keyCode;
-			}
-			break;
-		case 'keyup':
-			switch(evt.keyCode) {
-			case 37: case 38: case 39: case 40: case 65: case 87: case 68: case 83:
-				if( evt.keyCode == _keyPressed ) {
-					_keyPressed = -1;
-				}
-			}
-		}
-	};
-	Scene.update = function(t, view_width, view_height) {
-		if( 0 > _keyPressed ) {
-			switch(_character.status) {
-			case 'down_walk': _character.status = 'down_stop'; break;
-			case 'up_walk': _character.status = 'up_stop'; break;
-			case 'left_walk': _character.status = 'left_stop'; break;
-			case 'right_walk': _character.status = 'right_stop'; break;
-			}
-		} else {
-			switch(_keyPressed) {
-			case 37:case 65: checkAndChangeToWalk(t, 'left_walk', 'x', false); break;
-			case 38:case 87: checkAndChangeToWalk(t, 'up_walk', 'y', false); break;
-			case 39:case 68: checkAndChangeToWalk(t, 'right_walk', 'x', true); break;
-			case 40:case 83: checkAndChangeToWalk(t, 'down_walk', 'y', true); break;
-			}
-		}				
-	};
-	return Scene;
-})();
-
 var tutorial_room01_map_data = {
 	'objects': {
 		'citywindow1':{
@@ -181,7 +65,16 @@ var tutorial_room01_map_data = {
 		'doctorW':{
 			'cls':'/characters/doctor_w',
 			'data':{
-				'status':'down_stop', 'x':72, 'y':100, 'z':1
+				'status':'down_stop', 'x':72, 'y':100, 'z':1,
+				'children':{
+					'emoticon':{
+						'cls':'/characters/emoticon',
+						'data':{
+							'status':'none', 'x':0, 'y':-18, 'z':1, 'xOrigin':'center', 'yOrigin':'top'
+						},
+					},
+				},
+
 			},
 		},
 	},

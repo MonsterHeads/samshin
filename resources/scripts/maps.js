@@ -102,7 +102,15 @@ var tutorial_scene01_room01 = (function(){
 		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.01']);
 		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.02']);
 		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.03']);
+		tl.wait(500);
+		tl.call(function(){
+			_character.child('emoticon').status = 'silence';
+		});
+		tl.wait(1000);
 		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.04']);
+		tl.call(function(){
+			_character.child('emoticon').status = 'none';
+		});
 		tl.call(function(){
 			tl.stop();
 			_timeline = undefined;
@@ -115,12 +123,14 @@ var tutorial_scene01_room01 = (function(){
 		var tv = $this.gameObject('tv');
 		var stackbook = $this.gameObject('teatable').child('stackbook');
 		var diningtable = $this.gameObject('diningtable');
+		var couch = $this.gameObject('couch');
 
 		_charMove.start();
 
 		setHoverCursorForNearCharacter(tv, 'action');
 		setHoverCursorForNearCharacter(stackbook, 'action');
 		setHoverCursorForNearCharacter(diningtable, 'action');
+		setHoverCursorForNearCharacter(couch, 'action');
 		stackbook.on('mouseup', function(evt){
 			if( stackbook.data.nearCharacter ) {
 				openTextDialog(txt['tutorial.scene01.room01.book'], function(){});
@@ -129,6 +139,11 @@ var tutorial_scene01_room01 = (function(){
 		diningtable.on('mouseup', function(evt){
 			if( diningtable.data.nearCharacter ) {
 				openTextDialog(txt['tutorial.scene01.room01.diningtable'], function(){});
+			}
+		});
+		couch.on('mouseup', function(evt){
+			if( couch.data.nearCharacter ) {
+				openTextDialog(txt['tutorial.scene01.room01.couch'], function(){});
 			}
 		});
 	}

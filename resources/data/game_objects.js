@@ -71,6 +71,16 @@ var data_game_object_classes =
 	'children':[
 		{
 			'type':'class',
+			'name':'emoticon',
+			'data': {
+				'status': {
+					'none': {'type':'none', 'data':{}},
+					'silence': {'type':'single', 'data':{'assetName':'/emoticon/silence', 'hitboxMap':{}}},
+				},
+			},
+		},
+		{
+			'type':'class',
 			'name':'doctor_w',
 			'data': {
 				'status': {

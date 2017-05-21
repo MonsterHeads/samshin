@@ -5,4 +5,5 @@ var txt = $.extend({}, txt, {
 	'tutorial.scene01.room01.04':'너무 조용하니까 기분이 점점 우울해진다.\n텔레비전이라도 틀어놔야지.',
 	'tutorial.scene01.room01.book':'할아버지의 여행기, 모험기.\n책 서문에는 할아버지의 헌사가 적혀있다.',
 	'tutorial.scene01.room01.diningtable':'주로 혼자 식사 한다.\n내 책상이기도 하다.',
+	'tutorial.scene01.room01.couch':'아늑한 소파.\nTV를 보다 잠들기도 한다.',
 });
