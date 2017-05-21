@@ -58,7 +58,7 @@ var data_game_object_classes =
 					'stackbook':    {'type':'single', 'data':{'assetName':'/room01_furnitures/stackbook',}},
 					'tableandlamp': {'type':'single', 'data':{'assetName':'/room01_furnitures/tableandlamp', 'hitboxMap':{'move':[{'x':4, 'y':22, 'width':24, 'height':10}]}}},
 					'teatable':     {'type':'single', 'data':{'assetName':'/room01_furnitures/teatable', 'hitboxMap':{'move':[{'x':4, 'y':16, 'width':41, 'height':12}]}}},
-					'tv':           {'type':'single', 'data':{'assetName':'/room01_furnitures/tv', 'hitboxMap':{'move':[{'x':6, 'y':20, 'width':38, 'height':12}]}}},
+					'tv':           {'type':'single', 'data':{'assetName':'/room01_furnitures/tv01', 'hitboxMap':{'move':[{'x':2, 'y':20, 'width':38, 'height':12}]}}},
 					'wallshelf':    {'type':'single', 'data':{'assetName':'/room01_furnitures/wallshelf',}},
 				},
 			},
@@ -124,6 +124,58 @@ var data_game_object_classes =
 							'delay':140,
 							'assetList':[
 								'/characters/doctor_w/right2','/characters/doctor_w/right1','/characters/doctor_w/right3','/characters/doctor_w/right1',
+							],
+							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
+						},
+					},
+				},
+			},
+		},
+		{
+			'type':'class',
+			'name':'main',
+			'data': {
+				'status': {
+					'up_stop':     {'type':'single', 'data':{'assetName':'/characters/main/up1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+					'down_stop':   {'type':'single', 'data':{'assetName':'/characters/main/down1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+					'left_stop':   {'type':'single', 'data':{'assetName':'/characters/main/left1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+					'right_stop':  {'type':'single', 'data':{'assetName':'/characters/main/right1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+					'up_walk': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/characters/main/up2','/characters/main/up1','/characters/main/up3','/characters/main/up1',
+							],
+							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
+						},
+					},
+					'down_walk': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/characters/main/down2','/characters/main/down1','/characters/main/down3','/characters/main/down1',
+							],
+							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
+						},
+					},
+					'left_walk': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/characters/main/left2','/characters/main/left1','/characters/main/left3','/characters/main/left1',
+							],
+							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
+						},
+					},
+					'right_walk': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/characters/main/right2','/characters/main/right1','/characters/main/right3','/characters/main/right1',
 							],
 							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
 						},

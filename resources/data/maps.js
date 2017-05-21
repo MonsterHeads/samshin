@@ -21,7 +21,7 @@ var tutorial_room01_map_data = {
 		'tv':{
 			'cls':'/furnitures/room01',
 			'data':{
-				'status':'tv', 'x':24, 'y':40, 'z':1
+				'status':'tv', 'x':28, 'y':40, 'z':1
 			},
 		},
 		'tableandlamp':{
@@ -62,8 +62,8 @@ var tutorial_room01_map_data = {
 				'status':'chair', 'x':125, 'y':145, 'z':1
 			},
 		},
-		'doctorW':{
-			'cls':'/characters/doctor_w',
+		'main':{
+			'cls':'/characters/main',
 			'data':{
 				'status':'down_stop', 'x':72, 'y':100, 'z':1,
 				'children':{

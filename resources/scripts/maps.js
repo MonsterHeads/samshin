@@ -8,6 +8,7 @@ var tutorial_scene01_room01 = (function(){
 	var _timeline;
 	var _partKeyboardListener;
 
+	var nearChecking = [];
 	var setHoverCursorForNearCharacter = function(gameObject, hoverStatus) {
 		var mouseOver = false;
 		var checkNearAndSet = function() {
@@ -34,6 +35,18 @@ var tutorial_scene01_room01 = (function(){
 		gameObject.on('mouseenter', function(evt) {mouseOver = true; checkNearAndSet();});
 		gameObject.on('mousemove', function(evt) {mouseOver = true; checkNearAndSet();});
 		gameObject.on('mouseleave', function(evt) {mouseOver = false; $this.app.cursor.status='normal';});
+		nearChecking.push(gameObject);
+	};
+	var removeNearCharacterCheck = function() {
+		_character.removeObserverGroup('nearCursorCheck');
+		$.each(nearChecking, function(idx, value) {
+			value.removeObserverGroup('nearCursorCheck');
+			value.off('mouseenter');
+			value.off('mousemove');
+			value.off('mouseleave');
+		});
+		$this.app.cursor.status='normal';
+		nearChecking = [];
 	};
 	var addTextDialogToTimeline = function(timeline, txt) {
 		timeline.call(function(){
@@ -90,6 +103,7 @@ var tutorial_scene01_room01 = (function(){
 	};
 
 	var part01 = function(callback) {
+		_charMove.stop();
 		var tl = new SS.helper.Timeline();
 		tl.now(_character, {'status':'up_stop', 'x':72, 'y':170});
 		tl.now(_blackLayer,{'hide':false,});
@@ -106,11 +120,14 @@ var tutorial_scene01_room01 = (function(){
 		tl.call(function(){
 			_character.child('emoticon').status = 'silence';
 		});
-		tl.wait(1000);
+		tl.wait(1500);
 		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.04']);
 		tl.call(function(){
 			_character.child('emoticon').status = 'none';
 		});
+		tl.now(_character, {'status':'down_walk'});
+		tl.animate(_character, 500, {'y':{'begin':100,'end':110}});
+		tl.now(_character, {'status':'down_stop'});
 		tl.call(function(){
 			tl.stop();
 			_timeline = undefined;
@@ -120,43 +137,64 @@ var tutorial_scene01_room01 = (function(){
 		_timeline = tl;
 	};
 	var part02 = function(callback) {
-		var tv = $this.gameObject('tv');
+		_charMove.start();
 		var stackbook = $this.gameObject('teatable').child('stackbook');
 		var diningtable = $this.gameObject('diningtable');
 		var couch = $this.gameObject('couch');
-
-		_charMove.start();
+		var tv = $this.gameObject('tv');
 
 		setHoverCursorForNearCharacter(tv, 'action');
 		setHoverCursorForNearCharacter(stackbook, 'action');
 		setHoverCursorForNearCharacter(diningtable, 'action');
 		setHoverCursorForNearCharacter(couch, 'action');
 		stackbook.on('mouseup', function(evt){
-			if( stackbook.data.nearCharacter ) {
-				openTextDialog(txt['tutorial.scene01.room01.book'], function(){});
-			}
+			if( !stackbook.data.nearCharacter ) return;
+			openTextDialog(txt['tutorial.scene01.room01.book'], function(){});
 		});
 		diningtable.on('mouseup', function(evt){
-			if( diningtable.data.nearCharacter ) {
-				openTextDialog(txt['tutorial.scene01.room01.diningtable'], function(){});
-			}
+			if( !diningtable.data.nearCharacter ) return;
+			openTextDialog(txt['tutorial.scene01.room01.diningtable'], function(){});
 		});
 		couch.on('mouseup', function(evt){
-			if( couch.data.nearCharacter ) {
-				openTextDialog(txt['tutorial.scene01.room01.couch'], function(){});
-			}
+			if( !couch.data.nearCharacter ) return;
+			openTextDialog(txt['tutorial.scene01.room01.couch'], function(){});
 		});
-	}
+		tv.on('mouseup', function(evt){
+			if( !tv.data.nearCharacter ) return;
+			stackbook.off('mouseup');
+			diningtable.off('mouseup');
+			couch.off('mouseup');
+			tv.off('mouseup');
+			removeNearCharacterCheck();
+			callback();
+		});
+	};
+	var part03 = function(callback) {
+		_charMove.stop();
+		var tl = new SS.helper.Timeline();
+		tl.now(_character, {'status':'up_stop', 'x':32, 'y':90});
+		tl.now(_blackLayer,{'hide':false,});
+		tl.animate(_blackLayer, 3000, {'opacity':{'begin':1,'end':0,'easing':SS.helper.Easing.easeInQuad}});
+		tl.now(_blackLayer,{'hide':true});
+		tl.call(function(){
+			tl.stop();
+			_timeline = undefined;
+			//callback();
+		});
+		tl.start();
+		_timeline = tl;
+	};
 
 	Scene.init = function() {
 		$this = this;
 		_blackLayer = $this.uiObject('blackLayer');
-		_character = $this.gameObject('doctorW');
+		_character = $this.gameObject('main');
 		_textDialog = $this.modalObject('textDialog');
 
 		_charMove = new CharacterMoveHandler($this, _character);
 
-		part01(function(){part02();});
+		//part03();
+		part01(function(){part02(function(){part03()});});
 	};
 	Scene.keyboardEventListener = function(t, type, evt) {
 		_charMove.keyboardEventListener(t, type, evt);
