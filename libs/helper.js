@@ -306,7 +306,7 @@ SS.helper.Timeline = function(){
 			_totalPausedTime += Math.max(0,t-_pauseBeginTime);
 			_pauseBeginTime = -1;
 		}
-		var aniT = Math.max(0,t-_beginTime+_totalPausedTime);
+		var aniT = Math.max(0,t-_beginTime-_totalPausedTime);
 		$.each(_timelines, function(idx, timeline) {
 			var result = timeline.do(aniT, function() { delete _pausedCheck[idx]; });
 			if( !result ) {
