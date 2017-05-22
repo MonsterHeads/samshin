@@ -171,11 +171,20 @@ var tutorial_scene01_room01 = (function(){
 	};
 	var part03 = function(callback) {
 		_charMove.stop();
+		var tv = $this.gameObject('tv');
 		var tl = new SS.helper.Timeline();
 		tl.now(_character, {'status':'up_stop', 'x':32, 'y':90});
 		tl.now(_blackLayer,{'hide':false,});
 		tl.animate(_blackLayer, 3000, {'opacity':{'begin':1,'end':0,'easing':SS.helper.Easing.easeInQuad}});
 		tl.now(_blackLayer,{'hide':true});
+		tl.now(tv,{'status':'tv02'});
+		tl.wait(1500);
+		tl.now(tv,{'status':'tv03'});
+		tl.wait(1500);
+		tl.now(tv,{'status':'tv04'});
+		tl.wait(1500);
+		tl.now(tv,{'status':'tv05'});
+		tl.wait(1500);
 		tl.call(function(){
 			tl.stop();
 			_timeline = undefined;

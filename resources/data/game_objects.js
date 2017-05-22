@@ -58,8 +58,30 @@ var data_game_object_classes =
 					'stackbook':    {'type':'single', 'data':{'assetName':'/room01_furnitures/stackbook',}},
 					'tableandlamp': {'type':'single', 'data':{'assetName':'/room01_furnitures/tableandlamp', 'hitboxMap':{'move':[{'x':4, 'y':22, 'width':24, 'height':10}]}}},
 					'teatable':     {'type':'single', 'data':{'assetName':'/room01_furnitures/teatable', 'hitboxMap':{'move':[{'x':4, 'y':16, 'width':41, 'height':12}]}}},
-					'tv':           {'type':'single', 'data':{'assetName':'/room01_furnitures/tv01', 'hitboxMap':{'move':[{'x':2, 'y':20, 'width':38, 'height':12}]}}},
 					'wallshelf':    {'type':'single', 'data':{'assetName':'/room01_furnitures/wallshelf',}},
+					'tv01':         {'type':'single', 'data':{'assetName':'/room01_furnitures/tv01', 'hitboxMap':{'move':[{'x':2, 'y':20, 'width':38, 'height':12}]}}},
+					'tv02':         {'type':'single', 'data':{'assetName':'/room01_furnitures/tv02', 'hitboxMap':{'move':[{'x':2, 'y':20, 'width':38, 'height':12}]}}},
+					'tv03': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/room01_furnitures/tv03','/room01_furnitures/tv04','/room01_furnitures/tv05','/room01_furnitures/tv06'
+							],
+							'hitboxMap':{'move':[{'x':2, 'y':20, 'width':38, 'height':12}]},
+						},
+					},
+					'tv04': {
+						'type':'simpleAnimation',
+						'data': {
+							'delay':140,
+							'assetList':[
+								'/room01_furnitures/tv07','/room01_furnitures/tv08','/room01_furnitures/tv09','/room01_furnitures/tv10'
+							],
+							'hitboxMap':{'move':[{'x':2, 'y':20, 'width':38, 'height':12}]},
+						},
+					},
+					'tv05':         {'type':'single', 'data':{'assetName':'/room01_furnitures/tv11', 'hitboxMap':{'move':[{'x':2, 'y':20, 'width':38, 'height':12}]}}},
 				},
 			},
 		},

@@ -21,7 +21,7 @@ var tutorial_room01_map_data = {
 		'tv':{
 			'cls':'/furnitures/room01',
 			'data':{
-				'status':'tv', 'x':28, 'y':40, 'z':1
+				'status':'tv01', 'x':28, 'y':40, 'z':1
 			},
 		},
 		'tableandlamp':{
