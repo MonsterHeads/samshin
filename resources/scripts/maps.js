@@ -178,13 +178,14 @@ var tutorial_scene01_room01 = (function(){
 		tl.animate(_blackLayer, 3000, {'opacity':{'begin':1,'end':0,'easing':SS.helper.Easing.easeInQuad}});
 		tl.now(_blackLayer,{'hide':true});
 		tl.now(tv,{'status':'tv02'});
-		tl.wait(1500);
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.tv02_01']);
 		tl.now(tv,{'status':'tv03'});
-		tl.wait(1500);
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.tv03_01']);
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.tv03_02']);
 		tl.now(tv,{'status':'tv04'});
-		tl.wait(1500);
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.tv04_01']);
 		tl.now(tv,{'status':'tv05'});
-		tl.wait(1500);
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.tv05_01']);
 		tl.call(function(){
 			tl.stop();
 			_timeline = undefined;
