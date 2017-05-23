@@ -79,7 +79,13 @@ var tutorial_room01_map_data = {
 		},
 	},
 	'modal': {
-		'textDialog': {
+		'textDialogTop': {
+			'cls': '/ui/dialog',
+			'data': {
+				'status':'default', 'x':0, 'y':10, 'z':1, 'xOrigin':'center', 'yOrigin':'top', 'hide':true,
+			}
+		},
+		'textDialogBottom': {
 			'cls': '/ui/dialog',
 			'data': {
 				'status':'default', 'x':0, 'y':10, 'z':1, 'xOrigin':'center', 'yOrigin':'bottom', 'hide':true,
