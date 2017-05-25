@@ -74,10 +74,6 @@ SS.tool.MapScene = function(application, mapData, sceneHandler) {
 		_view.width = width;
 		_view.height = height;
 		_sceneHandler.update.apply($this, [t, width, height]);
-		var mapSrcX = Math.max(0, $this.center.x-width/2);
-		var mapSrcY = Math.max(0, $this.center.y-height/2);
-		var ctxDstX = Math.max(0, width/2-$this.center.x);
-		var ctxDstY = Math.max(0, height/2-$this.center.y);
 
 		_root.update(t);
 		ctx.save();
@@ -102,14 +98,10 @@ SS.tool.MapScene = function(application, mapData, sceneHandler) {
 					if( _view.width != _width ) {
 						_width = _view.width;
 						result.width = _width;
-						_tileRoot.x = $this.center.x;
-						_gameRoot.x = $this.center.x;
 					}
 					if( _view.height != _height ) {
 						_height = _view.height;
 						result.height = _height;
-						_tileRoot.y = $this.center.y;
-						_gameRoot.y = $this.center.y;
 					}
 					return result;
 				},
