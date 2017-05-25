@@ -234,7 +234,7 @@ var tutorial_scene01_room01 = (function(){
 			openTextDialog(txt['tutorial.scene01.room01.04_01'], function(){});
 		});
 		_character.addObserver('location_event', function(evt){
-			if( 180 <= _character.bottom ) {
+			if( 190 <= _character.bottom ) {
 				stackbook.off('mouseup');
 				diningtable.off('mouseup');
 				couch.off('mouseup');
@@ -255,7 +255,6 @@ var tutorial_scene01_room01 = (function(){
 		var dx = _character.x-60;
 		var dxStatus = 0<dx?'left_walk':'right_walk';
 		var dxTime = Math.max(50, Math.abs(Math.floor(dx*35)));
-		console.log(dx, dxTime);
 		tl.now(_character, {'status':dxStatus});
 		tl.animate(_character, dxTime, {'x':{'begin':_character.x,'end':60}});
 		tl.now(_character, {'status':'down_stop'});
@@ -291,8 +290,8 @@ var tutorial_scene01_room01 = (function(){
 
 		_charMove = new CharacterMoveHandler($this, _character);
 
-		//doChain([part01, part02, part03, part04, part05], function(){
-		doChain([part04, part05], function(){
+		doChain([part01, part02, part03, part04, part05], function(){
+		//doChain([part04, part05], function(){
 			console.log('test');
 			_charMove.stop();
 		});

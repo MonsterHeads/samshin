@@ -1,3 +1,53 @@
+var createCharacterStatus = function(name, customConfig) {
+	var config = {
+		'up_stop':     {'type':'single', 'data':{'assetName':'/characters/'+name+'/up1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+		'down_stop':   {'type':'single', 'data':{'assetName':'/characters/'+name+'/down1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+		'left_stop':   {'type':'single', 'data':{'assetName':'/characters/'+name+'/left1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+		'right_stop':  {'type':'single', 'data':{'assetName':'/characters/'+name+'/right1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
+		'up_walk': {
+			'type':'simpleAnimation',
+			'data': {
+				'delay':140,
+				'assetList':[
+					'/characters/'+name+'/up2','/characters/'+name+'/up1','/characters/'+name+'/up3','/characters/'+name+'/up1',
+				],
+				'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
+			},
+		},
+		'down_walk': {
+			'type':'simpleAnimation',
+			'data': {
+				'delay':140,
+				'assetList':[
+					'/characters/'+name+'/down2','/characters/'+name+'/down1','/characters/'+name+'/down3','/characters/'+name+'/down1',
+				],
+				'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
+			},
+		},
+		'left_walk': {
+			'type':'simpleAnimation',
+			'data': {
+				'delay':140,
+				'assetList':[
+					'/characters/'+name+'/left2','/characters/'+name+'/left1','/characters/'+name+'/left3','/characters/'+name+'/left1',
+				],
+				'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
+			},
+		},
+		'right_walk': {
+			'type':'simpleAnimation',
+			'data': {
+				'delay':140,
+				'assetList':[
+					'/characters/'+name+'/right2','/characters/'+name+'/right1','/characters/'+name+'/right3','/characters/'+name+'/right1',
+				],
+				'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
+			},
+		},
+	};
+	return $.extend(config, customConfig);
+};
+
 var data_game_object_classes = 
 [
 {
@@ -105,104 +155,16 @@ var data_game_object_classes =
 			'type':'class',
 			'name':'doctor_w',
 			'data': {
-				'status': {
-					'up_stop':     {'type':'single', 'data':{'assetName':'/characters/doctor_w/up1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
-					'down_stop':   {'type':'single', 'data':{'assetName':'/characters/doctor_w/down1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
-					'left_stop':   {'type':'single', 'data':{'assetName':'/characters/doctor_w/left1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
-					'right_stop':  {'type':'single', 'data':{'assetName':'/characters/doctor_w/right1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
-					'up_walk': {
-						'type':'simpleAnimation',
-						'data': {
-							'delay':140,
-							'assetList':[
-								'/characters/doctor_w/up2','/characters/doctor_w/up1','/characters/doctor_w/up3','/characters/doctor_w/up1',
-							],
-							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
-						},
-					},
-					'down_walk': {
-						'type':'simpleAnimation',
-						'data': {
-							'delay':140,
-							'assetList':[
-								'/characters/doctor_w/down2','/characters/doctor_w/down1','/characters/doctor_w/down3','/characters/doctor_w/down1',
-							],
-							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
-						},
-					},
-					'left_walk': {
-						'type':'simpleAnimation',
-						'data': {
-							'delay':140,
-							'assetList':[
-								'/characters/doctor_w/left2','/characters/doctor_w/left1','/characters/doctor_w/left3','/characters/doctor_w/left1',
-							],
-							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
-						},
-					},
-					'right_walk': {
-						'type':'simpleAnimation',
-						'data': {
-							'delay':140,
-							'assetList':[
-								'/characters/doctor_w/right2','/characters/doctor_w/right1','/characters/doctor_w/right3','/characters/doctor_w/right1',
-							],
-							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
-						},
-					},
-				},
+				'status': createCharacterStatus('doctor_w',{
+				}),
 			},
 		},
 		{
 			'type':'class',
 			'name':'main',
 			'data': {
-				'status': {
-					'up_stop':     {'type':'single', 'data':{'assetName':'/characters/main/up1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
-					'down_stop':   {'type':'single', 'data':{'assetName':'/characters/main/down1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
-					'left_stop':   {'type':'single', 'data':{'assetName':'/characters/main/left1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
-					'right_stop':  {'type':'single', 'data':{'assetName':'/characters/main/right1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
-					'up_walk': {
-						'type':'simpleAnimation',
-						'data': {
-							'delay':140,
-							'assetList':[
-								'/characters/main/up2','/characters/main/up1','/characters/main/up3','/characters/main/up1',
-							],
-							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
-						},
-					},
-					'down_walk': {
-						'type':'simpleAnimation',
-						'data': {
-							'delay':140,
-							'assetList':[
-								'/characters/main/down2','/characters/main/down1','/characters/main/down3','/characters/main/down1',
-							],
-							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
-						},
-					},
-					'left_walk': {
-						'type':'simpleAnimation',
-						'data': {
-							'delay':140,
-							'assetList':[
-								'/characters/main/left2','/characters/main/left1','/characters/main/left3','/characters/main/left1',
-							],
-							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
-						},
-					},
-					'right_walk': {
-						'type':'simpleAnimation',
-						'data': {
-							'delay':140,
-							'assetList':[
-								'/characters/main/right2','/characters/main/right1','/characters/main/right3','/characters/main/right1',
-							],
-							'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8}]},
-						},
-					},
-				},
+				'status': createCharacterStatus('main',{
+				}),
 			},
 		},
 	],
@@ -227,7 +189,7 @@ var data_game_object_classes =
 								'ml':'/ui/dialog/ml','mr':'/ui/dialog/mr',
 								'bl':'/ui/dialog/bl','bm':'/ui/dialog/bm','br':'/ui/dialog/br',
 							},
-							'width': 250,
+							'width': 270,
 							'line': 3,
 							'lineHeight':10,
 							'lineSpace': 3,
