@@ -34,6 +34,17 @@ var CharacterMoveHandler = function(mapScene, characterObject) {
 		}
 		_walking = false;
 	};
+	var getScreenPosition = function() {
+		var nObj = _charObj;
+		var left = 0;
+		var top = 0;
+		while( nObj ) {
+			left += nObj.left;
+			top += nObj.top;
+			nObj = nObj.parent;
+		}
+		return {'left':left, 'top':top, 'right':left+_charObj.width, 'bottom':top+_charObj.height};
+	}
 	var doWalk = function(t) {
 		if( !_walking ) return;
 		var delta = (t-_startTime)/35;
