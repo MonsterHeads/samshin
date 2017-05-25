@@ -12,7 +12,7 @@ SS.priv.AssetImageLoader = (function() {
 			} else {
 				var data = {'image':new Image(), 'callbacks':[loadingCallback,]};
 				data.image.onload = function() {
-					console.log('image loaded', url);
+					//console.log('image loaded', url);
 					$.each(data.callbacks, function(idx, callback){
 						callback(url, 'loaded');
 					});
