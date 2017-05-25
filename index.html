@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 	<title>Project G</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="viewport" content="width=1000" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
@@ -25,15 +25,14 @@
 	<link href="resources/font/dunggeunmo.css" rel="stylesheet" />
 	<style>
 		*{margin:0; padding:0; box-sizing:border-box; position:relative;}
-		body{-moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; user-select: none;}
-		a, a:hover, a:focus{text-decoration:none; color:inherit; cursor:pointer;}
-		ul{list-style-type: none;}
-		html{background-color:#ffffff; color:#000000;}
+		html{width:100%; height:100%; background-color:#ffffff; color:#000000;}
 		html{font-family:'DungGeunMo'; font-size:16px; font-weight:600; line-height:1.44; font-style:normal; font-stretch:normal; letter-spacing:normal;}
-		body{width:100vw; height:100vh; overflow-x:hidden;}
-		#debug{position:absolute; top:10px; right:10px; font-size:16px; height:20px; line-height:20px;}
+		body{-moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; user-select: none;}
+		body{width:100%; height:100%;}
+		#debug{position:absolute; top:10px; right:10px; z-index:10; padding:5px 20px; font-size:16px; line-height:20px; background-color:rgba(255,255,255,0.5);}
 		#debug label{position:relative; top:-2px;}
-		#viewport{position:absolute; width:1000px; height:750px; top:50%; left:50%; transform:translate(-50%,-50%);}
+		#bodywrap{display:flex; width:100%; height:100%; align-items:center; justify-content:center;}
+		#viewport{flex: 0 0 1000px; height:750px;}
 	</style>
 	<script>
 $(document).ready(function() {
@@ -54,7 +53,6 @@ $(document).ready(function() {
 	var LoadingScene = function() {
 		var _begin = -1;
 		var _circle = 1500;
-		
 		this.render = function(t, ctx, width, height) {
 			if( 0 > _begin ) {
 				_begin = t;
@@ -104,11 +102,12 @@ $(document).ready(function() {
 	</script>
 </head>
 <body>
-<div id="debug">
-	<input id="debug_fps" type="checkbox" /> <label for="debug_fps">fps</label>
-	<input id="debug_hitbox" type="checkbox" /> <label for="debug_hitbox">hitbox</label>
-	
+<div id="bodywrap">
+	<div id="debug">
+		<input id="debug_fps" type="checkbox" /> <label for="debug_fps">fps</label>
+		<input id="debug_hitbox" type="checkbox" /> <label for="debug_hitbox">hitbox</label>
+	</div>
+	<div id="viewport"></div>
 </div>
-<div id="viewport"></div>
 </body>
 </html>
