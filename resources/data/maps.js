@@ -82,7 +82,7 @@ var tutorial_room01_map_data = {
 		'textDialogTop': {
 			'cls': '/ui/dialog',
 			'data': {
-				'status':'default', 'x':0, 'y':10, 'z':1, 'xOrigin':'center', 'yOrigin':'top', 'hide':true,
+				'status':'default', 'x':0, 'y':25, 'z':1, 'xOrigin':'center', 'yOrigin':'top', 'hide':true,
 			}
 		},
 		'textDialogBottom': {
