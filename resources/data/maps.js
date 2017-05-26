@@ -74,7 +74,12 @@ var tutorial_room01_map_data = {
 						},
 					},
 				},
-
+			},
+		},
+		'detective':{
+			'cls':'/characters/detective',
+			'data':{
+				'status':'up_stop', 'x':84, 'y':210, 'z':1, 'hide':true,
 			},
 		},
 	},
@@ -88,8 +93,14 @@ var tutorial_room01_map_data = {
 		'textDialogBottom': {
 			'cls': '/ui/dialog',
 			'data': {
-				'status':'default', 'x':0, 'y':10, 'z':1, 'xOrigin':'center', 'yOrigin':'bottom', 'hide':true,
+				'status':'default', 'x':0, 'y':10, 'z':10, 'xOrigin':'center', 'yOrigin':'bottom', 'hide':true,
 			}
+		},
+		'detective':{
+			'cls':'/characters/detective',
+			'data':{
+				'status':'portrait_normal', 'x':12, 'y':15, 'z':1, 'xOrigin':'right', 'yOrigin':'bottom', 'hide':true,
+			},
 		},
 	},
 	'ui': {

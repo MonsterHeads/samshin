@@ -45,7 +45,26 @@ var data_assets = [
 				{'type':'asset', 'cls':'image', 'name':'right2', 'data':{'url':'resources/images/characters/main/right2.png', 'x':0, 'y':0, 'width':32, 'height':32},},
 				{'type':'asset', 'cls':'image', 'name':'right3', 'data':{'url':'resources/images/characters/main/right3.png', 'x':0, 'y':0, 'width':32, 'height':32},},
 			],
-		}
+		},
+		{
+			'type':'group',
+			'name':'detective',
+			'children':[
+				{'type':'asset', 'cls':'image', 'name':'portrait_normal', 'data':{'url':'resources/images/characters/detective/portrait_normal.png', 'x':0, 'y':0, 'width':135, 'height':225, 'scale':0.3},},
+				{'type':'asset', 'cls':'image', 'name':'up1', 'data':{'url':'resources/images/characters/detective/back1.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'up2', 'data':{'url':'resources/images/characters/detective/back2.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'up3', 'data':{'url':'resources/images/characters/detective/back3.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'down1', 'data':{'url':'resources/images/characters/detective/face1.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'down2', 'data':{'url':'resources/images/characters/detective/face2.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'down3', 'data':{'url':'resources/images/characters/detective/face3.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'left1', 'data':{'url':'resources/images/characters/detective/left1.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'left2', 'data':{'url':'resources/images/characters/detective/left2.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'left3', 'data':{'url':'resources/images/characters/detective/left3.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'right1', 'data':{'url':'resources/images/characters/detective/right1.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'right2', 'data':{'url':'resources/images/characters/detective/right2.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+				{'type':'asset', 'cls':'image', 'name':'right3', 'data':{'url':'resources/images/characters/detective/right3.png', 'x':0, 'y':0, 'width':32, 'height':32},},
+			],
+		},
 	],
 },
 {

@@ -167,6 +167,15 @@ var data_game_object_classes =
 				}),
 			},
 		},
+		{
+			'type':'class',
+			'name':'detective',
+			'data': {
+				'status': createCharacterStatus('detective',{
+					'portrait_normal': {'type':'single', 'data':{'assetName':'/characters/detective/portrait_normal', 'hitboxMap':{}}},
+				}),
+			},
+		},
 	],
 },
 {
@@ -189,7 +198,7 @@ var data_game_object_classes =
 								'ml':'/ui/dialog/ml','mr':'/ui/dialog/mr',
 								'bl':'/ui/dialog/bl','bm':'/ui/dialog/bm','br':'/ui/dialog/br',
 							},
-							'width': 270,
+							'width': 290,
 							'line': 3,
 							'lineHeight':10,
 							'lineSpace': 3,
