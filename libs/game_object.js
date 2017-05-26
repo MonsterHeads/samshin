@@ -15,6 +15,7 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _yOrigin = instanceData.yOrigin;
 	var _hide = instanceData.hide;
 	var _opacity = instanceData.opacity;
+	var _passMouseEvent = false;
 
 	var _width = 0;
 	var _height = 0;
@@ -31,7 +32,6 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _childList = [];
 	var _observeTypeMap = {};
 	var _observerMap = {}; // GroupMap > TypeMap > InstanceList
-	var _passMouseEvent = false;
 
 	var _updatePositionX = function() {
 		var left = $this.x;
