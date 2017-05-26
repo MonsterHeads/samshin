@@ -4,7 +4,7 @@ SS.GameObject = function(application, classData, instanceData) {
 	var $this = this;
 	var _id = SS.priv.gameObjectId++;
 	var _app = application;
-	var defaultInstanceData = {'x':0, 'y':0, 'z':0, 'xOrigin':'left', 'yOrigin':'top', 'hide':false,};
+	var defaultInstanceData = {'x':0, 'y':0, 'z':0, 'xOrigin':'left', 'yOrigin':'top', 'hide':false, 'opacity':1,};
 	instanceData = $.extend({}, defaultInstanceData, instanceData);
 
 	var _x = instanceData.x;
@@ -14,7 +14,7 @@ SS.GameObject = function(application, classData, instanceData) {
 	var _xOrigin = instanceData.xOrigin;
 	var _yOrigin = instanceData.yOrigin;
 	var _hide = instanceData.hide;
-	var _opacity = 1;
+	var _opacity = instanceData.opacity;
 
 	var _width = 0;
 	var _height = 0;
