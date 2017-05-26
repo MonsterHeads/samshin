@@ -32,11 +32,14 @@ SS.priv.AssetImageLoader = (function() {
 	}
 })();
 SS.assetClass.image = function(key, assetData, loadingCallback) {
+	var defaultAssetData = {'x':0, 'y':0, 'width':0, 'height':0, 'scale':1,};
+	assetData = $.extend({}, defaultAssetData, assetData);
 	var _url = assetData.url;
 	var _x = assetData.x;
 	var _y = assetData.y;
 	var _width = assetData.width;
 	var _height = assetData.height;
+	var _scale = assetData.scale;
 
 	var _image = SS.priv.AssetImageLoader.load(_url, function(url, msg){
 		switch(msg) {
@@ -55,7 +58,9 @@ SS.assetClass.image = function(key, assetData, loadingCallback) {
 	this.draw = function(ctx, dx, dy, dw, dh) {
 		var drawW = Math.min(_width, dw);
 		var drawH = Math.min(_height, dh);
-		ctx.drawImage(_image, _x, _y, drawW, drawH, dx, dy, drawW, drawH);
+		var imgW = drawW/_scale;
+		var imgH = drawH/_scale;
+		ctx.drawImage(_image, _x, _y, imgW, imgH, dx, dy, drawW, drawH);
 	}
 };
 
