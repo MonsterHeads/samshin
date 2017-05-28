@@ -149,13 +149,18 @@ SS.priv.Timeline.Timeline = function() {
 		_timeline.push({'type':'call', 'begin':_duration, 'handler':handler});
 		return $this;
 	}
-	this.clone = function() {
+	this.clone = function(after) {
 		var result = new SS.priv.Timeline.Timeline();
+		if( 0 < after ) {
+			result.wait(after);
+		}
 		$.each(_timeline, function(idx, descriptor) {
 			switch(descriptor.type) {
 			case 'now': result.now(descriptor.obj, descriptor.properties); break;
 			case 'animate': result.animate(descriptor.obj, descriptor.duration, descriptor.properties); break;
 			case 'wait': result.wait(descriptor.duration); break;
+			case 'waitFunc': result.waitFunc(descriptor.handler); break;
+			case 'call': result.call(descriptor.handler); break;
 			}
 		});
 		return result;
@@ -247,16 +252,24 @@ SS.helper.Timeline = function(){
 		_timelines[_longestTimelineIdx].call(handler);
 		return $this;
 	};
-	this.parallelMerge = function(timeline) {
+	this.parallelMerge = function(timeline, timeAt) {
 		var newTimelines = timeline.priv.timelines();
+		if( timeAt && 0 < timeAt ) {
+		} else {
+			timeAt = 0;
+		}
 		$.each(newTimelines, function(idx, newTimeline) {
-			_timelines.push(newTimeline.clone());
+			newTimeline = newTimeline.clone(timeAt);
+			_timelines.push(newTimeline);
 			if( newTimeline.duration > _timelines[_longestTimelineIdx].duration ) {
 				_longestTimelineIdx = _timelines.length-1;
 			}
 		});
 		return $this;
 	};
+	Object.defineProperty(this, 'duration', {
+		'get':function() { return _timelines[_longestTimelineIdx].duration; },
+	});
 
 	var _beginTime = -1;
 	var _running = false;
