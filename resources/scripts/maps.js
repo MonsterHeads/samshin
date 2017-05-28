@@ -49,14 +49,19 @@ var tutorial_scene01_room01 = (function(){
 		$this.app.cursor.status='normal';
 		nearChecking = [];
 	};
-	var addTextDialogToTimeline = function(timeline, txt, pos) {
+	var addTextDialogToTimeline = function(timeline, txt, pos, portrait) {
 		var textDialog = _textDialogBottom;
+		var portraitObj = {'hide':false};
+		if( portrait ) {
+			portraitObj = $this.modalObject(portrait);
+		}
 		if( pos == 'top' ) {
 			textDialog = _textDialogTop;
 		}
 		timeline.call(function(){
 			textDialog.data.txt = txt;
 			textDialog.hide = false;
+			portraitObj.hide = false;
 			$this.modal = true;
 		});
 		timeline.waitFunc(function(resolver){
@@ -64,6 +69,7 @@ var tutorial_scene01_room01 = (function(){
 				$this.modalObject().off('mouseup');
 				_partKeyboardListener = false;
 				textDialog.hide = true;
+				portraitObj.hide = true;
 				$this.modal = false;
 				resolver();
 			}
@@ -247,7 +253,9 @@ var tutorial_scene01_room01 = (function(){
 	};
 	var part05 = function(callback) {
 		_charMove.stop();
+		var detective = $this.gameObject('detective');
 		var tl = new SS.helper.Timeline();
+		var tl2;
 		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.05_01'], 'top');
 		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.05_02'], 'top');
 		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.05_03'], 'top');
@@ -255,9 +263,32 @@ var tutorial_scene01_room01 = (function(){
 		var dx = _character.x-60;
 		var dxStatus = 0<dx?'left_walk':'right_walk';
 		var dxTime = Math.max(50, Math.abs(Math.floor(dx*35)));
-		tl.now(_character, {'status':dxStatus});
+		tl.now(_character, {'status':dxStatus, 'x':158,});
 		tl.animate(_character, dxTime, {'x':{'begin':_character.x,'end':60}});
 		tl.now(_character, {'status':'down_stop'});
+		tl.now(detective, {'status':'up_walk', 'x':84, 'y':180, 'hide':false});
+		tl.animate(detective, 1000, {'y':{'begin':detective.y,'end':158}});
+		tl.now(detective, {'status':'up_stop'});
+		tl.now(_character, {'status':'up_walk'});
+		var p = tl.duration + 500;
+		tl.animate(_character, 1950, {'y':{'begin':158,'end':110}});
+		tl.now(_character, {'status':'up_stop'});
+		tl2 = new SS.helper.Timeline();
+		tl2.now(detective, {'status':'up_walk'});
+		tl2.animate(detective, 1950, {'y':{'begin':158,'end':110}});
+		tl2.now(detective, {'status':'up_stop'});
+		tl.parallelMerge(tl2, p);
+		tl.wait(500);
+		tl.now(_character, {'status':'right_stop'});
+		tl.now(detective, {'status':'left_stop'});
+		tl.wait(1000);
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.05_05'], 'bottom', 'detective');
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.05_06']);
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.05_07'], 'bottom', 'detective');
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.05_08']);
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.05_09'], 'bottom', 'detective');
+		addTextDialogToTimeline(tl, txt['tutorial.scene01.room01.05_10']);
+
 		tl.call(function(){
 			tl.stop();
 			_timeline = undefined;
@@ -292,7 +323,6 @@ var tutorial_scene01_room01 = (function(){
 
 		doChain([part01, part02, part03, part04, part05], function(){
 		//doChain([part04, part05], function(){
-			console.log('test');
 			_charMove.stop();
 		});
 	};
