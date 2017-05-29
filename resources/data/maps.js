@@ -9,7 +9,7 @@ var start_scene_data = {
 		'loading_txt':{
 			'cls':'/start/loading_txt',
 			'data':{
-				'status':'default', 'x':0, 'y':40, 'xOrigin':'center', 'yOrigin':'top',
+				'status':'default', 'x':0, 'y':55, 'xOrigin':'center', 'yOrigin':'top',
 			},
 		},
 	},
