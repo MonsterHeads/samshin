@@ -99,7 +99,7 @@ var tutorial_room01_map_data = {
 		'detective':{
 			'cls':'/characters/detective',
 			'data':{
-				'status':'portrait_normal', 'x':-10, 'y':11, 'z':11, 'xOrigin':'right', 'yOrigin':'bottom', 'hide':true,
+				'status':'portrait_normal', 'x':-10, 'y':0, 'z':11, 'xOrigin':'right', 'yOrigin':'bottom', 'hide':true,
 			},
 		},
 	},
