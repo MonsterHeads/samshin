@@ -1,3 +1,19 @@
+var start_scene_data = {
+	'ui': {
+		'bg':{
+			'cls':'/start/bg',
+			'data':{
+				'status':'default', 'x':0, 'y':0, 'xOrigin':'center', 'yOrigin':'bottom',
+			},
+		},
+		'loading_txt':{
+			'cls':'/start/loading_txt',
+			'data':{
+				'status':'default', 'x':0, 'y':40, 'xOrigin':'center', 'yOrigin':'top',
+			},
+		},
+	},
+};
 var tutorial_room01_map_data = {
 	'objects': {
 		'citywindow1':{

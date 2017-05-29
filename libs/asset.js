@@ -12,7 +12,6 @@ SS.priv.AssetImageLoader = (function() {
 			} else {
 				var data = {'image':new Image(), 'callbacks':[loadingCallback,]};
 				data.image.onload = function() {
-					//console.log('image loaded', url);
 					$.each(data.callbacks, function(idx, callback){
 						callback(url, 'loaded');
 					});
@@ -37,9 +36,11 @@ SS.assetClass.image = function(key, assetData, loadingCallback) {
 	var _url = assetData.url;
 	var _x = assetData.x;
 	var _y = assetData.y;
-	var _width = assetData.width;
-	var _height = assetData.height;
 	var _scale = assetData.scale;
+	var _orgWidth = assetData.width;
+	var _orgHeight = assetData.height;
+	var _width = _orgWidth * _scale;
+	var _height = _orgHeight * _scale;
 
 	var _image = SS.priv.AssetImageLoader.load(_url, function(url, msg){
 		switch(msg) {
@@ -58,9 +59,7 @@ SS.assetClass.image = function(key, assetData, loadingCallback) {
 	this.draw = function(ctx, dx, dy, dw, dh) {
 		var drawW = Math.min(_width, dw);
 		var drawH = Math.min(_height, dh);
-		var imgW = drawW/_scale;
-		var imgH = drawH/_scale;
-		ctx.drawImage(_image, _x, _y, imgW, imgH, dx, dy, drawW, drawH);
+		ctx.drawImage(_image, _x, _y, _orgWidth, _orgHeight, dx, dy, drawW, drawH);
 	}
 };
 

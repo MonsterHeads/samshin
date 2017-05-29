@@ -1,3 +1,71 @@
+var data_start_game_object_classes = [
+{
+	'type':'class',
+	'name':'cursors',
+	'data': {
+		'status': {
+			'action': {'type':'single', 'data':{'assetName':'/cursors/action',}},
+			'normal': {'type':'single', 'data':{'assetName':'/cursors/normal',}},
+			'search': {'type':'single', 'data':{'assetName':'/cursors/search',}},
+			'talk':   {'type':'single', 'data':{'assetName':'/cursors/talk',}},
+		},
+	}
+},
+{
+	'type':'group',
+	'name':'start',
+	'children':[
+		{
+			'type':'class',
+			'name':'bg',
+			'data': {
+				'status': {
+					'default': {'type':'single', 'data':{'assetName':'/start/bg'}},
+				},
+			}
+		},
+		{
+			'type':'class',
+			'name':'loading_txt',
+			'data': {
+				'status': {
+					'default': {
+						'type':'custom',
+						'data': (function() {
+							var _width = 0;
+							var _height = 24;
+							var _sentSize = false;
+							return {
+								'init': function(application) {
+									return {'width':0,'height':0,}
+								},
+								'update': function(t) {
+									if( !_sentSize && 0 < _width ) {
+										_sentSize = true;
+										return {'width':_width, 'height':_height,}
+									}
+								},
+								'render': function(t, ctx) {
+									ctx.fillStyle = '#000000';
+									ctx.font = '24px DungGeunMo';
+									ctx.fillStyle = '#000000';
+									ctx.textAlign = 'left'
+									ctx.textBaseline = 'hanging';
+									if( 0 == _width ) {
+										_width = Math.ceil(ctx.measureText('L O A D I N G').width);
+									}
+									else ctx.fillText('L O A D I N G', 0, 0);
+								},
+							}
+						})(),
+					},
+				},
+			},
+		},
+	],
+},
+];
+
 var createCharacterStatus = function(name, customConfig) {
 	var config = {
 		'up_stop':     {'type':'single', 'data':{'assetName':'/characters/'+name+'/up1', 'hitboxMap':{'move':[{'x':6, 'y':24, 'width':20, 'height':8},]}}},
@@ -50,18 +118,6 @@ var createCharacterStatus = function(name, customConfig) {
 
 var data_game_object_classes = 
 [
-{
-	'type':'class',
-	'name':'cursors',
-	'data': {
-		'status': {
-			'action': {'type':'single', 'data':{'assetName':'/cursors/action',}},
-			'normal': {'type':'single', 'data':{'assetName':'/cursors/normal',}},
-			'search': {'type':'single', 'data':{'assetName':'/cursors/search',}},
-			'talk':   {'type':'single', 'data':{'assetName':'/cursors/talk',}},
-		},
-	}
-},
 {
 	'type':'group',
 	'name':'tiles',

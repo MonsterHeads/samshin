@@ -50,38 +50,32 @@ $(document).ready(function() {
 			'background_color':'#000000',
 		},
 	}
-	var LoadingScene = function() {
-		var _begin = -1;
-		var _circle = 1500;
-		this.render = function(t, ctx, width, height) {
-			if( 0 > _begin ) {
-				_begin = t;
-			}
-			var dt = (t-_begin) / _circle;
-			var rad = Math.PI * dt
-			var opacity = Math.abs(Math.sin(rad));
-
-			ctx.fillStyle = '#bbccdd';
-			ctx.fillRect(0, 0, width, height);
-			ctx.fillStyle = 'rgba(0,0,0,'+opacity+')';
-			ctx.font = '32px DungGeunMo';
-			ctx.textAlign = 'center'
-			ctx.fillText("Loading...", width/2, height/2);
-		}
-	}
 	var app = new SS.Application(config);
-	app.scene = new LoadingScene();
-	app.loadAssets(data_assets, function(msg, progress) {
+	console.log('loading start images');
+	app.loadAssets(data_starting_assets, function(msg, progress) {
 		switch(msg) {
 			case 'finished':
 				console.log('assets loading finished');
-				setTimeout(function(){
-					app.scene = new SS.tool.MapScene(app, tutorial_room01_map_data, tutorial_scene01_room01);
-				}, 1500);
+				app.loadClasses(data_start_game_object_classes);
+				app.scene = new SS.tool.MapScene(app, start_scene_data, start_scene);
+				app.cursor = app.createGameObject('/cursors', {'status':'normal'});
+				console.log(app.cursor);
+				app.loadAssets(data_assets, function(msg, progress) {
+					switch(msg) {
+						case 'finished':
+							console.log('assets loading finished');
+							app.loadClasses(data_game_object_classes);
+							setTimeout(function(){
+								app.scene = new SS.tool.MapScene(app, tutorial_room01_map_data, tutorial_scene01_room01);
+							}, 2000);
+					}
+				});
+				
+				console.log(app.cursor);
 		}
 	});
-	app.loadClasses(data_game_object_classes);
-	app.cursor = app.createGameObject('/cursors', {'status':'normal'})
+	
+	
 
 	$('#debug_fps').on('change', function() {
 		if( $(this).prop('checked') ) {

@@ -1,3 +1,23 @@
+var data_starting_assets = [
+{
+	'type':'group',
+	'name':'start',
+	'children':[
+		{'type':'asset', 'cls':'image', 'name':'bg', 'data':{'url':'resources/images/ui/start_bg.png', 'x':0, 'y':0, 'width':1000, 'height':750, 'scale':0.35},},
+	],
+},
+{
+	'type':'group',
+	'name':'cursors',
+	'children':[
+		{'type':'asset', 'cls':'image', 'name':'action', 'data':{'url':'resources/images/cursors/action.png', 'x':0, 'y':0, 'width':14, 'height':14},},
+		{'type':'asset', 'cls':'image', 'name':'normal', 'data':{'url':'resources/images/cursors/normal.png', 'x':0, 'y':0, 'width':13, 'height':13},},
+		{'type':'asset', 'cls':'image', 'name':'search', 'data':{'url':'resources/images/cursors/search.png', 'x':0, 'y':0, 'width':14, 'height':14},},
+		{'type':'asset', 'cls':'image', 'name':'talk', 'data':{'url':'resources/images/cursors/talk.png', 'x':0, 'y':0, 'width':14, 'height':14},},
+	],
+},
+];
+
 var data_assets = [
 {
 	'type':'group',
@@ -50,7 +70,7 @@ var data_assets = [
 			'type':'group',
 			'name':'detective',
 			'children':[
-				{'type':'asset', 'cls':'image', 'name':'portrait_normal', 'data':{'url':'resources/images/characters/detective/portrait_normal.png', 'x':0, 'y':0, 'width':135, 'height':225, 'scale':0.3},},
+				{'type':'asset', 'cls':'image', 'name':'portrait_normal', 'data':{'url':'resources/images/characters/detective/portrait_normal.png', 'x':0, 'y':0, 'width':450, 'height':750, 'scale':0.3},},
 				{'type':'asset', 'cls':'image', 'name':'up1', 'data':{'url':'resources/images/characters/detective/back1.png', 'x':0, 'y':0, 'width':32, 'height':32},},
 				{'type':'asset', 'cls':'image', 'name':'up2', 'data':{'url':'resources/images/characters/detective/back2.png', 'x':0, 'y':0, 'width':32, 'height':32},},
 				{'type':'asset', 'cls':'image', 'name':'up3', 'data':{'url':'resources/images/characters/detective/back3.png', 'x':0, 'y':0, 'width':32, 'height':32},},
@@ -112,16 +132,6 @@ var data_assets = [
 		{'type':'asset', 'cls':'image', 'name':'floor_01_frame_corner_br', 'data':{'url':'resources/images/tiles/floor_01.png', 'x':16, 'y':64, 'width':16, 'height':16},},
 		{'type':'asset', 'cls':'image', 'name':'room01_wall', 'data':{'url':'resources/images/tiles/room01_wall.png', 'x':0, 'y':0, 'width':16, 'height':16},},
 		{'type':'asset', 'cls':'image', 'name':'room01_wall_bottom', 'data':{'url':'resources/images/tiles/room01_wall.png', 'x':0, 'y':16, 'width':16, 'height':16},},
-	],
-},
-{
-	'type':'group',
-	'name':'cursors',
-	'children':[
-		{'type':'asset', 'cls':'image', 'name':'action', 'data':{'url':'resources/images/cursors/action.png', 'x':0, 'y':0, 'width':14, 'height':14},},
-		{'type':'asset', 'cls':'image', 'name':'normal', 'data':{'url':'resources/images/cursors/normal.png', 'x':0, 'y':0, 'width':13, 'height':13},},
-		{'type':'asset', 'cls':'image', 'name':'search', 'data':{'url':'resources/images/cursors/search.png', 'x':0, 'y':0, 'width':14, 'height':14},},
-		{'type':'asset', 'cls':'image', 'name':'talk', 'data':{'url':'resources/images/cursors/talk.png', 'x':0, 'y':0, 'width':14, 'height':14},},
 	],
 },
 {

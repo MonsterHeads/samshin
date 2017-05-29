@@ -1,3 +1,25 @@
+var start_scene = (function() {
+	var Scene = {};
+	var $this;
+	var _circle = 1500;
+	var _begin = -1;
+	Scene.init = function() {
+		$this = this;
+	};
+	Scene.keyboardEventListener = function(t, type, evt) {
+	};
+	Scene.update = function(t, view_width, view_height) {
+		if( 0 > _begin ) {
+			_begin = t;
+		}
+		var dt = (t-_begin) / _circle;
+		var rad = Math.PI * dt
+		var opacity = Math.abs(Math.sin(rad));
+		$this.uiObject('loading_txt').opacity = opacity;
+	};
+	return Scene;
+})();
+
 var tutorial_scene01_room01 = (function(){
 	var Scene = {};
 	var $this;
