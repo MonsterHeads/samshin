@@ -191,3 +191,73 @@ SS.gameObjectStatusType.colorLayer = function(clsData) {
 		},
 	}
 };
+
+SS.gameObjectStatusType.text = function(clsData) {
+	var $this;
+	var defaultData = {'width':0, 'height':0, 'font':undefined, 'lineHeight':undefined, 'color':undefined, 'bgColor':undefined, 'borderColor':undefined, '_borderWidth':undefined, 'txt':''}
+	clsData = $.extend({}, defaultData, clsData);
+
+	var _width = clsData.width;
+	var _textWidth = 0;
+	var _height = clsData.height;
+	var _sentSize = false;
+
+	delete clsData['width'];
+	delete clsData['height'];
+
+	return {
+		'init': function(application) {
+			$this = this;
+			$.extend($this.data, clsData);
+			return {'width':_width,'height':_height}
+		},
+		'update': function(t) {
+			if( !_sentSize && ( 0 < _width || 0<_textWidth ) ) {
+				_sentSize = true;
+				return {'width':0<_width?_width:_textWidth, 'height':_height,}
+			}
+		},
+		'render': function(t, ctx) {
+			if( $this.data.font ) ctx.font = $this.data.font;
+
+			var textWidth = Math.ceil(ctx.measureText($this.data.txt).width);
+			if( textWidth != _textWidth ) {
+				_textWidth = textWidth;
+				_sentSize = false;
+			}
+			if( 0 < _textWidth ) {
+				var width = 0<_width?_width:_textWidth;
+				var height;
+				var lineHeight;
+				if( 0 == _height && !$this.data.lineHeight ) {
+					height = 0;
+					lineHeight = 0;
+				} else if( 0 != _height && !$this.data.lineHeight ) {
+					height = _height;
+					lineHeight = _height;
+				} else if( 0 == _height && $this.data.lineHeight ) {
+					height = $this.data.lineHeight;
+					lineHeight = $this.data.lineHeight;
+				} else {
+					height = _height;
+					lineHeight = $this.data.lineHeight;
+				}
+
+				if( $this.data.bgColor ) {
+					ctx.fillStyle = _bgColor;
+					ctx.fillRect(0,0,width,height);
+				}
+				if( $this.data.color ) ctx.fillStyle = $this.data.color;
+				if( $this.data.borderWidth && $this.data.borderColor ) {
+					ctx.lineWidth = $this.data.borderWidth;
+					ctx.strokeStyle = $this.data.borderColor;
+				}
+				ctx.textBaseline = 'hanging';
+				var xPos = (width - _textWidth) / 2;
+				var yPos = (height - lineHeight) / 2;
+				if( $this.data.borderWidth && $this.data.borderColor ) ctx.strokeText($this.data.txt, xPos, yPos);
+				ctx.fillText($this.data.txt, xPos, yPos);
+			}
+		},
+	}
+};
