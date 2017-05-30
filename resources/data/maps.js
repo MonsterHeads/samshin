@@ -6,10 +6,16 @@ var start_scene_data = {
 				'status':'default', 'x':0, 'y':0, 'xOrigin':'center', 'yOrigin':'bottom',
 			},
 		},
+		'btn_new_game':{
+			'cls':'/start/text_button',
+			'data':{
+				'status':'default', 'x':0, 'y':80, 'xOrigin':'center', 'yOrigin':'top',
+			},
+		},
 		'loading_txt':{
 			'cls':'/start/loading_txt',
 			'data':{
-				'status':'default', 'x':0, 'y':55, 'xOrigin':'center', 'yOrigin':'top',
+				'status':'default', 'x':0, 'y':55, 'xOrigin':'center', 'yOrigin':'top', 'hide':true,
 			},
 		},
 	},

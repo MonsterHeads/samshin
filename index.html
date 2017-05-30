@@ -51,24 +51,12 @@ $(document).ready(function() {
 		},
 	}
 	var app = new SS.Application(config);
-	console.log('loading start images');
 	app.loadAssets(data_starting_assets, function(msg, progress) {
 		switch(msg) {
 			case 'finished':
-				console.log('assets loading finished');
 				app.loadClasses(data_start_game_object_classes);
 				app.scene = new SS.tool.MapScene(app, start_scene_data, start_scene);
 				app.cursor = app.createGameObject('/cursors', {'status':'normal'});
-				app.loadAssets(data_assets, function(msg, progress) {
-					switch(msg) {
-						case 'finished':
-							console.log('assets loading finished');
-							app.loadClasses(data_game_object_classes);
-							setTimeout(function(){
-								app.scene = new SS.tool.MapScene(app, tutorial_room01_map_data, tutorial_scene01_room01);
-							}, 2000);
-					}
-				});
 		}
 	});
 	

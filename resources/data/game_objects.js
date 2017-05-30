@@ -26,38 +26,24 @@ var data_start_game_object_classes = [
 		},
 		{
 			'type':'class',
+			'name':'text_button',
+			'data': {
+				'status': {
+					'default': {
+						'type':'text',
+						'data': { 'height':24, 'font':'24px DungGeunMo', 'color':'#8f4247', 'borderColor':'#000000', 'borderWidth':2, 'txt':''},
+					},
+				},
+			},
+		},
+		{
+			'type':'class',
 			'name':'loading_txt',
 			'data': {
 				'status': {
 					'default': {
-						'type':'custom',
-						'data': (function() {
-							var _width = 0;
-							var _height = 24;
-							var _sentSize = false;
-							return {
-								'init': function(application) {
-									return {'width':0,'height':0,}
-								},
-								'update': function(t) {
-									if( !_sentSize && 0 < _width ) {
-										_sentSize = true;
-										return {'width':_width, 'height':_height,}
-									}
-								},
-								'render': function(t, ctx) {
-									ctx.fillStyle = '#000000';
-									ctx.font = '24px DungGeunMo';
-									ctx.fillStyle = '#000000';
-									ctx.textAlign = 'left'
-									ctx.textBaseline = 'hanging';
-									if( 0 == _width ) {
-										_width = Math.ceil(ctx.measureText('L O A D I N G').width);
-									}
-									else ctx.fillText('L O A D I N G', 0, 0);
-								},
-							}
-						})(),
+						'type':'text',
+						'data': { 'height':32, 'font':'32px DungGeunMo', 'color':'#000000', 'txt':'L O A D I N G'},
 					},
 				},
 			},

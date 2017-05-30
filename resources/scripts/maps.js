@@ -5,11 +5,33 @@ var start_scene = (function() {
 	var _begin = -1;
 	Scene.init = function() {
 		$this = this;
+		var loading_txt = $this.uiObject('loading_txt');
+		var newBtn = $this.uiObject('btn_new_game');
+		newBtn.data.txt = 'NEW GAME';
+		newBtn.on('mouseenter', function(){$this.app.cursor.status='action';});
+		newBtn.on('mouseleave', function(){$this.app.cursor.status='normal';});
+		newBtn.on('mouseup', function(){
+			newBtn.hide = true;
+			setTimeout(function(){
+				loading_txt.hide = false;
+				$this.app.cursor.status='normal';
+				$this.app.loadAssets(data_assets, function(msg, progress) {
+					switch(msg) {
+						case 'finished':
+							$this.app.loadClasses(data_game_object_classes);
+							setTimeout(function(){
+								$this.app.scene = new SS.tool.MapScene($this.app, tutorial_room01_map_data, tutorial_scene01_room01);
+							}, 1500);
+					}
+				});
+			},1000);
+		});
+		
 	};
 	Scene.keyboardEventListener = function(t, type, evt) {
 	};
 	Scene.update = function(t, view_width, view_height) {
-		if( 0 > _begin ) {
+		if( 0 > _begin && !$this.uiObject('loading_txt').hide ) {
 			_begin = t;
 		}
 		var dt = (t-_begin) / _circle;
