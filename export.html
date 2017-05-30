@@ -57,18 +57,14 @@ $(document).ready(function() {
 		}
 	}
 	var app = new SS.Application(config);
-	app.scene = new LoadingScene();
-	app.loadAssets(data_assets, function(msg, progress) {
+	app.loadAssets(data_starting_assets, function(msg, progress) {
 		switch(msg) {
 			case 'finished':
-				console.log('assets loading finished');
-				setTimeout(function(){
-					app.scene = new SS.tool.MapScene(app, tutorial_room01_map_data, tutorial_scene01_room01);
-				}, 1500);
+				app.loadClasses(data_start_game_object_classes);
+				app.scene = new SS.tool.MapScene(app, start_scene_data, start_scene);
+				app.cursor = app.createGameObject('/cursors', {'status':'normal'});
 		}
 	});
-	app.loadClasses(data_game_object_classes);
-	app.cursor = app.createGameObject('/cursors', {'status':'normal'})
 
 	$('#debug_fps').on('change', function() {
 		if( $(this).prop('checked') ) {
